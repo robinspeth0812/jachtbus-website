@@ -1,0 +1,53 @@
+---
+interface Props {
+  /** Main page heading — the page's single h1. */
+  title: string;
+  /** Short intro text under the heading. */
+  text?: string;
+  /** Color theme of the hero section. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+
+const {
+  title,
+  text = 'Deze pagina vullen we binnenkort met echte content.',
+  theme = 'light',
+} = Astro.props;
+
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+---
+
+<section class:list={['page-hero_wrap', 'u-section', themeClass]}>
+  <div class="page-hero_contain u-container">
+    <div class="page-hero_layout">
+      <div class="page-hero_content u-margin-trim">
+        <div class="page-hero_title u-heading u-text-style-h1">
+          <h1>{title}</h1>
+        </div>
+        <div class="page-hero_text u-text u-text-style-large">
+          <p>{text}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-hero_wrap { padding-top: var(--_spacing---section-space--small); }
+  .page-hero_layout { display: block; }
+  .page-hero_content { width: 100%; }
+  .page-hero_title {
+    display: flex;
+    max-width: 20ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .page-hero_text {
+    display: flex;
+    max-width: 55ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+</style>

@@ -1,0 +1,87 @@
+/*
+ * Design tokens — the ONLY file where hex codes and raw size values
+ * are allowed. Everything else references these custom properties.
+ */
+:root {
+  /* --- Color palette --- */
+  /* Marigold (gold), light to dark */
+  --color--marigold-1: #f8f3ea; /* soft section background */
+  --color--marigold-2: #f1e8d5;
+  --color--marigold-3: #d0af6c;
+  --color--marigold-4: #bc8e2d; /* button on dark sections only, with camarone-7 text */
+  --color--marigold-5: #8a6820; /* button color / gold text on light. Adjusted from #967124 (4.48:1 with white, under WCAG 4.5:1) — do not revert */
+  --color--marigold-6: #4b3812;
+  --color--marigold-7: #382a0d;
+
+  /* Camarone (green), light to dark */
+  --color--camarone-1: #e5ede8;
+  --color--camarone-2: #ccdcd1;
+  --color--camarone-3: #4c845f; /* too light for text — decorative only */
+  --color--camarone-4: #00501b; /* brand: dark section background + focus ring */
+  --color--camarone-5: #004015;
+  --color--camarone-6: #00200a; /* main text color */
+  --color--camarone-7: #001808;
+
+  /* Neutral */
+  --color--white: #ffffff;
+  --color--neutral-2: #cccccc;
+  --color--neutral-3: #666666;
+  --color--neutral-4: #4c4c4c;
+
+  /* --- Typography --- */
+  --_typography---font--heading: 'Asap Variable', Asap, sans-serif;
+  --_typography---font--body: 'Open Sans Variable', 'Open Sans', sans-serif;
+  --_typography---font--accent: 'Nothing You Could Do', cursive;
+  --_typography---font--primary-regular: 400;
+  --_typography---font--primary-medium: 500;
+  --_typography---font--primary-bold: 700;
+  --_typography---letter-spacing--tight: -0.02em;
+  --_typography---line-height--heading: 1.15;
+  --_typography---line-height--body: 1.6;
+
+  --_typography---size--display: clamp(2.75rem, 1.5rem + 4.5vw, 4.25rem);
+  --_typography---size--h1: clamp(2.25rem, 1.35rem + 3.2vw, 3.25rem);
+  --_typography---size--h2: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+  --_typography---size--h3: clamp(1.375rem, 1.15rem + 1vw, 1.75rem);
+  --_typography---size--h4: 1.25rem;
+  --_typography---size--h5: 1.125rem;
+  --_typography---size--h6: 1rem;
+  --_typography---size--large: 1.125rem;
+  --_typography---size--main: 1rem;
+  --_typography---size--small: 0.875rem;
+
+  --_text-style---margin-bottom: 0.75em;
+
+  /* --- Spacing scale --- */
+  --_spacing---space--1: 0.25rem;
+  --_spacing---space--2: 0.5rem;
+  --_spacing---space--3: 0.75rem;
+  --_spacing---space--4: 1rem;
+  --_spacing---space--5: 1.5rem;
+  --_spacing---space--6: 2rem;
+  --_spacing---space--7: 3rem;
+  --_spacing---space--8: 4rem;
+
+  --_spacing---section-space--none: 0rem;
+  --_spacing---section-space--small: clamp(2rem, 1rem + 4vw, 4rem);
+  --_spacing---section-space--main: clamp(3rem, 1.5rem + 5vw, 6rem);
+  --_spacing---section-space--large: clamp(4rem, 2rem + 7vw, 8rem);
+  --_spacing---section-space--page-top: calc(var(--nav--height-total) + clamp(2rem, 1rem + 4vw, 4rem));
+
+  /* --- Site --- */
+  --max-width--small: 50rem;
+  --max-width--main: 90rem;
+  --max-width--full: 100%;
+  --site--margin: clamp(1rem, 0.5rem + 3vw, 2.5rem);
+  --site--gutter: var(--_spacing---space--5);
+  --radius--small: 0.25rem;
+  --radius--main: 0.5rem;
+  --radius--round: 100rem;
+  --border-width--main: 0.0625rem;
+  --nav--height-total: 4.5rem;
+
+  /* --- Accessibility --- */
+  --target--min: 2.75rem; /* 44px minimum target size (WCAG 2.2) */
+  --focus--width: 0.1875rem;
+  --focus--offset: 0.125rem;
+}

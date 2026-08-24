@@ -1,0 +1,58 @@
+---
+import '@fontsource-variable/asap';
+import '@fontsource-variable/open-sans';
+import '@fontsource/nothing-you-could-do';
+import '../styles/tokens.css';
+import '../styles/lumos.css';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  /** Page title shown in the browser tab and search results. */
+  title: string;
+  /** Meta description for search engines. */
+  description?: string;
+}
+
+const { title, description = '' } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} — Jachtbus Foodtruck</title>
+    {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+  </head>
+  <body>
+    <a class="skip_wrap" href="#main">Direct naar de inhoud</a>
+    <Nav />
+    <main id="main" class="main_wrap">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip_wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    transform: translateY(-100%);
+  }
+  .skip_wrap:focus-visible { transform: translateY(0); }
+  .main_wrap {
+    display: flex;
+    flex-flow: column;
+  }
+</style>

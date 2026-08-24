@@ -1,0 +1,106 @@
+---
+// Site-wide navigation. Brand-themed, sticky at the top.
+const links = [
+  { href: '/catering', label: 'Catering' },
+  { href: '/referenties', label: 'Referenties' },
+  { href: '/over-ons', label: 'Over ons' },
+  { href: '/contact', label: 'Contact' },
+];
+---
+
+<header class="nav_wrap u-theme-brand">
+  <nav class="nav_contain u-container" aria-label="Hoofdmenu">
+    <div class="nav_layout">
+      <a class="nav_logo_wrap" href="/">Jachtbus</a>
+      <ul class="nav_list">
+        {
+          links.map((link) => (
+            <li class="nav_list_item">
+              <a class="nav_link_wrap" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="nav_actions u-button-wrapper">
+        <a class="nav_button" href="/aanvraag" data-trigger="hover focus">Aanvraag starten</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .nav_wrap {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    min-height: var(--nav--height-total);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-top: var(--_spacing---space--2);
+    padding-bottom: var(--_spacing---space--2);
+  }
+  .nav_contain { gap: var(--_spacing---space--3); }
+  .nav_layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_spacing---space--3) var(--_spacing---space--5);
+  }
+  .nav_logo_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--h4);
+    text-decoration: none;
+  }
+  .nav_list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2) var(--_spacing---space--4);
+    margin-right: auto;
+  }
+  .nav_list_item { display: flex; }
+  .nav_link_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--1) var(--_spacing---space--2);
+    font-size: var(--_typography---size--main);
+    text-decoration: none;
+  }
+  .nav_button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    text-decoration: none;
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
+    );
+    transition: all 300ms;
+  }
+</style>

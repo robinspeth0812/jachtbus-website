@@ -1,0 +1,107 @@
+---
+// Site-wide footer: brand line plus link columns.
+const serviceLinks = [
+  { href: '/catering/bruiloft', label: 'Bruiloft' },
+  { href: '/catering/bedrijfsfeest', label: 'Bedrijfsfeest' },
+  { href: '/catering/evenement', label: 'Evenement' },
+  { href: '/catering/bbq-smoker', label: 'BBQ-smoker' },
+];
+const siteLinks = [
+  { href: '/referenties', label: 'Referenties' },
+  { href: '/over-ons', label: 'Over ons' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/aanvraag', label: 'Aanvraag starten' },
+];
+const legalLinks = [
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/voorwaarden', label: 'Voorwaarden' },
+  { href: '/cookies', label: 'Cookies' },
+];
+---
+
+<footer class="footer_wrap u-section u-theme-brand">
+  <div class="footer_contain u-container">
+    <div class="footer_layout">
+      <div class="footer_brand_wrap u-margin-trim">
+        <p class="footer_logo u-text-style-h4">Jachtbus Foodtruck</p>
+        <p class="footer_text u-text-style-small">
+          Foodtruckcatering in Drenthe, Groningen en Friesland. Uit de keuken van Brasserie
+          Jachtlust.
+        </p>
+      </div>
+      <nav class="footer_nav_wrap" aria-label="Diensten">
+        <p class="footer_nav_title u-text-style-h6">Diensten</p>
+        <ul class="footer_list">
+          {
+            serviceLinks.map((link) => (
+              <li class="footer_list_item">
+                <a class="footer_link_wrap" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <nav class="footer_nav_wrap" aria-label="Website">
+        <p class="footer_nav_title u-text-style-h6">Jachtbus</p>
+        <ul class="footer_list">
+          {
+            siteLinks.map((link) => (
+              <li class="footer_list_item">
+                <a class="footer_link_wrap" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <nav class="footer_nav_wrap" aria-label="Juridisch">
+        <p class="footer_nav_title u-text-style-h6">Praktisch</p>
+        <ul class="footer_list">
+          {
+            legalLinks.map((link) => (
+              <li class="footer_list_item">
+                <a class="footer_link_wrap" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .footer_brand_wrap { width: 100%; }
+  .footer_logo { margin-bottom: var(--_text-style---margin-bottom); }
+  .footer_text { margin-bottom: var(--_text-style---margin-bottom); }
+  .footer_nav_wrap {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    width: 100%;
+  }
+  .footer_list {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+  }
+  .footer_list_item { display: flex; }
+  .footer_link_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    font-size: var(--_typography---size--small);
+    text-decoration: none;
+  }
+</style>

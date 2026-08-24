@@ -1,0 +1,80 @@
+/*
+ * Global base styles: minimal reset, element defaults, focus ring, and
+ * reduced-motion handling. Part of the framework layer — @media and
+ * element selectors are allowed here only.
+ */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  font-family: var(--_typography---font--body);
+  font-size: var(--_typography---size--main);
+  line-height: var(--_typography---line-height--body);
+  background-color: var(--_theme---background);
+  color: var(--_theme---text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--_typography---font--heading);
+  font-weight: var(--_typography---font--primary-bold);
+  line-height: var(--_typography---line-height--heading);
+  font-size: inherit;
+  overflow-wrap: break-word;
+}
+
+p { overflow-wrap: break-word; }
+
+img, video {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+a { color: inherit; }
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul, ol {
+  padding: 0;
+  list-style: none;
+}
+
+:focus-visible {
+  outline: var(--focus--width) solid var(--_theme---focus-ring);
+  outline-offset: var(--focus--offset);
+}
+
+::selection {
+  background-color: var(--_theme---text-accent);
+  color: var(--_theme---background);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
