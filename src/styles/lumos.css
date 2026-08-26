@@ -56,13 +56,13 @@
   --_theme---button-secondary--text-hover: var(--color--camarone-5);
 }
 
-/* White sections (site-specific addition to the standard Lumos
-   light/dark/brand trio) - the lighter alternative now that cream is
-   the default background. */
+/* u-theme-soft is identical to light (owner's rule: marigold-1 is the
+   background everywhere outside the green sections, marigold-2 the
+   foreground on it). The class stays for markup compatibility. */
 .u-theme-soft {
-  --_theme---background: var(--color--white);
-  --_theme---background-2: var(--color--marigold-1);
-  --_theme---background-skeleton: var(--color--marigold-1);
+  --_theme---background: var(--color--marigold-1);
+  --_theme---background-2: var(--color--marigold-2);
+  --_theme---background-skeleton: var(--color--marigold-2);
 }
 
 /* Brand: dark green sections. */

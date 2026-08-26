@@ -233,9 +233,11 @@ Fixed assignments (do not deviate):
   dark sections the hover state gets a light gold border (`#d0af6c`)
   so the button visibly reacts against the green.
 - `#4c845f` is **too light for text** — decorative use only.
-- `#f8f3ea` is the **default light background site-wide** (owner's
-  decision 2026-08-26); `#f1e8d5` is the foreground layer on it (cards,
-  pills, badges). `u-theme-soft` is the white alternative section.
+- `#f8f3ea` is the **background everywhere outside the green sections**
+  (owner's decision 2026-08-27, confirmed twice); `#f1e8d5` is the
+  foreground layer on it (cards, pills, badges). No white sections:
+  `u-theme-soft` is identical to light and only kept for markup
+  compatibility.
 
 ### Typography
 
