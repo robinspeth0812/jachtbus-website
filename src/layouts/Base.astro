@@ -9,6 +9,8 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WhatsappButton from '../components/WhatsappButton.astro';
 import CtaBar from '../components/CtaBar.astro';
+import busImg from '../assets/jachtbus-bus.jpg';
+import logoImg from '../assets/jachtbus-logo-wit.png';
 
 interface Props {
   /** Page title shown in the browser tab and search results. */
@@ -63,6 +65,12 @@ const businessSchema = {
     { '@type': 'City', name: 'Drachten' },
     { '@type': 'City', name: 'Hoogeveen' },
   ],
+  image: [new URL(busImg.src, 'https://jachtbusfoodtruck.nl').href],
+  logo: new URL(logoImg.src, 'https://jachtbusfoodtruck.nl').href,
+  slogan: 'Goed, vers en ambachtelijk bereid.',
+  founder: { '@type': 'Person', name: 'Peer Wagenaar' },
+  // TODO: replace with the Google Business Profile map link once it exists.
+  hasMap: 'https://www.google.com/maps/search/?api=1&query=Julianalaan%2054%2C%209462PH%20Gasselte',
   sameAs: [
     'https://www.instagram.com/jachtbusfoodtruck/',
     'https://www.facebook.com/brasseriejachtlust',
@@ -75,6 +83,7 @@ const businessSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="generator" content={Astro.generator} />
     <title>{title} | Jachtbus Foodtruck</title>
     {description && <meta name="description" content={description} />}

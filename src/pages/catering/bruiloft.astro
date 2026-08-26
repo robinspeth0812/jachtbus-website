@@ -9,6 +9,7 @@ import StepList from '../../components/StepList.astro';
 import MediaText from '../../components/MediaText.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import RegionPill from '../../components/RegionPill.astro';
+import ServiceSchema from '../../components/ServiceSchema.astro';
 import LocationRequirements from '../../components/LocationRequirements.astro';
 import FaqSection from '../../components/FaqSection.astro';
 import CtaSection from '../../components/CtaSection.astro';
@@ -104,6 +105,10 @@ const faqItems = [
   description="Bruiloftscatering van de Jachtbus: borrel, diner en avondsnack, ter plekke bereid en afgestemd op jullie dag. In Drenthe, Groningen en Friesland."
   footerCta={false}
 >
+  <ServiceSchema
+    name="Bruiloftscatering"
+    description="Foodtruckcatering op bruiloften: borrel, diner en avondsnack, ter plekke bereid en afgestemd op de dag."
+  />
   <section class="wedding-hero_wrap u-section u-theme-brand">
     <Image class="wedding-hero_bg_img" src={heroImg} alt="" aria-hidden="true" width={1920} loading="eager" />
     <div class="wedding-hero_overlay" aria-hidden="true"></div>

@@ -1,0 +1,27 @@
+---
+// Service structured data for the catering pages, linked to the
+// LocalBusiness entity in the Base layout via its @id.
+interface Props {
+  /** Name of the service, e.g. "Bruiloftscatering". */
+  name: string;
+  /** Short description for search engines. */
+  description: string;
+}
+const { name, description } = Astro.props;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: name,
+  name,
+  description,
+  provider: { '@id': 'https://jachtbusfoodtruck.nl/#business' },
+  areaServed: [
+    { '@type': 'State', name: 'Drenthe' },
+    { '@type': 'State', name: 'Groningen' },
+    { '@type': 'State', name: 'Friesland' },
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />

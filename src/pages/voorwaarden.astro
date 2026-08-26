@@ -1,11 +1,117 @@
 ---
+// General terms for the catering business. Draft written in-house: the
+// cancellation percentages and deposit are proposals for the owner to
+// confirm, and the whole text should be checked by a legal professional
+// before go-live.
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 ---
 
-<Base title="Algemene voorwaarden" description="De algemene voorwaarden van de Jachtbus.">
+<Base
+  title="Algemene voorwaarden"
+  description="De algemene voorwaarden van Jachtbus Foodtruck & Catering B.V."
+>
   <PageHero
     title="Algemene voorwaarden"
-    text="Hier staan binnenkort onze algemene voorwaarden."
+    text="Geen kleine lettertjes, gewoon duidelijke afspraken. Laatst bijgewerkt: augustus 2026."
   />
+  <section class="legal_wrap u-section u-theme-light">
+    <div class="legal_contain u-container">
+      <div class="legal_layout u-margin-trim">
+        <h2 class="legal_title u-text-style-h4">1. Wie en waarvoor</h2>
+        <p class="legal_text">
+          Deze voorwaarden gelden voor alle offertes en overeenkomsten van
+          Jachtbus Foodtruck &amp; Catering B.V., Julianalaan 54, 9462 PH
+          Gasselte, KvK 96772174 (hierna: de Jachtbus). Afwijken kan alleen
+          als we dat samen schriftelijk afspreken.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">2. Offertes en totstandkoming</h2>
+        <p class="legal_text">
+          Offertes zijn 14 dagen geldig. Een boeking staat vast zodra je
+          onze offerte schriftelijk (mail of WhatsApp telt) hebt bevestigd
+          en de aanbetaling is voldaan. Prijzen voor particulieren zijn
+          inclusief btw; voor bedrijven exclusief btw, tenzij anders
+          vermeld.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">3. Aantal gasten</h2>
+        <p class="legal_text">
+          Het definitieve aantal gasten geef je uiterlijk 14 dagen voor het
+          feest door. Komen er daarna nog gasten bij, dan doen we ons best
+          en rekenen we die bij tegen de prijs per persoon uit de offerte.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">4. Betaling</h2>
+        <p class="legal_text">
+          Bij bevestiging betaal je 50% aan. Het restant factureren we na
+          het feest, met een betaaltermijn van 14 dagen.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">5. Annuleren en verplaatsen</h2>
+        <p class="legal_text">
+          Annuleer je tot 30 dagen voor de datum, dan ben je 25% van de
+          totaalprijs verschuldigd. Tot 14 dagen: 50%. Tot 7 dagen: 75%.
+          Daarna: de volledige prijs, omdat inkoop en planning dan al
+          gedaan zijn. Verplaatsen naar een nieuwe datum kan in overleg;
+          als wij op de nieuwe datum kunnen, rekenen we geen
+          annuleringskosten. Omdat catering voor een afgesproken datum
+          wordt geleverd, geldt het wettelijke herroepingsrecht van 14
+          dagen hier niet (artikel 6:230p BW).
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">6. De locatie</h2>
+        <p class="legal_text">
+          Jij zorgt voor een geschikte plek: minimaal 6,5 bij 2,5 meter
+          ruimte, een stevige en vlakke ondergrond, bereikbaar voor een bus
+          van 3,5 ton, en 230V of 16A binnen 25 meter. Twijfel je? Overleg
+          vooraf, dan denken we mee. Vergunningen of toestemming van de
+          locatie-eigenaar regel jij.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">7. Weer en overmacht</h2>
+        <p class="legal_text">
+          Bij slecht weer draaien we gewoon door, in overleg met tent of
+          overkapping. Bij overmacht (bijvoorbeeld extreem weer waardoor
+          rijden onverantwoord is, of ziekte zonder vervanging) zoeken we
+          samen naar een oplossing, zoals een nieuwe datum. Lukt dat niet,
+          dan betalen we vooruitbetaalde bedragen terug minus al gemaakte
+          kosten.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">8. Allergieën</h2>
+        <p class="legal_text">
+          Geef allergieën en dieetwensen van je gasten uiterlijk 14 dagen
+          vooraf door, dan zorgen wij dat iedereen mee-eet. Voor reacties
+          op allergenen die niet aan ons zijn doorgegeven, zijn wij niet
+          aansprakelijk.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">9. Aansprakelijkheid</h2>
+        <p class="legal_text">
+          Onze aansprakelijkheid is beperkt tot het factuurbedrag van de
+          betreffende boeking en geldt niet voor indirecte schade. Dit
+          geldt niet bij opzet of bewuste roekeloosheid van onze kant.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">10. Klachten en recht</h2>
+        <p class="legal_text">
+          Iets niet goed? Zeg het ons direct, of uiterlijk binnen 48 uur na
+          het feest, dan lossen we het op. Op alle overeenkomsten is
+          Nederlands recht van toepassing.
+        </p>
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .legal_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    max-width: var(--max-width--small);
+  }
+  .legal_title { margin-top: var(--_spacing---space--4); }
+  .legal_text { max-width: 70ch; }
+</style>

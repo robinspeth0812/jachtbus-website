@@ -1,0 +1,4 @@
+Contact: mailto:info@brasseriejachtlust.nl
+Contact: tel:+31592656363
+Expires: 2027-12-31T23:00:00.000Z
+Preferred-Languages: nl, en

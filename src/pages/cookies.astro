@@ -1,11 +1,67 @@
 ---
+// Cookie policy. Current honest state: no cookies, no tracking, only
+// functional sessionStorage for the request form draft. When analytics
+// or marketing pixels are added, this page and a consent banner must be
+// updated BEFORE those scripts go live (EU ePrivacy: prior opt-in).
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 ---
 
-<Base title="Cookies" description="Welke cookies deze site gebruikt en waarom.">
+<Base
+  title="Cookiebeleid"
+  description="Welke cookies jachtbusfoodtruck.nl gebruikt. Spoiler: op dit moment geen."
+>
   <PageHero
-    title="Cookies"
-    text="Hier lees je binnenkort welke cookies we gebruiken en waarom."
+    title="Cookiebeleid"
+    text="Het kortste cookiebeleid dat je vandaag leest. Laatst bijgewerkt: augustus 2026."
   />
+  <section class="legal_wrap u-section u-theme-light">
+    <div class="legal_contain u-container">
+      <div class="legal_layout u-margin-trim">
+        <h2 class="legal_title u-text-style-h4">Geen cookies</h2>
+        <p class="legal_text">
+          Deze website plaatst op dit moment geen cookies. Niet voor
+          statistieken, niet voor marketing, niet van derden. Daarom zie je
+          hier ook geen cookiebanner: die is alleen verplicht als een site
+          iets te vragen heeft.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">Wat we wel opslaan</h2>
+        <p class="legal_text">
+          Vul je het aanvraagformulier in, dan bewaart je browser je
+          tussentijdse antwoorden in de sessieopslag (sessionStorage). Dat
+          is puur functioneel: sluit je het tabblad, dan is het weg. Deze
+          opslag verlaat je browser nooit en er is geen toestemming voor
+          nodig.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">Externe links en diensten</h2>
+        <p class="legal_text">
+          Klik je door naar WhatsApp, Instagram, Facebook of Google
+          (bijvoorbeeld de kaartlink of straks onze reviews), dan gelden
+          daar de cookies en voorwaarden van die platforms. Dat begint pas
+          zodra je klikt, niet op deze site zelf.
+        </p>
+
+        <h2 class="legal_title u-text-style-h4">Als dit verandert</h2>
+        <p class="legal_text">
+          Gaan we ooit statistieken of advertenties meten met cookies of
+          vergelijkbare technieken, dan vragen we daarvoor eerst je
+          toestemming via een banner, en werken we deze pagina bij voordat
+          er iets wordt geplaatst.
+        </p>
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .legal_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    max-width: var(--max-width--small);
+  }
+  .legal_title { margin-top: var(--_spacing---space--4); }
+  .legal_text { max-width: 70ch; }
+</style>
