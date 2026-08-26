@@ -3,21 +3,14 @@ name: Deploy to Bunny
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-concurrency:
-  group: deploy
-  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
@@ -25,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build site
         run: npm run build
 
       - name: Upload dist/ to Bunny Storage
@@ -33,15 +26,56 @@ jobs:
           BUNNY_KEY: ${{ secrets.BUNNY_KEY }}
           BUNNY_ZONE: ${{ secrets.BUNNY_ZONE }}
         run: |
+          set -euo pipefail
           cd dist
           find . -type f -print0 | while IFS= read -r -d '' file; do
             path="${file#./}"
-            echo "Uploading $path"
-            curl --fail --silent --show-error --retry 3 --retry-delay 2 \
-              -X PUT "https://storage.bunnycdn.com/$BUNNY_ZONE/$path" \
+            status=$(curl -sS -o /dev/null -w '%{http_code}' \
+              -X PUT \
               -H "AccessKey: $BUNNY_KEY" \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary "@$file" > /dev/null
+              --data-binary "@$file" \
+              "https://storage.bunnycdn.com/$BUNNY_ZONE/$path")
+            if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+              echo "Upload failed for $path (HTTP $status)" >&2
+              exit 1
+            fi
+            echo "Uploaded $path"
+          done
+
+      - name: Remove stale files from Bunny Storage
+        env:
+          BUNNY_KEY: ${{ secrets.BUNNY_KEY }}
+          BUNNY_ZONE: ${{ secrets.BUNNY_ZONE }}
+        run: |
+          set -euo pipefail
+
+          list_remote() {
+            local dir="$1"
+            local json
+            json=$(curl -sS -H "AccessKey: $BUNNY_KEY" \
+              "https://storage.bunnycdn.com/$BUNNY_ZONE/$dir")
+            jq -r '.[] | [(.IsDirectory|tostring), .ObjectName] | @tsv' <<<"$json" |
+            while IFS=$'\t' read -r isdir name; do
+              if [ "$isdir" = "true" ]; then
+                list_remote "$dir$name/"
+              else
+                printf '%s\n' "$dir$name"
+              fi
+            done
+          }
+
+          list_remote "" | while IFS= read -r path; do
+            if [ ! -f "dist/$path" ]; then
+              status=$(curl -sS -o /dev/null -w '%{http_code}' \
+                -X DELETE \
+                -H "AccessKey: $BUNNY_KEY" \
+                "https://storage.bunnycdn.com/$BUNNY_ZONE/$path")
+              if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+                echo "Delete failed for $path (HTTP $status)" >&2
+                exit 1
+              fi
+              echo "Deleted stale $path"
+            fi
           done
 
       - name: Purge Bunny cache
@@ -49,7 +83,13 @@ jobs:
           BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
           BUNNY_PULLZONE: ${{ secrets.BUNNY_PULLZONE }}
         run: |
-          curl --fail --silent --show-error \
-            -X POST "https://api.bunny.net/pullzone/$BUNNY_PULLZONE/purgeCache" \
+          set -euo pipefail
+          status=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -X POST \
             -H "AccessKey: $BUNNY_API_KEY" \
-            -H "Content-Length: 0"
+            "https://api.bunny.net/pullzone/$BUNNY_PULLZONE/purgeCache")
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "Cache purge failed (HTTP $status)" >&2
+            exit 1
+          fi
+          echo "Cache purged"
