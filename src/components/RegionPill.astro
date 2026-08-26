@@ -1,0 +1,39 @@
+---
+// Region pill with a location pin, used in heroes. Always the beige
+// foreground look, normal case (no caps).
+interface Props {
+  /** Region label. */
+  label?: string;
+}
+const { label = 'Drenthe, Groningen, Friesland e.o.' } = Astro.props;
+---
+
+<p class="region-pill_wrap u-theme-light u-text-style-small">
+  <svg class="region-pill_icon" aria-hidden="true" viewBox="0 0 16 16">
+    <path
+      fill="currentColor"
+      fill-rule="evenodd"
+      d="M8 1.5c-2.7 0-4.8 2.1-4.8 4.8 0 3.6 4.8 8.2 4.8 8.2s4.8-4.6 4.8-8.2c0-2.7-2.1-4.8-4.8-4.8Zm0 6.5a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z"
+    />
+  </svg>
+  {label}
+</p>
+
+<style>
+  .region-pill_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+  }
+  .region-pill_icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    color: var(--_theme---text-accent);
+  }
+</style>

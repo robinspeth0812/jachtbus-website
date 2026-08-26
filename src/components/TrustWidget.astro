@@ -1,0 +1,156 @@
+---
+// Google review trust widget in three sizes: sm (inline row for topbar
+// or footer), md (pill with a review link, for next to a CTA), lg
+// (card, for above the request form). Score and count are REQUIRED on
+// purpose: no defaults means no accidental invented numbers, per the
+// house rule that trust figures only appear once real reviews exist.
+import { Image } from 'astro:assets';
+import googleLogo from '../assets/google-icon.webp';
+
+interface Props {
+  /** Widget size: sm inline row, md pill with link, lg card. */
+  size?: 'sm' | 'md' | 'lg';
+  /** Review score exactly as shown, e.g. "4,9". Real numbers only. */
+  score: string;
+  /** Number of Google reviews. Real numbers only. */
+  count: number;
+  /** Link to the Google reviews. */
+  href?: string;
+}
+const {
+  size = 'sm',
+  score,
+  count,
+  href = 'https://www.google.com/maps/search/?api=1&query=Jachtbus%20Foodtruck',
+} = Astro.props;
+const stars = [1, 2, 3, 4, 5];
+const starPath =
+  'M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.2L8 11.2l-3.8 2 .7-4.2-3.1-3 4.3-.6z';
+---
+
+{
+  size === 'sm' && (
+    <p class="trust_wrap is-sm">
+      <Image class="trust_logo_img is-sm" src={googleLogo} alt="" aria-hidden="true" width={40} />
+      <span class="trust_score is-sm">{score}</span>
+      <span class="trust_stars is-sm" aria-hidden="true">
+        {stars.map(() => (
+          <svg class="trust_stars_icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d={starPath} />
+          </svg>
+        ))}
+      </span>
+      <span class="trust_count">· {count}</span>
+      <span class="u-sr-only">van 5 sterren op Google, {count} reviews</span>
+    </p>
+  )
+}
+
+{
+  size === 'md' && (
+    <p class="trust_wrap is-md">
+      <Image class="trust_logo_img is-md" src={googleLogo} alt="" aria-hidden="true" width={56} />
+      <span class="trust_score is-md">{score}</span>
+      <span class="trust_stars is-md" aria-hidden="true">
+        {stars.map(() => (
+          <svg class="trust_stars_icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d={starPath} />
+          </svg>
+        ))}
+      </span>
+      <span class="trust_count">· {count} reviews</span>
+      <span class="u-sr-only">van 5 sterren op Google</span>
+      <a class="trust_link" href={href} rel="external" data-trigger="hover focus">
+        <span class="trust_link_text u-underline">Bekijk</span>
+      </a>
+    </p>
+  )
+}
+
+{
+  size === 'lg' && (
+    <a class="trust_wrap is-lg" href={href} rel="external" data-trigger="hover focus">
+      <Image class="trust_logo_img is-lg" src={googleLogo} alt="" aria-hidden="true" width={96} />
+      <span class="trust_body_wrap">
+        <span class="trust_body_row">
+          <span class="trust_score is-lg">{score}</span>
+          <span class="trust_stars is-lg" aria-hidden="true">
+            {stars.map(() => (
+              <svg class="trust_stars_icon" viewBox="0 0 16 16" fill="currentColor">
+                <path d={starPath} />
+              </svg>
+            ))}
+          </span>
+          <span class="u-sr-only">van 5 sterren</span>
+        </span>
+        <span class="trust_body_text u-text-style-main">{count} reviews op Google</span>
+      </span>
+    </a>
+  )
+}
+
+<style>
+  .trust_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  .trust_wrap.is-md {
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    background-color: var(--_theme---google-surface);
+    color: var(--_theme---google-surface-text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+  }
+  .trust_wrap.is-lg {
+    gap: var(--_spacing---space--4);
+    padding: var(--_spacing---space--5);
+    background-color: var(--_theme---google-surface);
+    color: var(--_theme---google-surface-text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+    text-decoration: none;
+  }
+  .trust_logo_img { object-fit: contain; flex-shrink: 0; }
+  .trust_logo_img.is-sm { width: var(--_spacing---space--5); height: var(--_spacing---space--5); }
+  .trust_logo_img.is-md { width: var(--_spacing---space--6); height: var(--_spacing---space--6); }
+  .trust_logo_img.is-lg { width: var(--_spacing---space--7); height: var(--_spacing---space--7); }
+  .trust_score {
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-medium);
+  }
+  .trust_score.is-md { font-size: var(--_typography---size--large); }
+  .trust_score.is-lg { font-size: var(--_typography---size--h3); }
+  .trust_stars {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--_spacing---space--1) / 2);
+    color: var(--_theme---rating);
+  }
+  /* Stars scale with the score size next to them. */
+  .trust_stars.is-sm { font-size: var(--_typography---size--main); }
+  .trust_stars.is-md { font-size: var(--_typography---size--large); }
+  .trust_stars.is-lg { font-size: var(--_typography---size--h4); }
+  .trust_stars_icon {
+    width: 1em;
+    height: 1em;
+  }
+  .trust_count { white-space: nowrap; }
+  .trust_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--1);
+    text-decoration: none;
+  }
+  .trust_body_wrap {
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--1);
+  }
+  .trust_body_row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+</style>

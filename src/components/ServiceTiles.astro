@@ -1,0 +1,115 @@
+---
+// The four service entrances: photo, title, one line, link to the
+// service page. Used on the homepage and the catering overview.
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import bruiloftImg from '../assets/dienst-bruiloft.jpg';
+import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
+import evenementImg from '../assets/dienst-evenement.jpg';
+import bbqImg from '../assets/ambachtelijk-eten.jpg';
+
+interface Props {
+  /** Section heading. */
+  title: string;
+  /** Optional intro under the heading. */
+  text?: string;
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const { title, text = '', theme = 'light' } = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+
+const services = [
+  {
+    href: '/catering/bruiloft',
+    label: 'Bruiloft',
+    text: 'Van borrel tot avondsnack, afgestemd op jullie dag.',
+    image: bruiloftImg,
+  },
+  {
+    href: '/catering/bedrijfsfeest',
+    label: 'Bedrijfsfeest',
+    text: 'Personeelsfeest, jubileum of borrel: wij regelen het eten.',
+    image: bedrijfsfeestImg,
+  },
+  {
+    href: '/catering/evenement',
+    label: 'Evenement',
+    text: 'Festival, markt of open dag, de bus draait door.',
+    image: evenementImg,
+  },
+  {
+    href: '/catering/bbq-smoker',
+    label: 'BBQ-smoker',
+    text: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.',
+    image: bbqImg,
+  },
+];
+---
+
+<section class:list={['services_wrap', 'u-section', themeClass]}>
+  <div class="services_contain u-container">
+    <SectionHeader title={title} text={text} />
+    <ul class="services_layout">
+      {
+        services.map((service) => (
+          <li class="services_item">
+            <a class="services_card_wrap" href={service.href} data-trigger="hover focus">
+              <span class="services_card_visual">
+                <Image class="services_card_img" src={service.image} alt="" width={640} />
+              </span>
+              <span class="services_card_body u-margin-trim">
+                <span class="services_card_title u-text-style-h4">
+                  <span class="services_card_label u-hover-underline">{service.label}</span>
+                </span>
+                <span class="services_card_text u-text-style-small">{service.text}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services_layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .services_item { display: flex; }
+  .services_card_wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+    overflow: clip;
+    text-decoration: none;
+  }
+  .services_card_visual {
+    display: block;
+    overflow: clip;
+  }
+  .services_card_img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transform: scale(calc(1 + 0.04 * var(--_trigger---off)));
+    transition: transform 300ms;
+  }
+  .services_card_body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--1);
+    padding: var(--_spacing---space--4) var(--_spacing---space--5) var(--_spacing---space--5);
+  }
+  .services_card_title { display: inline-flex; }
+  .services_card_text { max-width: 30ch; }
+</style>

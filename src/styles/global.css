@@ -1,6 +1,6 @@
 /*
  * Global base styles: minimal reset, element defaults, focus ring, and
- * reduced-motion handling. Part of the framework layer — @media and
+ * reduced-motion handling. Part of the framework layer - @media and
  * element selectors are allowed here only.
  */
 
@@ -30,6 +30,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--_typography---font--primary-bold);
   line-height: var(--_typography---line-height--heading);
   font-size: inherit;
+  text-transform: uppercase;
   overflow-wrap: break-word;
 }
 
@@ -53,6 +54,9 @@ ul, ol {
   padding: 0;
   list-style: none;
 }
+
+/* The hidden attribute always wins, also over author display values. */
+[hidden] { display: none !important; }
 
 :focus-visible {
   outline: var(--focus--width) solid var(--_theme---focus-ring);

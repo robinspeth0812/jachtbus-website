@@ -1,36 +1,162 @@
 ---
-// Site-wide navigation. Brand-themed, sticky at the top.
+// Site-wide navigation. Brand-themed, sticky at the top. Mirrors the old
+// Jachtlust nav: links left, round logo badge center (overhanging the bar),
+// external Brasserie link + request button right.
+import { Image } from 'astro:assets';
+import TrustWidget from './TrustWidget.astro';
+import logo from '../assets/jachtbus-logo-wit.png';
+import whatsappIcon from '../assets/whatsapp-icon.svg';
+import instagramIcon from '../assets/instagram-icon.png';
+import facebookIcon from '../assets/facebook-icon.svg';
+
+interface TopbarLink {
+  href: string;
+  label: string;
+  icon?: ImageMetadata;
+}
+
 const links = [
   { href: '/catering', label: 'Catering' },
   { href: '/referenties', label: 'Referenties' },
+  { href: '/events', label: 'Events' },
   { href: '/over-ons', label: 'Over ons' },
   { href: '/contact', label: 'Contact' },
 ];
+
+// Topbar: Google trust widget left, socials + contact right (Instagram
+// and Facebook first). The widget renders only once real reviews
+// exist: fill in `reviews` with the live score, count, and GBP link.
+const reviews: { score: string; count: number; href: string } | null = null;
+
+const topbarLinks: TopbarLink[] = [
+  { href: 'https://www.instagram.com/jachtbusfoodtruck/', label: 'Instagram', icon: instagramIcon },
+  { href: 'https://www.facebook.com/brasseriejachtlust', label: 'Facebook', icon: facebookIcon },
+  { href: 'tel:+31592656363', label: '+31 592 656363' },
+  { href: 'https://wa.me/31592656363', label: 'WhatsApp', icon: whatsappIcon },
+];
 ---
 
-<header class="nav_wrap u-theme-brand">
-  <nav class="nav_contain u-container" aria-label="Hoofdmenu">
-    <div class="nav_layout">
-      <a class="nav_logo_wrap" href="/">Jachtbus</a>
-      <ul class="nav_list">
+<div class="topbar_wrap u-theme-brand">
+  <div class="topbar_contain u-container">
+    <div class="topbar_layout">
+      <div class="topbar_trust_wrap">
+        {reviews && <TrustWidget size="sm" score={reviews.score} count={reviews.count} href={reviews.href} />}
+      </div>
+      <ul class="topbar_list">
         {
-          links.map((link) => (
-            <li class="nav_list_item">
-              <a class="nav_link_wrap" href={link.href}>
-                {link.label}
+          topbarLinks.map((link) => (
+            <li class="topbar_list_item">
+              <a class="topbar_link_wrap" href={link.href} data-trigger="hover focus">
+                {link.icon && (
+                  <Image class="topbar_link_icon" src={link.icon} alt="" aria-hidden="true" width={20} densities={[1, 2]} />
+                )}
+                <span class="topbar_link_text u-hover-underline">{link.label}</span>
               </a>
             </li>
           ))
         }
       </ul>
-      <div class="nav_actions u-button-wrapper">
-        <a class="nav_button" href="/aanvraag" data-trigger="hover focus">Aanvraag starten</a>
+    </div>
+  </div>
+</div>
+
+<header class="nav_wrap u-theme-brand">
+  <nav class="nav_contain u-container" aria-label="Hoofdmenu">
+    <div class="nav_layout">
+      <div class="nav_mobile_wrap is-start">
+        <button
+          class="nav_menu_btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="nav-menu"
+          aria-label="Menu"
+        >
+          <span class="nav_menu_bar is-1"></span>
+          <span class="nav_menu_bar is-2"></span>
+          <span class="nav_menu_bar is-3"></span>
+        </button>
+      </div>
+      <a class="nav_logo_wrap" href="/">
+        <Image class="nav_logo_img" src={logo} alt="Jachtbus Foodtruck, naar de homepage" width={208} densities={[1, 2]} />
+      </a>
+      <div class="nav_mobile_wrap is-end">
+        <a class="nav_cta_link" href="/aanvraag" data-trigger="hover focus">Aanvraag starten</a>
+      </div>
+      <div class="nav_menu_wrap" id="nav-menu">
+        <ul class="nav_list">
+          {
+            links.map((link) => (
+              <li class="nav_list_item">
+                <a class="nav_link_wrap" href={link.href} data-trigger="hover focus">
+                  <span class="nav_link_text u-hover-underline">{link.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="nav_actions u-button-wrapper">
+          <a
+            class="nav_external_wrap"
+            href="https://www.brasseriejachtlust.nl"
+            data-trigger="hover focus"
+            rel="external"
+          >
+            <span class="nav_external_text u-hover-underline">Brasserie Jachtlust</span>
+            <svg class="nav_external_icon" aria-hidden="true" viewBox="0 0 16 16" fill="none">
+              <path d="M5 11 11 5M6.5 5H11v4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+          <a class="nav_button" href="/aanvraag" data-trigger="hover focus">Aanvraag starten</a>
+        </div>
       </div>
     </div>
   </nav>
 </header>
 
 <style>
+  .topbar_wrap {
+    display: flex;
+    flex-flow: column;
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+  }
+  .topbar_layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: var(--center-small, space-between);
+    gap: var(--_spacing---space--1) var(--_spacing---space--5);
+  }
+  .topbar_list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  /* Slot for the sm trust widget; sized to the row so the bar never
+     grows taller when the widget appears. */
+  .topbar_trust_wrap {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .topbar_list_item { display: flex; }
+  .topbar_link_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--1);
+    font-size: var(--_typography---size--small);
+    text-decoration: none;
+  }
+  .topbar_link_icon {
+    width: 1.1em;
+    height: 1.1em;
+    object-fit: contain;
+  }
   .nav_wrap {
     position: sticky;
     top: 0;
@@ -52,39 +178,65 @@ const links = [
     align-items: center;
     gap: var(--_spacing---space--3) var(--_spacing---space--5);
   }
-  .nav_logo_wrap {
-    display: inline-flex;
+  /* Collapsible on medium-down; on desktop `contents` lets the list and
+     actions participate directly in the bar layout (list left of the
+     logo via order, actions right of it). */
+  .nav_menu_wrap {
+    display: var(--flex-medium, contents);
+    order: 1;
+    flex-direction: column;
     align-items: center;
-    min-height: var(--target--min);
-    font-family: var(--_typography---font--heading);
-    font-weight: var(--_typography---font--primary-bold);
-    font-size: var(--_typography---size--h4);
-    text-decoration: none;
+    width: 100%;
+    gap: var(--_spacing---space--5);
+    overflow-y: auto;
+    max-height: calc(var(--_state---false) * (100svh - var(--nav--height-total)));
+    transition: max-height 300ms;
+    /* Open panel interior is the light foreground color, not green; the
+       matching u-theme-light class is toggled by the script below on
+       medium-down only (on desktop this element renders as `contents`,
+       so these box styles are inert there). */
+    background-color: var(--_theme---background-2);
+    border-radius: 0 0 var(--radius--main) var(--radius--main);
+    padding: 0 var(--_spacing---space--5) var(--_spacing---space--5);
   }
-  .nav_list {
+  /* Mobile bar slots left and right of the centered logo; equal flex
+     keeps the logo truly centered. Hidden on desktop. */
+  .nav_mobile_wrap {
+    display: var(--flex-medium, none);
+    flex: 1 1 0;
+    align-items: center;
+    min-width: 0;
+  }
+  .nav_mobile_wrap.is-start { justify-content: flex-start; }
+  .nav_mobile_wrap.is-end { justify-content: flex-end; }
+  .nav_menu_btn {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--_spacing---space--2) var(--_spacing---space--4);
-    margin-right: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--_spacing---space--2);
+    width: var(--target--min);
+    height: var(--target--min);
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
   }
-  .nav_list_item { display: flex; }
-  .nav_link_wrap {
+  .nav_cta_link {
     display: inline-flex;
     align-items: center;
     min-height: var(--target--min);
-    padding: var(--_spacing---space--1) var(--_spacing---space--2);
-    font-size: var(--_typography---size--main);
-    text-decoration: none;
-  }
-  .nav_button {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--target--min);
-    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
     border-radius: var(--radius--main);
     border-style: solid;
     border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--small);
+    letter-spacing: var(--_typography---letter-spacing--caps);
+    text-transform: uppercase;
+    text-align: center;
     text-decoration: none;
     background-color: color-mix(
       in hsl,
@@ -101,6 +253,160 @@ const links = [
       var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
       var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
     );
-    transition: all 300ms;
+    transition: background-color 300ms, color 300ms, border-color 300ms;
+  }
+  .nav_menu_bar {
+    display: block;
+    width: var(--_spacing---space--5);
+    height: calc(var(--border-width--main) * 2);
+    border-radius: var(--radius--round);
+    background-color: currentColor;
+    transition: transform 300ms, opacity 300ms;
+  }
+  .nav_menu_bar.is-1 {
+    transform: translateY(calc((var(--_spacing---space--2) + var(--border-width--main) * 2) * var(--_state---false)))
+      rotate(calc(45deg * var(--_state---false)));
+  }
+  .nav_menu_bar.is-2 { opacity: var(--_state---true); }
+  .nav_menu_bar.is-3 {
+    transform: translateY(calc((var(--_spacing---space--2) + var(--border-width--main) * 2) * -1 * var(--_state---false)))
+      rotate(calc(-45deg * var(--_state---false)));
+  }
+  .nav_list {
+    display: flex;
+    flex-direction: var(--column-medium, row);
+    flex-wrap: wrap;
+    align-items: var(--center-medium, center);
+    justify-content: var(--center-medium, flex-start);
+    gap: var(--_spacing---space--2) var(--_spacing---space--4);
+    flex: var(--unset-medium, 1 1 0);
+    order: -1;
+  }
+  .nav_list_item { display: flex; }
+  .nav_link_wrap,
+  .nav_external_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--1) var(--_spacing---space--2);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--small);
+    letter-spacing: var(--_typography---letter-spacing--caps);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav_external_icon {
+    width: 1em;
+    height: 1em;
+  }
+  .nav_logo_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Full badge on desktop, smaller on medium-down; both overhang the
+       bar bottom (negative margin keeps the bar height fixed). */
+    --_logo-size: calc(
+      var(--_responsive---large) * var(--nav--logo-size) +
+      (1 - var(--_responsive---large)) * var(--nav--logo-size-mobile)
+    );
+    width: var(--_logo-size);
+    height: var(--_logo-size);
+    border-radius: var(--radius--round);
+    background-color: var(--_theme---background);
+    margin-bottom: calc(var(--nav--height-total) - var(--_logo-size));
+  }
+  .nav_logo_img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+  .nav_actions {
+    justify-content: var(--center-medium, flex-end);
+    align-items: center;
+    flex: var(--unset-medium, 1 1 0);
+    gap: var(--_spacing---space--2) var(--_spacing---space--5);
+  }
+  .nav_button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--small);
+    letter-spacing: var(--_typography---letter-spacing--caps);
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
+    );
+    transition: background-color 300ms, color 300ms, border-color 300ms;
   }
 </style>
+
+<script>
+  // Mobile menu toggle. `.is-active` on the nav root flips the Lumos state
+  // variables for the panel and the burger icon; `inert` keeps the closed
+  // panel out of the tab order on small viewports.
+  const menuQuery = window.matchMedia('(max-width: 50em)');
+
+  document.querySelectorAll<HTMLElement>('.nav_wrap').forEach((wrap) => {
+    const btn = wrap.querySelector<HTMLButtonElement>('.nav_menu_btn');
+    const menu = wrap.querySelector<HTMLElement>('.nav_menu_wrap');
+    if (!btn || !menu) return;
+
+    const close = () => {
+      wrap.classList.remove('is-active');
+      btn.setAttribute('aria-expanded', 'false');
+      if (menuQuery.matches) menu.inert = true;
+    };
+    const open = () => {
+      wrap.classList.add('is-active');
+      btn.setAttribute('aria-expanded', 'true');
+      menu.inert = false;
+    };
+    const sync = () => {
+      // Light theme inside the open panel on mobile only; on desktop the
+      // element renders as `contents` and must keep the brand theme for
+      // the links it passes through to the bar.
+      menu.classList.toggle('u-theme-light', menuQuery.matches);
+      if (!menuQuery.matches) {
+        wrap.classList.remove('is-active');
+        btn.setAttribute('aria-expanded', 'false');
+        menu.inert = false;
+      } else if (!wrap.classList.contains('is-active')) {
+        menu.inert = true;
+      }
+    };
+
+    btn.addEventListener('click', () => {
+      wrap.classList.contains('is-active') ? close() : open();
+    });
+    wrap.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && wrap.classList.contains('is-active')) {
+        close();
+        btn.focus();
+      }
+    });
+    menuQuery.addEventListener('change', sync);
+    sync();
+  });
+</script>

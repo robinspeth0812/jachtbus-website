@@ -1,0 +1,69 @@
+---
+// Text beside a photo. The content comes in through the slot so each
+// page writes its own paragraphs and lists.
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** Section heading. */
+  title: string;
+  /** Photo shown beside the text. */
+  image: ImageMetadata;
+  /** Alt text for the photo; keep empty when decorative. */
+  alt?: string;
+  /** Put the photo on the left instead of the right. */
+  reversed?: boolean;
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const { title, image, alt = '', reversed = false, theme = 'light' } = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+---
+
+<section class:list={['media-text_wrap', 'u-section', themeClass]}>
+  <div class="media-text_contain u-container">
+    <div class="media-text_layout">
+      <div class:list={['media-text_content', 'u-margin-trim', reversed && 'is-reversed']}>
+        <div class="media-text_title u-heading u-text-style-h2">
+          <h2>{title}</h2>
+        </div>
+        <slot />
+      </div>
+      <div class="media-text_visual_wrap">
+        <Image class="media-text_img" src={image} alt={alt} width={880} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .media-text_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  .media-text_content { max-width: 55ch; }
+  /* Reversed variant: text moves to the second column (photo left). */
+  .media-text_content.is-reversed { order: 2; }
+  .media-text_title {
+    display: flex;
+    max-width: 25ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .media-text_visual_wrap {
+    display: flex;
+    width: 100%;
+  }
+  .media-text_img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius--large);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+// Where the Jachtbus comes: map plus links to the region pages. The
+// city chips point to their province page until dedicated city pages
+// exist (those follow from the keyword research).
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import mapImg from '../assets/kaart-nederland.svg';
+
+interface Props {
+  /** Section heading. */
+  title?: string;
+  /** Optional intro under the heading. */
+  text?: string;
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const {
+  title = 'Waar we komen',
+  text = 'De Jachtbus rijdt door heel Noord-Nederland. Staat jouw plaats er niet bij? Grote kans dat we toch kunnen.',
+  theme = 'light',
+} = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+
+const places = [
+  { label: 'Assen', href: '/foodtruck-drenthe' },
+  { label: 'Groningen', href: '/foodtruck-groningen' },
+  { label: 'Leeuwarden', href: '/foodtruck-friesland' },
+  { label: 'Roden', href: '/foodtruck-drenthe' },
+  { label: 'Emmen', href: '/foodtruck-drenthe' },
+  { label: 'Meppel', href: '/foodtruck-drenthe' },
+  { label: 'Drachten', href: '/foodtruck-friesland' },
+  { label: 'Hoogeveen', href: '/foodtruck-drenthe' },
+];
+---
+
+<section class:list={['region_wrap', 'u-section', themeClass]}>
+  <div class="region_contain u-container">
+    <div class="region_layout">
+      <div class="region_visual_wrap">
+        <Image class="region_img" src={mapImg} alt="" aria-hidden="true" width={520} />
+      </div>
+      <div class="region_content u-margin-trim">
+        <SectionHeader title={title} text={text} />
+        <ul class="region_list">
+          {
+            places.map((place) => (
+              <li class="region_list_item">
+                <a class="region_chip_wrap" href={place.href} data-trigger="hover focus">
+                  <span class="region_chip_text u-hover-underline">{place.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .region_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  .region_visual_wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .region_img {
+    width: 100%;
+    max-width: 24rem;
+    height: auto;
+    object-fit: contain;
+  }
+  .region_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--5);
+  }
+  .region_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2) var(--_spacing---space--3);
+  }
+  .region_list_item { display: flex; }
+  .region_chip_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    text-decoration: none;
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+// Numbered steps, e.g. what happens after the request.
+import SectionHeader from './SectionHeader.astro';
+
+interface Step {
+  /** Step heading. */
+  title: string;
+  /** Short explanation. */
+  text: string;
+}
+interface Props {
+  /** Section heading. */
+  title: string;
+  /** Optional intro under the heading. */
+  text?: string;
+  /** The steps, in order. */
+  steps: Step[];
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const { title, text = '', steps, theme = 'soft' } = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+---
+
+<section class:list={['steps_wrap', 'u-section', themeClass]}>
+  <div class="steps_contain u-container">
+    <SectionHeader title={title} text={text} />
+    <ol class="steps_layout">
+      {
+        steps.map((step, index) => (
+          <li class="steps_item u-margin-trim">
+            <span class="steps_item_num u-text-style-h5" aria-hidden="true">
+              {index + 1}
+            </span>
+            <h3 class="steps_item_title u-text-style-h5">{step.title}</h3>
+            <p class="steps_item_text u-text-style-main">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps_layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--_spacing---space--6) var(--_spacing---space--5);
+  }
+  .steps_item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .steps_item_num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--_spacing---space--7);
+    height: var(--_spacing---space--7);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+  }
+  .steps_item_text { max-width: 35ch; }
+</style>

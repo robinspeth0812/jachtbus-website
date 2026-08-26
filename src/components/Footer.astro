@@ -1,70 +1,173 @@
 ---
-// Site-wide footer: brand line plus link columns.
-const serviceLinks = [
+// Site-wide footer: CTA bar on top, five link columns (brand column is
+// wider), and a bottom row with copyright, legal links, and site credits
+// over a faded logo watermark.
+import { Image } from 'astro:assets';
+import Button from './Button.astro';
+import logo from '../assets/jachtbus-logo-wit.png';
+
+interface Props {
+  /** Show the thin CTA bar above the footer. Turn off on pages that end
+      with their own closing CTA section. */
+  showCta?: boolean;
+}
+const { showCta = true } = Astro.props;
+
+const year = new Date().getFullYear();
+const creditsUrl =
+  'https://www.smakenvan.nl/?utm_source=jachtbusfoodtruck.nl&utm_medium=referral&utm_campaign=footer-credit';
+
+// TODO: replace both with links to the Google Business Profile once it
+// exists (open task) - until then these open a Google Maps search.
+const googleReviewsUrl = 'https://www.google.com/maps/search/?api=1&query=Jachtbus%20Foodtruck';
+const mapsAddressUrl =
+  'https://www.google.com/maps/search/?api=1&query=Julianalaan%2054%2C%209462PH%20Gasselte';
+
+const regionLinks = [
+  { href: '/foodtruck-drenthe', label: 'Drenthe' },
+  { href: '/foodtruck-groningen', label: 'Groningen' },
+  { href: '/foodtruck-friesland', label: 'Friesland' },
+];
+const occasionLinks = [
   { href: '/catering/bruiloft', label: 'Bruiloft' },
   { href: '/catering/bedrijfsfeest', label: 'Bedrijfsfeest' },
-  { href: '/catering/evenement', label: 'Evenement' },
-  { href: '/catering/bbq-smoker', label: 'BBQ-smoker' },
+  { href: '/catering/evenement', label: 'Evenementen' },
 ];
-const siteLinks = [
-  { href: '/referenties', label: 'Referenties' },
-  { href: '/over-ons', label: 'Over ons' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/aanvraag', label: 'Aanvraag starten' },
+// Walking dinner and Streetfood are placeholder terms without their own
+// page yet - they point at the catering overview until pages exist.
+const offerLinks = [
+  { href: '/catering/bbq-smoker', label: 'BBQ-smoker' },
+  { href: '/catering', label: 'Walking dinner' },
+  { href: '/catering', label: 'Streetfood' },
 ];
 const legalLinks = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/voorwaarden', label: 'Voorwaarden' },
   { href: '/cookies', label: 'Cookies' },
 ];
+const contactSubLinks = [
+  { href: 'tel:+31592656363', label: '+31 592 656363' },
+  { href: 'mailto:info@brasseriejachtlust.nl', label: 'info@brasseriejachtlust.nl' },
+  { href: 'https://wa.me/31592656363', label: 'WhatsApp' },
+];
 ---
+
+{
+  showCta && (
+    <section class="cta_wrap u-section u-theme-soft">
+      <div class="cta_contain u-container">
+        <div class="cta_layout">
+          <p class="cta_text u-text-style-large">
+            Zin in de Jachtbus op jouw feest? Vertel ons wat je viert.
+          </p>
+          <div class="cta_actions u-button-wrapper">
+            <Button variant="primary" label="Aanvraag starten" href="/aanvraag" />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 <footer class="footer_wrap u-section u-theme-brand">
   <div class="footer_contain u-container">
     <div class="footer_layout">
       <div class="footer_brand_wrap u-margin-trim">
-        <p class="footer_logo u-text-style-h4">Jachtbus Foodtruck</p>
+        <Image class="footer_brand_img" src={logo} alt="Jachtbus Foodtruck" width={336} densities={[1, 2]} />
         <p class="footer_text u-text-style-small">
-          Foodtruckcatering in Drenthe, Groningen en Friesland. Uit de keuken van Brasserie
-          Jachtlust.
+          Foodtruckcatering in
+          <a class="footer_region_link u-underline" href={regionLinks[0].href} data-trigger="hover focus">{regionLinks[0].label}</a>,
+          <a class="footer_region_link u-underline" href={regionLinks[1].href} data-trigger="hover focus">{regionLinks[1].label}</a> en
+          <a class="footer_region_link u-underline" href={regionLinks[2].href} data-trigger="hover focus">{regionLinks[2].label}</a>.
+          Goed, vers en ambachtelijk bereid.
         </p>
       </div>
-      <nav class="footer_nav_wrap" aria-label="Diensten">
-        <p class="footer_nav_title u-text-style-h6">Diensten</p>
+      <nav class="footer_nav_wrap" aria-label="Gelegenheden">
+        <p class="footer_nav_title u-text-style-h6">Catering tijdens ...</p>
         <ul class="footer_list">
           {
-            serviceLinks.map((link) => (
+            occasionLinks.map((link) => (
               <li class="footer_list_item">
-                <a class="footer_link_wrap" href={link.href}>
-                  {link.label}
+                <a class="footer_link_wrap" href={link.href} data-trigger="hover focus">
+                  <span class="footer_link_text u-hover-underline">{link.label}</span>
                 </a>
               </li>
             ))
           }
         </ul>
       </nav>
-      <nav class="footer_nav_wrap" aria-label="Website">
-        <p class="footer_nav_title u-text-style-h6">Jachtbus</p>
+      <nav class="footer_nav_wrap" aria-label="Aanbod">
+        <p class="footer_nav_title u-text-style-h6">Catering met ...</p>
         <ul class="footer_list">
           {
-            siteLinks.map((link) => (
+            offerLinks.map((link) => (
               <li class="footer_list_item">
-                <a class="footer_link_wrap" href={link.href}>
-                  {link.label}
+                <a class="footer_link_wrap" href={link.href} data-trigger="hover focus">
+                  <span class="footer_link_text u-hover-underline">{link.label}</span>
                 </a>
               </li>
             ))
           }
         </ul>
       </nav>
-      <nav class="footer_nav_wrap" aria-label="Juridisch">
-        <p class="footer_nav_title u-text-style-h6">Praktisch</p>
+      <nav class="footer_nav_wrap" aria-label="Informatie">
+        <p class="footer_nav_title u-text-style-h6">Informatie</p>
         <ul class="footer_list">
+          <li class="footer_list_item">
+            <a class="footer_link_wrap" href="/referenties" data-trigger="hover focus">
+              <span class="footer_link_text u-hover-underline">Referenties</span>
+            </a>
+          </li>
+          <li class="footer_list_item">
+            <a class="footer_link_wrap" href={googleReviewsUrl} rel="external" data-trigger="hover focus">
+              <span class="footer_link_text u-hover-underline">Reviews op Google</span>
+            </a>
+          </li>
+          <li class="footer_list_item">
+            <a class="footer_link_wrap" href="/over-ons" data-trigger="hover focus">
+              <span class="footer_link_text u-hover-underline">Over ons</span>
+            </a>
+          </li>
+          <li class="footer_list_item is-parent">
+            <a class="footer_link_wrap" href="/contact" data-trigger="hover focus">
+              <span class="footer_link_text u-hover-underline">Contact</span>
+            </a>
+            <ul class="footer_sublist">
+              {
+                contactSubLinks.map((link) => (
+                  <li class="footer_list_item">
+                    <a class="footer_link_wrap" href={link.href} data-trigger="hover focus">
+                      <span class="footer_link_text u-hover-underline">{link.label}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <div class="footer_nav_wrap">
+        <p class="footer_nav_title u-text-style-h6">Bedrijfsinformatie</p>
+        <ul class="footer_list">
+          <li class="footer_info_item">Jachtbus Foodtruck &amp; Catering B.V.</li>
+          <li class="footer_info_item">KvK: 96772174</li>
+          <li class="footer_list_item">
+            <a class="footer_link_wrap" href={mapsAddressUrl} rel="external" data-trigger="hover focus">
+              <span class="footer_link_text u-hover-underline">Julianalaan 54, 9462 PH Gasselte</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer_bottom_wrap">
+      <p class="footer_bottom_text u-text-style-small">© {year} Jachtbus Foodtruck &amp; Catering BV</p>
+      <nav class="footer_bottom_nav" aria-label="Juridisch">
+        <ul class="footer_bottom_list">
           {
             legalLinks.map((link) => (
               <li class="footer_list_item">
-                <a class="footer_link_wrap" href={link.href}>
-                  {link.label}
+                <a class="footer_link_wrap" href={link.href} data-trigger="hover focus">
+                  <span class="footer_link_text u-hover-underline">{link.label}</span>
                 </a>
               </li>
             ))
@@ -72,19 +175,58 @@ const legalLinks = [
         </ul>
       </nav>
     </div>
+    <p class="footer_credits_text u-text-style-small">
+      Website door Robin Speth <span class="footer_credits_dot">·</span>
+      <a class="footer_credits_link" href={creditsUrl} rel="external" data-trigger="hover focus">
+        <span class="footer_credits_label u-underline">SmakenVan</span>
+      </a>
+    </p>
+  </div>
+  <div class="footer_watermark_wrap" aria-hidden="true">
+    <Image class="footer_watermark_img" src={logo} alt="" width={640} />
   </div>
 </footer>
 
 <style>
+  .cta_wrap {
+    padding-top: var(--_spacing---space--6);
+    padding-bottom: var(--_spacing---space--6);
+  }
+  .cta_layout {
+    display: flex;
+    flex-direction: var(--column-medium, row);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    text-align: var(--center-medium, left);
+    gap: var(--_spacing---space--4) var(--_spacing---space--6);
+  }
+  .cta_text { max-width: 45ch; }
+  .cta_actions { justify-content: var(--center-medium, flex-end); }
+
+  .footer_wrap { overflow: clip; }
+  .footer_contain {
+    position: relative;
+    z-index: 1;
+  }
   .footer_layout {
     display: var(--flex-medium, grid);
     flex-direction: column;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
     gap: var(--_spacing---space--6) var(--site--gutter);
   }
   .footer_brand_wrap { width: 100%; }
-  .footer_logo { margin-bottom: var(--_text-style---margin-bottom); }
-  .footer_text { margin-bottom: var(--_text-style---margin-bottom); }
+  .footer_brand_img {
+    width: var(--nav--logo-size);
+    height: auto;
+    object-fit: contain;
+    margin-bottom: var(--_spacing---space--4);
+  }
+  .footer_text {
+    margin-bottom: var(--_text-style---margin-bottom);
+    max-width: 32ch;
+  }
+  /* Underline styling comes from the shared u-underline utility. */
   .footer_nav_wrap {
     display: flex;
     flex-flow: column;
@@ -96,12 +238,107 @@ const legalLinks = [
     flex-flow: column;
     gap: var(--_spacing---space--1);
   }
-  .footer_list_item { display: flex; }
+  .footer_list_item {
+    display: flex;
+    flex-flow: column;
+  }
+  .footer_sublist {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    padding-left: var(--_spacing---space--4);
+    border-left: var(--border-width--main) solid var(--_theme---border);
+  }
+  .footer_info_item {
+    display: flex;
+    min-height: var(--_spacing---space--6);
+    align-items: center;
+    font-size: var(--_typography---size--small);
+  }
   .footer_link_wrap {
     display: inline-flex;
     align-items: center;
-    min-height: var(--target--min);
+    /* Tighter than the 44px house rule (owner's call, 2026-08-26):
+       footer list links sit at 2rem height, still above the WCAG AA
+       24px minimum. */
+    min-height: var(--_spacing---space--6);
     font-size: var(--_typography---size--small);
     text-decoration: none;
+  }
+  .footer_bottom_wrap {
+    display: flex;
+    flex-direction: var(--column-medium, row);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--2) var(--_spacing---space--5);
+    padding-top: var(--_spacing---space--5);
+    /* Top divider as a gradient line that fades out around the centered
+       watermark logo and fades back in after it. */
+    background-image: linear-gradient(
+      to right,
+      var(--_theme---border) 26%,
+      transparent 38%,
+      transparent 62%,
+      var(--_theme---border) 74%
+    );
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 100% var(--border-width--main);
+  }
+  .footer_bottom_nav { display: flex; }
+  .footer_bottom_list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: var(--center-medium, flex-start);
+    gap: var(--_spacing---space--1) var(--_spacing---space--4);
+  }
+  .footer_bottom_text {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+  }
+  /* Site credits: tucked under the bottom row at the container's right
+     edge (same content width as the rest), deliberately low-key; in
+     flow and centered on medium-down. */
+  .footer_credits_text {
+    position: var(--relative-medium, absolute);
+    right: 0;
+    bottom: calc(-1 * var(--_spacing---space--7));
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: var(--center-medium, flex-end);
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+    opacity: 0.7;
+  }
+  .footer_credits_dot { font-weight: var(--_typography---font--primary-bold); }
+  .footer_credits_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--1);
+    text-decoration: none;
+  }
+  /* Faded logo watermark, half tucked under the footer's bottom edge.
+     Decorative only - sits behind the content layer. */
+  .footer_watermark_wrap {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 35%);
+    width: clamp(14rem, 40vw, 26rem);
+    opacity: 0.07;
+    pointer-events: none;
+  }
+  .footer_watermark_img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 </style>

@@ -24,6 +24,12 @@ components must be written in a way Stacki can turn into settings.
   exists, the form UI is built but wired to an endpoint URL from an
   env var; no Resend key ever appears in this repo.
 
+- **Legal entity** (from KvK, supplied 2026-08-26): Jachtbus Foodtruck
+  & Catering B.V., KVK 96772174, Julianalaan 54, 9462 PH Gasselte.
+  The site must **not** say "onderdeel van Brasserie Jachtlust" any
+  more; the Jachtbus is being split off. The old Steenbergen address
+  from the old site is superseded.
+
 ## Content reference (old site)
 
 The Jachtbus previously lived as one page on the Brasserie Jachtlust
@@ -216,15 +222,20 @@ Fixed assignments (do not deviate):
   sections and the **focus ring** color.
 - `#00200a` is the **main text color** (green-black, on-brand) — not
   pure black.
-- `#8a6820` is the **button color** (white text on it) and the gold
-  **text color on light backgrounds**. Deliberately adjusted from
-  `#967124`, which hit only 4.48:1 with white — just under the WCAG
-  4.5:1 minimum. The visual difference is imperceptible; never "fix"
-  it back.
-- `#bc8e2d` is a **button color on dark sections only**, always with
-  `#001808` text.
+- `#8a6820` is the **button color on all themes** (white text on it)
+  and the gold **text color on light backgrounds**. Deliberately
+  adjusted from `#967124`, which hit only 4.48:1 with white — just
+  under the WCAG 4.5:1 minimum. The visual difference is imperceptible;
+  never "fix" it back.
+- `#bc8e2d` is a **decorative gold accent only** — never a button
+  color and **never with white text** (only ~2.9:1 contrast). Owner's
+  decision 2026-08-26: one button gold site-wide with white text; on
+  dark sections the hover state gets a light gold border (`#d0af6c`)
+  so the button visibly reacts against the green.
 - `#4c845f` is **too light for text** — decorative use only.
-- `#f8f3ea` is the **soft section background**.
+- `#f8f3ea` is the **default light background site-wide** (owner's
+  decision 2026-08-26); `#f1e8d5` is the foreground layer on it (cards,
+  pills, badges). `u-theme-soft` is the white alternative section.
 
 ### Typography
 
@@ -240,7 +251,9 @@ Fixed assignments (do not deviate):
 - **Visible focus** on every interactive element — never remove outlines
   without an at-least-as-visible replacement.
 - **Color is never the only signal** (add icons, text, or underlines).
-- Interactive **target areas at least 44×44px**.
+- Interactive **target areas at least 44×44px**. Documented exception
+  (owner's call, 2026-08-26): footer link lists use 2rem-high targets
+  for tighter spacing, still above the WCAG 2.2 AA minimum of 24px.
 - **Decorative icons get `aria-hidden="true"`** (and empty `alt` for
   decorative images).
 - Respect **`prefers-reduced-motion`**: wrap non-essential animation and
@@ -272,6 +285,9 @@ language.
 - **No superlatives without proof** (numbers, reviews, named events).
 - **Banned phrases**: "culinaire beleving", "vrijblijvend informeren",
   "uw wensen inventariseren", and English marketing jargon in general.
+- **Never use an em dash (—), anywhere** (owner's rule, 2026-08-26):
+  not in site copy, not in code comments. Use a comma, colon, period,
+  or parentheses instead.
 
 ## Deployment
 

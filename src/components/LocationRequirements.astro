@@ -1,0 +1,106 @@
+---
+// What the location needs: the practical checklist, with a photo of
+// the bus on the full variant. The compact variant (weddings) keeps it
+// short; extra content like a planner link comes in through the slot.
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import busImg from '../assets/jachtbus-regio.jpg';
+
+interface Props {
+  /** Section heading. */
+  title?: string;
+  /** Optional intro under the heading. */
+  text?: string;
+  /** Shorter list without the photo. */
+  compact?: boolean;
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const {
+  title = 'Waar moet de locatie aan voldoen?',
+  text = '',
+  compact = false,
+  theme = 'soft',
+} = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+
+const fullItems = [
+  'Voldoende ruimte: minimaal 6,5 meter lang en 2,5 meter breed, plus ruimte rondom voor doorgang.',
+  'Vlakke ondergrond: bij voorkeur stevig en vlak, gras of grind is mogelijk.',
+  'Toegankelijk: de bus is 3,5 ton, dus goed bereikbaar zonder smalle doorgangen.',
+  'Stroom: standaard 230V of 16A binnen 25 meter afstand, met of zonder verlengsnoer.',
+  'Bij slecht weer: wij draaien gewoon door, in overleg met tent of overkapping.',
+];
+const compactItems = [
+  'Ruimte: minimaal 6,5 meter lang en 2,5 meter breed.',
+  'Ondergrond: stevig en vlak, gras of grind kan ook.',
+  'Toegankelijk: de bus weegt 3,5 ton.',
+  'Stroom: 230V of 16A binnen 25 meter.',
+];
+const items = compact ? compactItems : fullItems;
+---
+
+<section class:list={['location_wrap', 'u-section', themeClass]}>
+  <div class="location_contain u-container">
+    <div class:list={['location_layout', compact && 'is-compact']}>
+      <div class="location_content u-margin-trim">
+        <SectionHeader title={title} text={text} />
+        <ul class="location_list">
+          {items.map((item) => <li class="location_list_item">{item}</li>)}
+        </ul>
+        <slot />
+      </div>
+      {
+        !compact && (
+          <div class="location_visual_wrap">
+            <Image class="location_img" src={busImg} alt="" width={880} />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .location_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  .location_layout.is-compact {
+    display: flex;
+    flex-direction: column;
+  }
+  .location_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--5);
+    max-width: 60ch;
+  }
+  .location_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .location_list_item {
+    padding-left: var(--_spacing---space--4);
+    border-left: var(--focus--width) solid var(--_theme---text-accent);
+  }
+  .location_visual_wrap {
+    display: flex;
+    width: 100%;
+  }
+  .location_img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius--large);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+</style>

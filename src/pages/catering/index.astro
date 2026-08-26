@@ -1,14 +1,181 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import ServiceTiles from '../../components/ServiceTiles.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import MediaText from '../../components/MediaText.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import LocationRequirements from '../../components/LocationRequirements.astro';
+import RegionMap from '../../components/RegionMap.astro';
+import FaqSection from '../../components/FaqSection.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import etenImg from '../../assets/ambachtelijk-eten.jpg';
+
+const servingStyles = [
+  {
+    title: 'Walking dinner',
+    text: 'Zeven seizoensgerechten die we rondbrengen, vanaf 30 personen.',
+  },
+  {
+    title: 'Buffet',
+    text: 'Gasten pakken zelf, wij vullen aan en houden alles vers.',
+  },
+  {
+    title: 'Uit het vuistje',
+    text: 'Direct uit de bus, lekker informeel op festivals en borrels.',
+  },
+  {
+    title: 'Aan tafel',
+    text: 'Wij serveren uit, jij blijft zitten. Chic zonder poespas.',
+  },
+];
+
+const faqItems = [
+  {
+    question: 'Wat kost foodtruckcatering ongeveer?',
+    answer:
+      'Dat hangt af van het aantal gasten, het menu en de vorm van je feest. Je krijgt altijd een voorstel op maat. Doe de aanvraag, dan hoor je snel wat het voor jouw feest kost.',
+  },
+  {
+    question: 'Voor hoeveel personen kunnen jullie koken?',
+    answer:
+      'Van een borrel met een klein gezelschap tot een groot event. Het walking dinner draaien we vanaf 30 personen; voor andere vormen overleggen we wat past.',
+  },
+  {
+    question: 'Nemen jullie zelf personeel mee?',
+    answer:
+      'Ja. We komen met eigen bediening, dus jij hoeft niets te regelen en niemand van je gasten hoeft achter de bar.',
+  },
+];
 ---
 
 <Base
   title="Foodtruckcatering op locatie"
-  description="Wat de Jachtbus precies levert: het eten, hoe we serveren en wat er op locatie nodig is."
+  description="Foodtruckcatering voor bruiloften, bedrijfsfeesten, evenementen en BBQ in Drenthe, Groningen en Friesland. Alles ter plekke bereid."
+  footerCta={false}
 >
-  <PageHero
-    title="Foodtruckcatering op locatie"
-    text="Van walking dinner tot BBQ-smoker. Hier lees je binnenkort precies wat we leveren."
+  <section class="catering-hero_wrap u-section u-theme-brand">
+    <div class="catering-hero_contain u-container">
+      <div class="catering-hero_layout u-margin-trim">
+        <div class="catering-hero_title u-heading u-text-style-h1">
+          <h1>Foodtruckcatering op locatie</h1>
+        </div>
+        <div class="catering-hero_text u-text u-text-style-large">
+          <p>
+            De Jachtbus komt naar jouw feest en kookt ter plekke. Hieronder
+            lees je wat we maken, hoe we serveren en wat er praktisch nodig
+            is.
+          </p>
+        </div>
+        <div class="catering-hero_actions u-button-wrapper">
+          <Button variant="primary" label="Aanvraag starten" href="/aanvraag" />
+          <Button variant="secondary" label="Bellen" href="tel:+31592656363" />
+          <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <TrustBar />
+
+  <section class="catering-intro_wrap u-section u-theme-light">
+    <div class="catering-intro_contain u-container">
+      <div class="catering-intro_layout u-margin-trim">
+        <p class="catering-intro_text u-text-style-large">
+          De Jachtbus is een rijdende keuken. Geen opgewarmde bakken uit een
+          koelwagen, maar koken op het moment zelf, waar jouw feest ook is.
+          Het menu stellen we samen in overleg: van borrelhappen tot een
+          walking dinner van zeven gerechten.
+        </p>
+        <p class="catering-intro_text u-text-style-main">
+          Deze pagina is voor iedereen die eerst rustig wil lezen. Weet je al
+          wat voor feest het wordt? Klik dan hieronder direct door naar jouw
+          gelegenheid.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <ServiceTiles
+    title="Voor welke gelegenheid?"
+    text="Staat jouw feest er niet tussen? Bel of app ons even, er kan meer dan je denkt."
+    theme="soft"
   />
+
+  <MediaText title="Het eten" image={etenImg} theme="light">
+    <p class="catering-food_text">
+      Eerlijke keuken met lokale producten, ter plekke bereid. Geen vaste
+      kaart: het menu hangt af van het seizoen en van wat bij jouw feest
+      past. Denk aan langzaam gegaard vlees uit de smoker, frisse salades en
+      huisgemaakte sauzen.
+    </p>
+    <h3 class="catering-food_subtitle u-text-style-h5">Allergieën en dieetwensen</h3>
+    <p class="catering-food_text">
+      Glutenvrij, vegetarisch, vegan: geef het door bij de aanvraag, dan
+      zorgen wij dat iedereen mee-eet.
+    </p>
+  </MediaText>
+
+  <CardGrid
+    title="Hoe we serveren"
+    text="Dit gaat over de vorm van je feest, niet over het eten zelf."
+    cards={servingStyles}
+    theme="soft"
+  />
+
+  <section class="catering-drinks_wrap u-section u-theme-light">
+    <div class="catering-drinks_contain u-container">
+      <div class="catering-drinks_layout u-margin-trim">
+        <SectionHeader
+          title="En het drinken?"
+          text="Kan allebei: wij leveren en schenken, of jij regelt het zelf en wij doen het eten. Tap of flessen, met of zonder bediening. We stemmen het af op je locatie en je gasten."
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="catering-custom_wrap u-section u-theme-brand">
+    <div class="catering-custom_contain u-container">
+      <SectionHeader
+        title="Maatwerk in de praktijk"
+        text="Geen twee feesten zijn hetzelfde, dus geen twee menu's zijn dat ook. Binnenkort lees je hier drie echte voorbeelden: wat de klant vroeg en wat we hebben neergezet."
+      />
+    </div>
+  </section>
+
+  <LocationRequirements theme="soft" />
+
+  <RegionMap theme="light" />
+
+  <FaqSection items={faqItems} theme="soft" />
+
+  <CtaSection />
 </Base>
+
+<style>
+  .catering-hero_wrap { padding-top: var(--_spacing---section-space--small); }
+  .catering-hero_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .catering-hero_title {
+    display: flex;
+    max-width: 20ch;
+  }
+  .catering-hero_text {
+    display: flex;
+    max-width: 55ch;
+  }
+  .catering-hero_actions { display: flex; }
+  .catering-intro_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .catering-intro_text { max-width: 65ch; }
+  .catering-food_text { margin-bottom: var(--_text-style---margin-bottom); }
+  .catering-food_subtitle { margin-bottom: var(--_text-style---margin-bottom); }
+  .catering-drinks_layout { display: flex; }
+</style>

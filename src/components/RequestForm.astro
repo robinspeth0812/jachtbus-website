@@ -1,0 +1,532 @@
+---
+// Multi-step request form (4 steps): occasion, date and moments,
+// location and guests, contact. Progressive enhancement: without JS it
+// renders as one long working form; JS turns it into steps with
+// progress, per-step validation, draft saving, and prefill via the
+// ?gelegenheid= parameter. Posts to the endpoint from
+// PUBLIC_AANVRAAG_ENDPOINT (the Resend key lives outside this repo);
+// without an endpoint the submit shows the direct-contact fallback.
+import ChatBubble from './ChatBubble.astro';
+
+const endpoint = import.meta.env.PUBLIC_AANVRAAG_ENDPOINT ?? '';
+
+const occasions = [
+  { value: 'bruiloft', label: 'Bruiloft' },
+  { value: 'bedrijfsfeest', label: 'Bedrijfsfeest' },
+  { value: 'evenement', label: 'Evenement' },
+  { value: 'bbq', label: 'BBQ' },
+];
+const momentOptions = [
+  { value: 'borrel', label: 'De borrel' },
+  { value: 'diner', label: 'Het diner' },
+  { value: 'avondsnack', label: 'De avondsnack' },
+];
+const locationChecks = [
+  { value: 'ruimte', label: 'Er is minstens 6,5 bij 2,5 meter ruimte' },
+  { value: 'ondergrond', label: 'De ondergrond is stevig en vlak' },
+  { value: 'stroom', label: 'Er is 230V of 16A binnen 25 meter' },
+];
+---
+
+<section class="aanvraag_wrap u-section u-theme-light" data-aanvraag-form>
+  <div class="aanvraag_contain u-container">
+    <form
+      class="aanvraag_form_wrap u-theme-soft"
+      method="post"
+      action={endpoint}
+      data-endpoint={endpoint}
+    >
+      <div class="aanvraag_progress_wrap" hidden>
+        <p class="aanvraag_progress_text u-text-style-small">
+          Stap <span class="aanvraag_progress_current">1</span> van 4
+        </p>
+        <div class="aanvraag_progress_track">
+          <div class="aanvraag_progress_bar"></div>
+        </div>
+      </div>
+
+      <fieldset class="aanvraag_step is-1">
+        <legend class="aanvraag_step_title u-text-style-h4">Waarvoor zoek je een foodtruck?</legend>
+        <div class="aanvraag_options_grid">
+          {
+            occasions.map((occasion) => (
+              <label class="aanvraag_option_wrap is-tile">
+                <input
+                  class="aanvraag_option_input"
+                  type="radio"
+                  name="gelegenheid"
+                  value={occasion.value}
+                  required
+                />
+                <span class="aanvraag_option_text">{occasion.label}</span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="aanvraag_step is-2">
+        <legend class="aanvraag_step_title u-text-style-h4">Wanneer is het feest?</legend>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-datum">Datum</label>
+          <input class="aanvraag_input" type="date" id="aanvraag-datum" name="datum" required />
+          <p class="aanvraag_hint u-text-style-small">
+            Nog geen vaste datum? Kies een richtdatum en zet het straks in je opmerking.
+          </p>
+        </div>
+        <div class="aanvraag_field_wrap">
+          <p class="aanvraag_label">Welke momenten mogen wij verzorgen?</p>
+          <div class="aanvraag_options_row">
+            {
+              momentOptions.map((moment) => (
+                <label class="aanvraag_option_wrap">
+                  <input
+                    class="aanvraag_option_input"
+                    type="checkbox"
+                    name="momenten"
+                    value={moment.value}
+                  />
+                  <span class="aanvraag_option_text">{moment.label}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="aanvraag_hint u-text-style-small">Meerdere kiezen mag. Twijfel je? Sla over, dan bespreken we het.</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="aanvraag_step is-3">
+        <legend class="aanvraag_step_title u-text-style-h4">Waar is het feest?</legend>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-plaats">Plaats of locatie</label>
+          <input
+            class="aanvraag_input"
+            type="text"
+            id="aanvraag-plaats"
+            name="plaats"
+            required
+            autocomplete="address-level2"
+          />
+        </div>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-gasten">Aantal gasten (schatting)</label>
+          <input
+            class="aanvraag_input is-short"
+            type="number"
+            id="aanvraag-gasten"
+            name="gasten"
+            min="1"
+            inputmode="numeric"
+            required
+          />
+        </div>
+        <div class="aanvraag_field_wrap">
+          <p class="aanvraag_label">Wat weet je al over de locatie?</p>
+          <div class="aanvraag_options_row">
+            {
+              locationChecks.map((check) => (
+                <label class="aanvraag_option_wrap">
+                  <input
+                    class="aanvraag_option_input"
+                    type="checkbox"
+                    name="locatiecheck"
+                    value={check.value}
+                  />
+                  <span class="aanvraag_option_text">{check.label}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="aanvraag_hint u-text-style-small">
+            Weet je iets niet? Geen punt, dan kijken we er samen naar.
+          </p>
+        </div>
+      </fieldset>
+
+      <fieldset class="aanvraag_step is-4">
+        <legend class="aanvraag_step_title u-text-style-h4">Hoe kunnen we je bereiken?</legend>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-naam">Je naam</label>
+          <input class="aanvraag_input" type="text" id="aanvraag-naam" name="naam" required autocomplete="name" />
+        </div>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-email">E-mailadres</label>
+          <input class="aanvraag_input" type="email" id="aanvraag-email" name="email" required autocomplete="email" />
+        </div>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-telefoon">Telefoonnummer (mag)</label>
+          <input class="aanvraag_input" type="tel" id="aanvraag-telefoon" name="telefoon" autocomplete="tel" />
+        </div>
+        <div class="aanvraag_field_wrap">
+          <label class="aanvraag_label" for="aanvraag-opmerking">Wil je nog iets kwijt?</label>
+          <textarea class="aanvraag_input is-area" id="aanvraag-opmerking" name="opmerking" rows="4"></textarea>
+        </div>
+        <div class="aanvraag_trap_wrap" aria-hidden="true">
+          <label class="aanvraag_label" for="aanvraag-website">Website</label>
+          <input
+            class="aanvraag_input"
+            type="text"
+            id="aanvraag-website"
+            name="website"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+        <input type="hidden" name="ts" value="" />
+      </fieldset>
+
+      <div class="aanvraag_nav_wrap u-button-wrapper">
+        <button class="aanvraag_nav_btn is-prev" type="button" hidden>Terug</button>
+        <button class="aanvraag_nav_btn is-next" type="button" hidden>Volgende</button>
+        <button class="aanvraag_nav_btn is-submit" type="submit">Verstuur aanvraag</button>
+      </div>
+
+      <p class="aanvraag_status u-text-style-small" aria-live="polite"></p>
+
+      <div class="aanvraag_done_wrap" hidden>
+        <ChatBubble message="Gelukt, je aanvraag is binnen. Ik kijk er snel naar en je hoort van ons. Tot zo!" />
+        <p class="aanvraag_done_text">
+          Dit gebeurt er nu: wij bekijken je aanvraag en je krijgt een
+          voorstel met menu en prijs. Vragen tussendoor? Bel of app gerust.
+        </p>
+      </div>
+
+      <div class="aanvraag_fallback_wrap" hidden>
+        <p class="aanvraag_fallback_text">
+          Versturen lukte even niet. Probeer het straks nog eens, of app of
+          bel ons direct, dan regelen we het zo.
+        </p>
+        <div class="aanvraag_fallback_actions u-button-wrapper">
+          <a class="aanvraag_nav_btn is-submit" href="https://wa.me/31592656363" rel="external">WhatsApp</a>
+          <a class="aanvraag_nav_btn is-prev" href="tel:+31592656363">Bellen</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .aanvraag_contain { align-items: center; }
+  .aanvraag_form_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--6);
+    width: 100%;
+    max-width: var(--max-width--small);
+    padding: var(--_spacing---space--7);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .aanvraag_progress_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_progress_track {
+    height: var(--_spacing---space--1);
+    background-color: var(--_theme---background-2);
+    border-radius: var(--radius--round);
+    overflow: clip;
+  }
+  .aanvraag_progress_bar {
+    width: 25%;
+    height: 100%;
+    background-color: var(--_theme---text-accent);
+    border-radius: var(--radius--round);
+    transition: width 300ms;
+  }
+  .aanvraag_step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--5);
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+  .aanvraag_step_title { margin-bottom: var(--_spacing---space--2); }
+  .aanvraag_field_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_label { font-weight: var(--_typography---font--primary-bold); }
+  .aanvraag_input {
+    width: 100%;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+  }
+  .aanvraag_input.is-short { max-width: 12rem; }
+  .aanvraag_input.is-area { min-height: calc(var(--target--min) * 2); }
+  .aanvraag_hint { max-width: 55ch; }
+  .aanvraag_options_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--3);
+  }
+  .aanvraag_options_row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--3);
+  }
+  .aanvraag_option_wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    background-color: color-mix(
+      in srgb,
+      var(--_theme---background-2) calc(100% * var(--_state---true)),
+      var(--_theme---border) calc(100% * var(--_state---false))
+    );
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+    cursor: pointer;
+    transition: background-color 300ms;
+  }
+  .aanvraag_option_wrap.is-tile {
+    justify-content: flex-start;
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .aanvraag_option_input {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    accent-color: var(--_theme---text-accent);
+    flex-shrink: 0;
+  }
+  /* Honeypot: invisible for people, present for bots. */
+  .aanvraag_trap_wrap {
+    position: absolute;
+    width: 0.0625rem;
+    height: 0.0625rem;
+    overflow: clip;
+    clip-path: inset(50%);
+  }
+  .aanvraag_nav_wrap { justify-content: flex-start; }
+  .aanvraag_nav_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--main);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .aanvraag_nav_btn.is-next,
+  .aanvraag_nav_btn.is-submit {
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: var(--_theme---button-primary--text);
+    border-color: var(--_theme---button-primary--border);
+  }
+  .aanvraag_nav_btn.is-prev {
+    background-color: var(--_theme---button-secondary--background);
+    color: var(--_theme---button-secondary--text);
+    border-color: var(--_theme---button-secondary--border);
+  }
+  .aanvraag_done_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .aanvraag_done_text,
+  .aanvraag_fallback_text { max-width: 55ch; }
+  .aanvraag_fallback_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .aanvraag_fallback_actions { justify-content: flex-start; }
+</style>
+
+<script>
+  // Step logic, per-step validation, draft saving, prefill, and submit.
+  const STORAGE_KEY = 'jachtbus-aanvraag-draft';
+
+  document.querySelectorAll<HTMLFormElement>('.aanvraag_form_wrap').forEach((form) => {
+    const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.aanvraag_step'));
+    const progress = form.querySelector<HTMLElement>('.aanvraag_progress_wrap');
+    const progressCurrent = form.querySelector<HTMLElement>('.aanvraag_progress_current');
+    const progressBar = form.querySelector<HTMLElement>('.aanvraag_progress_bar');
+    const prevBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-prev');
+    const nextBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-next');
+    const submitBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-submit');
+    const status = form.querySelector<HTMLElement>('.aanvraag_status');
+    const done = form.querySelector<HTMLElement>('.aanvraag_done_wrap');
+    const fallback = form.querySelector<HTMLElement>('.aanvraag_fallback_wrap');
+    const nav = form.querySelector<HTMLElement>('.aanvraag_nav_wrap');
+    const tsField = form.querySelector<HTMLInputElement>('input[name="ts"]');
+    if (!steps.length || !prevBtn || !nextBtn || !submitBtn || !nav) return;
+
+    let current = 0;
+    if (tsField) tsField.value = String(Date.now());
+
+    const show = (index: number, focus: boolean) => {
+      current = Math.max(0, Math.min(index, steps.length - 1));
+      steps.forEach((step, i) => {
+        step.hidden = i !== current;
+        step.classList.toggle('is-active', i === current);
+      });
+      prevBtn.hidden = current === 0;
+      nextBtn.hidden = current === steps.length - 1;
+      submitBtn.hidden = current !== steps.length - 1;
+      if (progressCurrent) progressCurrent.textContent = String(current + 1);
+      if (progressBar) progressBar.style.width = `${((current + 1) / steps.length) * 100}%`;
+      if (focus) {
+        const legend = steps[current].querySelector<HTMLElement>('.aanvraag_step_title');
+        if (legend) {
+          legend.tabIndex = -1;
+          legend.focus();
+        }
+      }
+    };
+
+    const validateStep = () => {
+      const fields = steps[current].querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        'input, textarea'
+      );
+      for (const field of fields) {
+        if (!field.checkValidity()) {
+          field.reportValidity();
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const syncOptionStates = () => {
+      form.querySelectorAll<HTMLInputElement>('.aanvraag_option_input').forEach((input) => {
+        input.closest('.aanvraag_option_wrap')?.classList.toggle('is-active', input.checked);
+      });
+    };
+
+    const saveDraft = () => {
+      try {
+        const data = new FormData(form);
+        data.delete('website');
+        data.delete('ts');
+        const entries: [string, string][] = [];
+        data.forEach((value, key) => {
+          if (typeof value === 'string') entries.push([key, value]);
+        });
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      } catch {
+        /* storage unavailable: fine, the form still works */
+      }
+    };
+
+    const restoreDraft = () => {
+      try {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const entries = JSON.parse(raw) as [string, string][];
+        const grouped = new Map<string, string[]>();
+        entries.forEach(([key, value]) => {
+          grouped.set(key, [...(grouped.get(key) ?? []), value]);
+        });
+        grouped.forEach((values, key) => {
+          form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(`[name="${key}"]`).forEach(
+            (field) => {
+              if (field instanceof HTMLInputElement && (field.type === 'checkbox' || field.type === 'radio')) {
+                field.checked = values.includes(field.value);
+              } else {
+                field.value = values[0] ?? '';
+              }
+            }
+          );
+        });
+      } catch {
+        /* corrupt draft: ignore */
+      }
+    };
+
+    const setStatus = (message: string) => {
+      if (status) status.textContent = message;
+    };
+
+    // Init: turn the long form into steps.
+    restoreDraft();
+    const prefill = new URLSearchParams(window.location.search).get('gelegenheid');
+    if (prefill) {
+      const radio = form.querySelector<HTMLInputElement>(
+        `input[name="gelegenheid"][value="${prefill}"]`
+      );
+      if (radio) radio.checked = true;
+    }
+    syncOptionStates();
+    if (progress) progress.hidden = false;
+    const checkedOccasion = form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked');
+    show(checkedOccasion ? 1 : 0, false);
+
+    prevBtn.addEventListener('click', () => show(current - 1, true));
+    nextBtn.addEventListener('click', () => {
+      if (validateStep()) show(current + 1, true);
+    });
+    form.addEventListener('input', () => {
+      syncOptionStates();
+      saveDraft();
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!validateStep()) return;
+
+      const honeypot = form.querySelector<HTMLInputElement>('input[name="website"]');
+      const endpoint = form.dataset.endpoint ?? '';
+      const finish = (panel: HTMLElement | null) => {
+        steps.forEach((step) => (step.hidden = true));
+        nav.hidden = true;
+        if (progress) progress.hidden = true;
+        if (panel) panel.hidden = false;
+      };
+
+      if (honeypot && honeypot.value !== '') {
+        // Bot: pretend success, send nothing.
+        finish(done);
+        return;
+      }
+      if (!endpoint) {
+        finish(fallback);
+        return;
+      }
+
+      setStatus('Versturen...');
+      submitBtn.disabled = true;
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+        });
+        if (!response.ok) throw new Error(String(response.status));
+        try {
+          sessionStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* fine */
+        }
+        setStatus('');
+        finish(done);
+      } catch {
+        setStatus('');
+        finish(fallback);
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  });
+</script>

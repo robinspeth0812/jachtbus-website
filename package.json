@@ -13,10 +13,12 @@
     "@fontsource-variable/asap": "^5.1.0",
     "@fontsource-variable/open-sans": "^5.1.0",
     "@fontsource/nothing-you-could-do": "^5.1.0",
-    "astro": "^5.13.0"
+    "astro": "^5.13.0",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@types/qrcode": "^1.5.6",
     "typescript": "^5.6.0"
   }
 }

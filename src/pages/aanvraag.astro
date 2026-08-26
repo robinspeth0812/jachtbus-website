@@ -1,15 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import RequestForm from '../components/RequestForm.astro';
 ---
 
 <Base
   title="Aanvraag starten"
-  description="Vertel ons wat je viert, dan komen we binnen 24 uur met een reactie."
+  description="Vertel ons wat je viert, wanneer en waar. Je krijgt een voorstel met menu en prijs, afgestemd op jouw feest."
+  footerCta={false}
 >
   <PageHero
-    title="Aanvraag starten"
-    text="Vertel ons wat je viert en wanneer. Het aanvraagformulier staat hier binnenkort — tot die tijd kun je bellen of appen."
-    theme="brand"
+    title="Vertel ons wat je viert"
+    text="Vier korte stappen en je aanvraag is binnen. Liever direct contact? Bel of app ons gerust."
   />
+  <RequestForm />
 </Base>

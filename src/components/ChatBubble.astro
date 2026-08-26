@@ -1,0 +1,54 @@
+---
+// Chat bubble with Peer's avatar, styled like a WhatsApp/Messenger
+// message. The text is plain DOM content, so search engines and screen
+// readers read it like any other paragraph; a visually hidden name
+// prefix tells screen readers who is "speaking". The bubble always
+// keeps the beige foreground look (u-theme-light on the root), also
+// inside green sections and heroes.
+import { Image } from 'astro:assets';
+import peer from '../assets/peer-wagenaar.png';
+
+interface Props {
+  /** The chat message shown in the bubble. */
+  message?: string;
+  /** Who is speaking; read aloud by screen readers before the message. */
+  name?: string;
+}
+const { message = 'Zin in wat lekkers op jouw feest?', name = 'Peer' } = Astro.props;
+---
+
+<div class="chat_wrap u-theme-light">
+  <Image class="chat_avatar_img" src={peer} alt="" aria-hidden="true" width={96} densities={[1, 2]} />
+  <p class="chat_bubble_text u-text-style-main">
+    <span class="u-sr-only">{name}: </span>{message}
+  </p>
+</div>
+
+<style>
+  .chat_wrap {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: var(--_spacing---space--2);
+    max-width: 45ch;
+    /* Re-apply the (light) theme text color; inside a brand section the
+       inherited color would otherwise stay cream. */
+    color: var(--_theme---text);
+  }
+  .chat_avatar_img {
+    width: var(--_spacing---space--7);
+    height: var(--_spacing---space--7);
+    flex-shrink: 0;
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    object-fit: cover;
+  }
+  .chat_bubble_text {
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    border-radius: var(--radius--large);
+    /* The flattened corner next to the avatar is the "tail", like chat
+       apps flatten the corner closest to the sender. */
+    border-bottom-left-radius: var(--radius--small);
+  }
+</style>

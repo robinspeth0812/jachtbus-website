@@ -1,0 +1,63 @@
+---
+// Grid of simple text cards: a title and one line each. Used for the
+// "herkenning" doubts, wedding day moments, rain questions, and the
+// serving styles.
+import SectionHeader from './SectionHeader.astro';
+
+interface Card {
+  /** Card heading. */
+  title: string;
+  /** One supporting line. */
+  text: string;
+}
+interface Props {
+  /** Section heading. */
+  title: string;
+  /** Optional intro under the heading. */
+  text?: string;
+  /** The cards. */
+  cards: Card[];
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const { title, text = '', cards, theme = 'light' } = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+---
+
+<section class:list={['card-grid_wrap', 'u-section', themeClass]}>
+  <div class="card-grid_contain u-container">
+    <SectionHeader title={title} text={text} />
+    <ul class="card-grid_layout">
+      {
+        cards.map((card) => (
+          <li class="card-grid_item u-margin-trim">
+            <h3 class="card-grid_item_title u-text-style-h5">{card.title}</h3>
+            <p class="card-grid_item_text u-text-style-main">{card.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .card-grid_layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .card-grid_item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+    padding: var(--_spacing---space--5);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .card-grid_item_text { max-width: 40ch; }
+</style>

@@ -1,5 +1,5 @@
 /*
- * Lumos framework layer — themes, u-* utilities, responsive variables,
+ * Lumos framework layer - themes, u-* utilities, responsive variables,
  * and the trigger/state system. This file (plus tokens.css) replaces
  * what Webflow provides in a native Lumos project.
  *
@@ -10,13 +10,30 @@
 /* ---------- Themes ---------- */
 
 :root,
-.u-theme-light {
-  --_theme---background: var(--color--white);
-  --_theme---background-2: var(--color--marigold-1);
-  --_theme---background-skeleton: var(--color--camarone-1);
+.u-theme-light,
+.u-theme-soft {
+  /* Cream is the default site background (owner's call, 2026-08-26);
+     marigold-2 is the foreground layer on it - cards, pills, badges.
+     u-theme-soft shares the full light palette and only swaps the
+     backgrounds in its own block below, so a soft card nested inside a
+     brand section gets readable dark text. */
+  --_theme---background: var(--color--marigold-1);
+  --_theme---background-2: var(--color--marigold-2);
+  --_theme---background-skeleton: var(--color--marigold-2);
   --_theme---text: var(--color--camarone-6);
   --_theme---text-accent: var(--color--marigold-5);
-  --_theme---border: var(--color--camarone-2);
+  /* Google brand values, constant across themes (not overridden in the
+     dark/brand blocks): review stars and the trust widget surface. */
+  --_theme---rating: var(--color--google-star);
+  --_theme---google-surface: var(--color--google-grey);
+  --_theme---google-surface-text: var(--color--camarone-6);
+  /* Dark scrim for text readability over hero photos; near-black so it
+     reads as shade, not as a green film. */
+  --_theme---scrim: color-mix(in srgb, var(--color--camarone-7) 82%, transparent);
+  /* Border between foreground and background: the text color at low
+     opacity (same trick as smakenvan.nl), which reads as a subtle warm
+     line on cream and white. */
+  --_theme---border: color-mix(in srgb, var(--color--camarone-6) 12%, transparent);
   --_theme---focus-ring: var(--color--camarone-4);
 
   --_theme---text-link--text: var(--color--camarone-4);
@@ -39,12 +56,13 @@
   --_theme---button-secondary--text-hover: var(--color--camarone-5);
 }
 
-/* Soft cream sections (site-specific addition to the standard Lumos
-   light/dark/brand trio). */
+/* White sections (site-specific addition to the standard Lumos
+   light/dark/brand trio) - the lighter alternative now that cream is
+   the default background. */
 .u-theme-soft {
-  --_theme---background: var(--color--marigold-1);
-  --_theme---background-2: var(--color--marigold-2);
-  --_theme---background-skeleton: var(--color--marigold-2);
+  --_theme---background: var(--color--white);
+  --_theme---background-2: var(--color--marigold-1);
+  --_theme---background-skeleton: var(--color--marigold-1);
 }
 
 /* Brand: dark green sections. */
@@ -56,7 +74,7 @@
   --_theme---text: var(--color--marigold-1);
   --_theme---text-accent: var(--color--marigold-3);
   --_theme---border: var(--color--camarone-3);
-  /* Brand green is invisible on itself — the ring flips to cream here. */
+  /* Brand green is invisible on itself - the ring flips to cream here. */
   --_theme---focus-ring: var(--color--marigold-1);
 
   --_theme---text-link--text: var(--color--marigold-2);
@@ -64,12 +82,15 @@
   --_theme---text-link--text-hover: var(--color--white);
   --_theme---text-link--border-hover: var(--color--marigold-2);
 
-  --_theme---button-primary--background: var(--color--marigold-4);
-  --_theme---button-primary--border: var(--color--marigold-4);
-  --_theme---button-primary--text: var(--color--camarone-7);
-  --_theme---button-primary--background-hover: var(--color--marigold-3);
+  /* Same primary button as on light (owner's call, 2026-08-26): one gold
+     site-wide, white text. Never bc8e2d with white - only ~2.9:1. The
+     light border on hover keeps the button visible against the green. */
+  --_theme---button-primary--background: var(--color--marigold-5);
+  --_theme---button-primary--border: var(--color--marigold-5);
+  --_theme---button-primary--text: var(--color--white);
+  --_theme---button-primary--background-hover: var(--color--marigold-6);
   --_theme---button-primary--border-hover: var(--color--marigold-3);
-  --_theme---button-primary--text-hover: var(--color--camarone-7);
+  --_theme---button-primary--text-hover: var(--color--white);
 
   --_theme---button-secondary--background: transparent;
   --_theme---button-secondary--border: var(--color--marigold-2);
@@ -101,6 +122,7 @@
 
 [aria-expanded='true'],
 [aria-pressed='true'],
+details[open],
 :checked {
   --_state---true: 0;
   --_state---false: 1;
@@ -222,6 +244,48 @@
 
 .u-display-none { display: none; }
 
+/* Permanent underline: a thin half-transparent line close under the
+   text; on hover/focus the solid text color fills it from the left.
+   Put this on an inline text span inside a [data-trigger] link. */
+.u-underline {
+  text-decoration: none;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(
+      color-mix(in srgb, currentColor 55%, transparent),
+      color-mix(in srgb, currentColor 55%, transparent)
+    );
+  background-repeat: no-repeat;
+  background-position:
+    0 calc(100% - 0.08em),
+    0 calc(100% - 0.08em);
+  background-size:
+    calc(100% * var(--_trigger---off)) var(--border-width--main),
+    100% var(--border-width--main);
+  transition: background-size 300ms;
+}
+
+/* Hover underline for links without a permanent line: on hover/focus a
+   faint line pops in close under the text while the solid text color
+   sweeps in from the left. Put this on an inline text span inside a
+   [data-trigger="hover focus"] link. */
+.u-hover-underline {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(
+      color-mix(in srgb, currentColor 40%, transparent),
+      color-mix(in srgb, currentColor 40%, transparent)
+    );
+  background-repeat: no-repeat;
+  background-position:
+    0 calc(100% - 0.08em),
+    0 calc(100% - 0.08em);
+  background-size:
+    calc(100% * var(--_trigger---off)) var(--border-width--main),
+    100% calc(var(--border-width--main) * var(--_trigger---off));
+  transition: background-size 300ms;
+}
+
 .u-sr-only {
   position: absolute;
   width: 0.0625rem;
@@ -243,6 +307,8 @@
   font-weight: var(--_typography---font--primary-bold);
   line-height: var(--_typography---line-height--heading);
   letter-spacing: var(--_typography---letter-spacing--tight);
+  /* All caps via CSS so screen readers still get the normal text. */
+  text-transform: uppercase;
 }
 
 .u-text-style-display { font-size: var(--_typography---size--display); }
@@ -265,7 +331,7 @@
 .u-text-style-main { font-size: var(--_typography---size--main); }
 .u-text-style-small { font-size: var(--_typography---size--small); }
 
-/* Handwritten accent — use sparingly (Peer's quotes and the like). */
+/* Handwritten accent - use sparingly (Peer's quotes and the like). */
 .u-text-style-accent {
   font-family: var(--_typography---font--accent);
   line-height: var(--_typography---line-height--body);

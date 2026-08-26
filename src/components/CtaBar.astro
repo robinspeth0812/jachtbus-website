@@ -1,0 +1,111 @@
+---
+// Sticky CTA bar at the viewport bottom, mobile only (desktop already
+// has the sticky nav CTA and the WhatsApp widget). Hides itself while a
+// request form section (any element with [data-aanvraag-form]) is in
+// view. Links to /aanvraag for now; swaps to opening the request modal
+// once that exists.
+import { Image } from 'astro:assets';
+import peer from '../assets/peer-wagenaar.png';
+
+interface Props {
+  /** Short question shown next to Peer's avatar. */
+  text?: string;
+  /** Label on the CTA button. */
+  label?: string;
+}
+const { text = 'Catering op locatie?', label = 'Aanvraag starten' } = Astro.props;
+---
+
+<div class="ctabar_wrap u-theme-light">
+  <div class="ctabar_layout">
+    <Image class="ctabar_avatar_img" src={peer} alt="" aria-hidden="true" width={80} densities={[1, 2]} />
+    <p class="ctabar_text u-text-style-main">{text}</p>
+    <a class="ctabar_button" href="/aanvraag" data-trigger="hover focus">{label}</a>
+  </div>
+</div>
+
+<style>
+  .ctabar_wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    display: var(--flex-medium, none);
+    flex-flow: column;
+    justify-content: center;
+    min-height: var(--ctabar--height);
+    padding: var(--_spacing---space--2) var(--site--margin);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    border-top: var(--border-width--main) solid var(--_theme---border);
+    /* Slides out of view while a request form is on screen
+       (`.is-active` set by the observer below). */
+    transform: translateY(calc(110% * var(--_state---false)));
+    transition: transform 300ms;
+  }
+  .ctabar_layout {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  .ctabar_avatar_img {
+    width: var(--_spacing---space--6);
+    height: var(--_spacing---space--6);
+    flex-shrink: 0;
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    object-fit: cover;
+  }
+  .ctabar_text {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .ctabar_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--small);
+    text-decoration: none;
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
+    );
+    transition: background-color 300ms, color 300ms, border-color 300ms;
+  }
+</style>
+
+<script>
+  // Hide the bar while any request form section is in view.
+  document.querySelectorAll<HTMLElement>('.ctabar_wrap').forEach((bar) => {
+    const forms = document.querySelectorAll('[data-aanvraag-form]');
+    if (!forms.length) return;
+
+    let visibleForms = 0;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        visibleForms += entry.isIntersecting ? 1 : -1;
+      });
+      bar.classList.toggle('is-active', visibleForms > 0);
+    });
+    forms.forEach((form) => observer.observe(form));
+  });
+</script>

@@ -1,15 +1,281 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import PageHero from '../../components/PageHero.astro';
+import Button from '../../components/Button.astro';
+import ChatBubble from '../../components/ChatBubble.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import StepList from '../../components/StepList.astro';
+import MediaText from '../../components/MediaText.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import RegionPill from '../../components/RegionPill.astro';
+import LocationRequirements from '../../components/LocationRequirements.astro';
+import FaqSection from '../../components/FaqSection.astro';
+import CtaSection from '../../components/CtaSection.astro';
+import heroImg from '../../assets/bruiloft-hero.webp';
+import tafelImg from '../../assets/dienst-bruiloft.jpg';
+
+const moments = [
+  {
+    title: 'De borrel na de ceremonie',
+    text: 'Hapjes uit het vuistje, terwijl de foto’s worden gemaakt.',
+  },
+  {
+    title: 'Het diner',
+    text: 'Walking dinner, buffet of aan tafel. Wat bij jullie dag past.',
+  },
+  {
+    title: 'De avondsnack',
+    text: 'Rond een uur of elf, als de dansvloer vol staat.',
+  },
+];
+
+const steps = [
+  {
+    title: 'Kennismaken',
+    text: 'We gaan eerst samen zitten. Wat voor dag wordt het, wat past bij jullie?',
+  },
+  {
+    title: 'Het plan',
+    text: 'Menu, tijden en opstelling, helemaal op jullie dag afgestemd.',
+  },
+  {
+    title: 'Op locatie kijken',
+    text: 'Als het handig is komen we vooraf even langs op de locatie.',
+  },
+  {
+    title: 'De dag zelf',
+    text: 'Wij bouwen op buiten beeld, serveren op afspraak en laten alles netjes achter.',
+  },
+];
+
+const worries = [
+  {
+    title: 'Als het regent',
+    text: 'Wij draaien gewoon door, in overleg met tent of overkapping.',
+  },
+  {
+    title: 'Als er meer gasten komen',
+    text: 'Laat het weten, we rekenen op een marge.',
+  },
+  {
+    title: 'Als de dag uitloopt',
+    text: 'Gebeurt bij elke bruiloft. We schuiven mee.',
+  },
+  {
+    title: 'Als jullie moeten verplaatsen',
+    text: 'In goed overleg kijken we samen naar een nieuwe datum.',
+  },
+];
+
+const venues = [
+  'In de tuin thuis',
+  'Op het erf bij de schuur',
+  'In een weiland',
+  'Bij een trouwlocatie zonder eigen keuken',
+];
+
+const faqItems = [
+  {
+    question: 'Hoe ver van tevoren moeten we boeken?',
+    answer:
+      'Zaterdagen in het hoogseizoen gaan ver vooruit. Trouwen jullie tussen mei en september, check je datum dan vroeg. Voor andere dagen is er vaak meer ruimte.',
+  },
+  {
+    question: 'Kunnen jullie meerdere momenten op de dag verzorgen?',
+    answer:
+      'Ja. Borrel, diner en avondsnack kunnen los of in combinatie. Veel stellen kiezen voor het hele traject, dan staat er de hele dag een vast gezicht.',
+  },
+  {
+    question: 'Nemen jullie zelf bediening mee?',
+    answer:
+      'Ja, we komen met eigen bediening. Jullie gasten hoeven nergens voor te zorgen, jullie ook niet.',
+  },
+  {
+    question: 'Wat als onze locatie geen stroom heeft?',
+    answer:
+      'Meestal is daar een oplossing voor, bijvoorbeeld een aggregaat. Zet het in de aanvraag, dan denken we mee.',
+  },
+];
 ---
 
 <Base
   title="Foodtruck op je bruiloft"
-  description="De Jachtbus op jullie trouwdag: borrel, diner en avondsnack, helemaal afgestemd op jullie dag."
+  description="Bruiloftscatering van de Jachtbus: borrel, diner en avondsnack, ter plekke bereid en afgestemd op jullie dag. In Drenthe, Groningen en Friesland."
+  footerCta={false}
 >
-  <PageHero
-    title="Foodtruck op je bruiloft"
-    text="Van de borrel na de ceremonie tot de snack op de dansvloer. Binnenkort lees je hier hoe dat loopt."
+  <section class="wedding-hero_wrap u-section u-theme-brand">
+    <Image class="wedding-hero_bg_img" src={heroImg} alt="" aria-hidden="true" width={1920} loading="eager" />
+    <div class="wedding-hero_overlay" aria-hidden="true"></div>
+    <div class="wedding-hero_contain u-container">
+      <div class="wedding-hero_layout u-margin-trim">
+        <RegionPill />
+        <div class="wedding-hero_title u-heading u-text-style-h1">
+          <h1>Foodtruck op je bruiloft</h1>
+        </div>
+        <div class="wedding-hero_text u-text u-text-style-large">
+          <p>
+            Van de borrel na de ceremonie tot de snack op de dansvloer:
+            wij koken ter plekke en stemmen alles af op jullie dag.
+          </p>
+        </div>
+        <div class="wedding-hero_actions u-button-wrapper">
+          <Button variant="primary" label="Check beschikbaarheid" href="/aanvraag?gelegenheid=bruiloft" />
+          <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />
+        </div>
+        <ChatBubble message="We gaan altijd eerst even samen zitten. Gewoon in het echt, met een kop koffie." />
+      </div>
+    </div>
+  </section>
+
+  <TrustBar items={['Alles ter plekke bereid', 'Eigen bediening', 'Menu in overleg']} />
+
+  <CardGrid
+    title="Op welk moment van de dag?"
+    text="Veel stellen denken dat een foodtruck alleen voor het diner is. Er kan meer."
+    cards={moments}
+    theme="light"
+  />
+
+  <StepList
+    title="Zo gaan we te werk"
+    text="Bij een bruiloft doen we niks uit een pakket. Dit is het hele traject."
+    steps={steps}
     theme="soft"
   />
+
+  <MediaText title="Wat er op tafel komt" image={tafelImg} theme="light">
+    <p class="wedding-food_text">
+      Menu in overleg, er is geen vaste kaart. We kijken samen naar het
+      seizoen, jullie smaak en de vorm van de dag.
+    </p>
+    <h3 class="wedding-food_subtitle u-text-style-h5">Allergieën en dieetwensen van je gasten</h3>
+    <p class="wedding-food_text">
+      Geef ze door bij het plannen, dan zorgen wij dat iedereen mee-eet.
+    </p>
+  </MediaText>
+
+  <section class="wedding-refs_wrap u-section u-theme-soft">
+    <div class="wedding-refs_contain u-container">
+      <SectionHeader
+        title="Bruiloften die we deden"
+        text="Hier verkoopt het beeld, niet de tekst. We verzamelen nu foto's en reacties van bruidsparen; binnenkort zie je ze hier."
+      />
+      <div class="wedding-refs_actions u-button-wrapper">
+        <Button variant="secondary" label="Bekijk referenties" href="/referenties" />
+      </div>
+    </div>
+  </section>
+
+  <section class="wedding-venues_wrap u-section u-theme-light">
+    <div class="wedding-venues_contain u-container">
+      <SectionHeader
+        title="Waar het kan"
+        text="Bij een trouwlocatie, maar net zo makkelijk ergens anders."
+      />
+      <ul class="wedding-venues_list">
+        {venues.map((venue) => <li class="wedding-venues_item">{venue}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <CardGrid
+    title="En als het regent?"
+    text="De vragen die elk bruidspaar heeft, maar niet durft te stellen."
+    cards={worries}
+    theme="soft"
+  />
+
+  <LocationRequirements
+    title="Past de bus op jullie locatie?"
+    compact
+    theme="light"
+  >
+    <p class="wedding-planner_text u-text-style-small">
+      Ben je weddingplanner of beheer je een trouwlocatie? Alle technische
+      details krijg je via
+      <a class="wedding-planner_link u-underline" href="/contact" data-trigger="hover focus">contact</a>.
+    </p>
+  </LocationRequirements>
+
+  <section class="wedding-booking_wrap u-section u-theme-soft">
+    <div class="wedding-booking_contain u-container">
+      <SectionHeader
+        title="Wanneer moet je boeken?"
+        text="Eerlijk antwoord: zaterdagen in het hoogseizoen gaan ver vooruit. Trouwen jullie tussen mei en september, wacht dan niet te lang met je datum checken. Voor andere dagen is er vaak meer ruimte."
+      />
+    </div>
+  </section>
+
+  <FaqSection
+    title="Veelgestelde vragen over bruiloften"
+    items={faqItems}
+    theme="light"
+  />
+
+  <CtaSection
+    title="Check je trouwdatum"
+    text=""
+    buttonLabel="Check beschikbaarheid"
+    buttonHref="/aanvraag?gelegenheid=bruiloft"
+  >
+    <ChatBubble message="Nog geen datum, maar wel benieuwd? Bel of app gerust, dan denk ik even met je mee." />
+  </CtaSection>
 </Base>
+
+<style>
+  .wedding-hero_wrap {
+    overflow: clip;
+    padding-top: var(--_spacing---section-space--large);
+    padding-bottom: var(--_spacing---section-space--large);
+  }
+  .wedding-hero_bg_img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .wedding-hero_overlay {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, var(--_theme---scrim), transparent 70%);
+  }
+  .wedding-hero_contain {
+    position: relative;
+    z-index: 1;
+  }
+  .wedding-hero_layout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--4);
+    max-width: 60ch;
+  }
+  .wedding-hero_title {
+    display: flex;
+    max-width: 20ch;
+  }
+  .wedding-hero_text {
+    display: flex;
+    max-width: 50ch;
+  }
+  .wedding-hero_actions { display: flex; }
+  .wedding-food_text { margin-bottom: var(--_text-style---margin-bottom); }
+  .wedding-food_subtitle { margin-bottom: var(--_text-style---margin-bottom); }
+  .wedding-refs_actions { display: flex; }
+  .wedding-venues_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2) var(--_spacing---space--3);
+  }
+  .wedding-venues_item {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+  }
+  .wedding-booking_layout { display: flex; }
+</style>

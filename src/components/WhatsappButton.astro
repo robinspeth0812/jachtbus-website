@@ -1,0 +1,201 @@
+---
+// Floating WhatsApp widget, fixed bottom-right on every page.
+// Mobile (medium-down): a direct link into the WhatsApp app.
+// Desktop: a toggle that opens a small panel with two options: open
+// WhatsApp Web, or scan a QR code with your phone. The QR is generated
+// at build time (no external service, no runtime JS for it).
+import { Image } from 'astro:assets';
+import QRCode from 'qrcode';
+import whatsappIcon from '../assets/whatsapp-icon.svg';
+import peer from '../assets/peer-wagenaar.png';
+import ChatBubble from './ChatBubble.astro';
+
+interface Props {
+  /** Phone number for the WhatsApp chat, digits only with country code. */
+  phone?: string;
+}
+const { phone = '31592656363' } = Astro.props;
+
+const chatUrl = `https://wa.me/${phone}`;
+const webUrl = `https://web.whatsapp.com/send?phone=${phone}`;
+// Pure black-on-white on purpose: QR scanners need maximum contrast.
+// These are scanner data, not brand colors, hence no tokens here.
+const qrSvg = await QRCode.toString(chatUrl, {
+  type: 'svg',
+  margin: 1,
+  color: { dark: '#000000', light: '#ffffff' },
+});
+---
+
+<div class="whatsapp_wrap">
+  <div class="whatsapp_panel_wrap u-theme-soft" id="whatsapp-panel">
+    <ChatBubble message="Hoe kan ik helpen? App gerust." />
+    <div class="whatsapp_panel_qr" set:html={qrSvg} />
+    <p class="whatsapp_panel_text u-text-style-small">
+      Scan de code met je telefoon, of open de chat direct in je browser.
+    </p>
+    <a class="whatsapp_panel_button" href={webUrl} rel="external" data-trigger="hover focus">
+      Open WhatsApp Web
+    </a>
+  </div>
+  <button
+    class="whatsapp_toggle_wrap"
+    type="button"
+    aria-expanded="false"
+    aria-controls="whatsapp-panel"
+    aria-label="App met Peer via WhatsApp"
+  >
+    <Image class="whatsapp_avatar_img" src={peer} alt="" aria-hidden="true" width={80} densities={[1, 2]} />
+    <Image class="whatsapp_icon_img" src={whatsappIcon} alt="" aria-hidden="true" width={40} />
+  </button>
+  <a class="whatsapp_link_wrap" href={chatUrl} rel="external" aria-label="App met Peer via WhatsApp">
+    <Image class="whatsapp_avatar_img" src={peer} alt="" aria-hidden="true" width={80} densities={[1, 2]} />
+    <Image class="whatsapp_icon_img" src={whatsappIcon} alt="" aria-hidden="true" width={40} />
+  </a>
+</div>
+
+<style>
+  .whatsapp_wrap {
+    position: fixed;
+    right: var(--_spacing---space--5);
+    /* Lifted above the sticky CTA bar on medium-down. */
+    bottom: calc(
+      var(--_spacing---space--5) +
+      (1 - var(--_responsive---large)) * var(--ctabar--height)
+    );
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--_spacing---space--3);
+    /* The container spans the (hidden) panel area; only the visible
+       parts may catch clicks, the rest clicks through to the page. */
+    pointer-events: none;
+  }
+  .whatsapp_toggle_wrap,
+  .whatsapp_link_wrap,
+  .whatsapp_panel_wrap {
+    pointer-events: auto;
+  }
+  /* Closed state: compact pill in the section foreground color with a
+     light border, Peer's avatar plus the WhatsApp badge. */
+  .whatsapp_toggle_wrap,
+  .whatsapp_link_wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--1) var(--_spacing---space--3) var(--_spacing---space--1) var(--_spacing---space--1);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    cursor: pointer;
+    color: inherit;
+  }
+  /* The toggle (panel flow) is desktop-only; the direct link is
+     mobile-only. */
+  .whatsapp_toggle_wrap { display: var(--none-medium, flex); }
+  .whatsapp_link_wrap { display: var(--flex-medium, none); }
+  .whatsapp_avatar_img {
+    width: var(--_spacing---space--6);
+    height: var(--_spacing---space--6);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    object-fit: cover;
+  }
+  .whatsapp_icon_img {
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
+    object-fit: contain;
+    transform: scale(calc(1 + 0.1 * var(--_trigger---off)));
+    transition: transform 300ms;
+  }
+  .whatsapp_panel_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+    width: 19rem;
+    max-width: calc(100vw - var(--_spacing---space--5) * 2);
+    padding: var(--_spacing---space--5);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+    opacity: var(--_state---false);
+    transform: translateY(calc(var(--_spacing---space--3) * var(--_state---true)));
+    transition: opacity 300ms, transform 300ms;
+  }
+  .whatsapp_panel_qr {
+    width: 10rem;
+    align-self: center;
+    border-radius: var(--radius--small);
+    overflow: clip;
+  }
+  .whatsapp_panel_text { text-align: center; }
+  .whatsapp_panel_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: none;
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
+    );
+    transition: background-color 300ms, color 300ms, border-color 300ms;
+  }
+</style>
+
+<script>
+  // Panel toggle via the Lumos state system: `.is-active` on the widget
+  // root flips the state variables; `inert` keeps the closed panel out
+  // of the tab order and blocks its links.
+  document.querySelectorAll<HTMLElement>('.whatsapp_wrap').forEach((wrap) => {
+    const btn = wrap.querySelector<HTMLButtonElement>('.whatsapp_toggle_wrap');
+    const panel = wrap.querySelector<HTMLElement>('.whatsapp_panel_wrap');
+    if (!btn || !panel) return;
+
+    const setOpen = (open: boolean) => {
+      wrap.classList.toggle('is-active', open);
+      btn.setAttribute('aria-expanded', String(open));
+      panel.inert = !open;
+    };
+    setOpen(false);
+
+    btn.addEventListener('click', () => {
+      setOpen(!wrap.classList.contains('is-active'));
+    });
+    wrap.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && wrap.classList.contains('is-active')) {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (
+        wrap.classList.contains('is-active') &&
+        event.target instanceof Node &&
+        !wrap.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    });
+  });
+</script>

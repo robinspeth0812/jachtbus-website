@@ -7,16 +7,67 @@ import '../styles/lumos.css';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import WhatsappButton from '../components/WhatsappButton.astro';
+import CtaBar from '../components/CtaBar.astro';
 
 interface Props {
   /** Page title shown in the browser tab and search results. */
   title: string;
   /** Meta description for search engines. */
   description?: string;
+  /** Keep this page out of search engines (internal pages like the style guide). */
+  noindex?: boolean;
+  /** Show the thin CTA bar above the footer; turn off on pages with their own closing CTA. */
+  footerCta?: boolean;
 }
 
-const { title, description = '' } = Astro.props;
+const { title, description = '', noindex = false, footerCta = true } = Astro.props;
+
+// Site-wide noindex until launch (owner's call): the site may deploy
+// but not be indexed yet. Flip to false at go-live.
+const SITE_NOINDEX = true;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+// No sticky request-CTA on the request page itself.
+const showCtaBar = !Astro.url.pathname.startsWith('/aanvraag');
+
+// LocalBusiness structured data (service-area business): the schema
+// confirms who we are and WHERE we work. Deliberately no aggregateRating -
+// never invented numbers - and no image until the real photos arrive.
+const businessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FoodEstablishment',
+  '@id': 'https://jachtbusfoodtruck.nl/#business',
+  name: 'Jachtbus Foodtruck',
+  legalName: 'Jachtbus Foodtruck & Catering B.V.',
+  identifier: { '@type': 'PropertyValue', propertyID: 'KVK', value: '96772174' },
+  url: 'https://jachtbusfoodtruck.nl',
+  telephone: '+31592656363',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Julianalaan 54',
+    postalCode: '9462 PH',
+    addressLocality: 'Gasselte',
+    addressRegion: 'Drenthe',
+    addressCountry: 'NL',
+  },
+  areaServed: [
+    { '@type': 'State', name: 'Drenthe' },
+    { '@type': 'State', name: 'Groningen' },
+    { '@type': 'State', name: 'Friesland' },
+    { '@type': 'City', name: 'Assen' },
+    { '@type': 'City', name: 'Groningen' },
+    { '@type': 'City', name: 'Leeuwarden' },
+    { '@type': 'City', name: 'Roden' },
+    { '@type': 'City', name: 'Emmen' },
+    { '@type': 'City', name: 'Meppel' },
+    { '@type': 'City', name: 'Drachten' },
+    { '@type': 'City', name: 'Hoogeveen' },
+  ],
+  sameAs: [
+    'https://www.instagram.com/jachtbusfoodtruck/',
+    'https://www.facebook.com/brasseriejachtlust',
+  ],
+};
 ---
 
 <!doctype html>
@@ -25,9 +76,12 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} — Jachtbus Foodtruck</title>
+    <title>{title} | Jachtbus Foodtruck</title>
     {description && <meta name="description" content={description} />}
     {canonical && <link rel="canonical" href={canonical} />}
+    {(noindex || SITE_NOINDEX) && <meta name="robots" content="noindex" />}
+    <script type="application/ld+json" set:html={JSON.stringify(businessSchema)} is:inline />
+
   </head>
   <body>
     <a class="skip_wrap" href="#main">Direct naar de inhoud</a>
@@ -35,7 +89,9 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefin
     <main id="main" class="main_wrap">
       <slot />
     </main>
-    <Footer />
+    <Footer showCta={footerCta} />
+    <WhatsappButton />
+    {showCtaBar && <CtaBar />}
   </body>
 </html>
 

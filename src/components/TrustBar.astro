@@ -1,0 +1,54 @@
+---
+// Thin trust band under a hero: short factual claims separated by dots.
+// No numbers here until real reviews and counts exist (house rule).
+interface Props {
+  /** Short factual claims, e.g. "Alles ter plekke bereid". */
+  items?: string[];
+}
+const {
+  items = ['Alles ter plekke bereid', 'Lokale producten', 'Eigen bediening'],
+} = Astro.props;
+---
+
+<aside class="trustbar_wrap u-theme-soft">
+  <div class="trustbar_contain u-container">
+    <ul class="trustbar_list">
+      {
+        items.map((item, index) => (
+          <li class="trustbar_item u-text-style-small">
+            {index > 0 && (
+              <span class="trustbar_dot" aria-hidden="true">
+                ·
+              </span>
+            )}
+            {item}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</aside>
+
+<style>
+  .trustbar_wrap {
+    display: flex;
+    flex-flow: column;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-top: var(--_spacing---space--3);
+    padding-bottom: var(--_spacing---space--3);
+    border-bottom: var(--border-width--main) solid var(--_theme---border);
+  }
+  .trustbar_list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--_spacing---space--2) var(--_spacing---space--4);
+  }
+  .trustbar_item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--4);
+  }
+  .trustbar_dot { font-weight: var(--_typography---font--primary-bold); }
+</style>

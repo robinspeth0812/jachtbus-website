@@ -1,0 +1,98 @@
+---
+// The three core values painted on the bus: local, honest, artisanal.
+// Four columns on the plain beige background: intro (h2) plus the three
+// values, each with a filled gold icon above an h3.
+interface Props {
+  /** Section heading in the first column. */
+  title?: string;
+  /** Paragraph under the heading. */
+  text?: string;
+}
+const {
+  title = 'Waar we voor staan',
+  text = 'Dit staat op de bus geschilderd, en zo werken we ook. Drie beloftes die je terugproeft.',
+} = Astro.props;
+
+const values = [
+  {
+    icon: 'pin',
+    title: 'Lokaal verkregen',
+    text: 'Waar mogelijk maken wij gebruik van regionale producten van nauwkeurig uitgekozen partners.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Eerlijke producten',
+    text: "Wij geloven in eerlijke, schone, goede producten. Geen 'gerommel' en onnodige toevoegingen. Eerlijk eten telt!",
+  },
+  {
+    icon: 'tree',
+    title: 'Ambachtelijk bereid',
+    text: '90% van ons voedsel bereiden we zelf. Anders vertrouwen we op ambachtelijke partners binnen onze waarden.',
+  },
+];
+
+const iconPaths: Record<string, string> = {
+  pin: 'M8 1.5c-2.7 0-4.8 2.1-4.8 4.8 0 3.6 4.8 8.2 4.8 8.2s4.8-4.6 4.8-8.2c0-2.7-2.1-4.8-4.8-4.8Zm0 6.5a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z',
+  leaf: 'M13.8 2.2c-7 .3-10.9 3.7-11.6 9.8-.1.9.1 1.7.5 2.3l1.2-1.1c2.6-4.6 5.9-6.9 8.2-7.9-2.9 2-5.6 4.7-7.3 8.2.7.4 1.6.6 2.6.5 6-.6 6.9-6.1 6.4-11.8Z',
+  tree: 'M8 1.5a4.4 4.4 0 0 0-4.3 5.4 3 3 0 0 0 .9 5.8h2.5v1.8h1.8v-1.8h2.5a3 3 0 0 0 .9-5.8A4.4 4.4 0 0 0 8 1.5Z',
+};
+---
+
+<section class="values_wrap u-section u-theme-light">
+  <div class="values_contain u-container">
+    <div class="values_layout">
+      <div class="values_intro u-margin-trim">
+        <div class="values_title u-heading u-text-style-h2">
+          <h2>{title}</h2>
+        </div>
+        <div class="values_text u-text u-text-style-main">
+          <p>{text}</p>
+        </div>
+      </div>
+      {
+        values.map((value) => (
+          <div class="values_item u-margin-trim">
+            <svg class="values_item_icon" aria-hidden="true" viewBox="0 0 16 16">
+              <path fill="currentColor" fill-rule="evenodd" d={iconPaths[value.icon]} />
+            </svg>
+            <h3 class="values_item_title u-text-style-h5">{value.title}</h3>
+            <p class="values_item_text u-text-style-main">{value.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .values_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--_spacing---space--6);
+  }
+  .values_intro {
+    display: flex;
+    flex-direction: column;
+  }
+  .values_title {
+    display: flex;
+    max-width: 15ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .values_text {
+    display: flex;
+    max-width: 35ch;
+  }
+  .values_item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+  }
+  .values_item_icon {
+    width: var(--_spacing---space--6);
+    height: var(--_spacing---space--6);
+    color: var(--_theme---text-accent);
+  }
+  .values_item_text { max-width: 35ch; }
+</style>

@@ -1,0 +1,250 @@
+---
+// Internal style guide: the agreed colors, type, buttons, and tone rules
+// in one place. Not linked from the site nav and excluded from search
+// engines - this page is the reference we hold the build against.
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import TrustWidget from '../components/TrustWidget.astro';
+
+interface Swatch {
+  /** Token name without the --color-- prefix. */
+  token: string;
+  /** Hex value, shown as documentation text (the value itself lives in tokens.css). */
+  hex: string;
+  /** Agreed usage, if fixed. */
+  note?: string;
+}
+
+const marigold: Swatch[] = [
+  { token: 'marigold-1', hex: '#f8f3ea', note: 'Standaard lichte achtergrond op de hele site' },
+  { token: 'marigold-2', hex: '#f1e8d5', note: 'Voorgrond op de crème achtergrond: cards en pills' },
+  { token: 'marigold-3', hex: '#d0af6c' },
+  { token: 'marigold-4', hex: '#bc8e2d', note: 'Alleen decoratief goud-accent: nooit als knop en nooit met witte tekst (~2,9:1)' },
+  { token: 'marigold-5', hex: '#8a6820', note: 'Dé knopkleur op alle thema’s, altijd met witte tekst. Bewust donkerder dan #967124 vanwege contrast, niet terugdraaien' },
+  { token: 'marigold-6', hex: '#4b3812' },
+  { token: 'marigold-7', hex: '#382a0d' },
+];
+
+const camarone: Swatch[] = [
+  { token: 'camarone-1', hex: '#e5ede8' },
+  { token: 'camarone-2', hex: '#ccdcd1' },
+  { token: 'camarone-3', hex: '#4c845f', note: 'Te licht voor tekst, alleen decoratief' },
+  { token: 'camarone-4', hex: '#00501b', note: 'Merkkleur: achtergrond van donkere secties en focus-ring' },
+  { token: 'camarone-5', hex: '#004015' },
+  { token: 'camarone-6', hex: '#00200a', note: 'Hoofdtekstkleur: groen-zwart, geen puur zwart' },
+  { token: 'camarone-7', hex: '#001808' },
+];
+
+const neutral: Swatch[] = [
+  { token: 'white', hex: '#ffffff' },
+  { token: 'neutral-2', hex: '#cccccc' },
+  { token: 'neutral-3', hex: '#666666' },
+  { token: 'neutral-4', hex: '#4c4c4c' },
+];
+
+const scales = [
+  { name: 'Marigold (goud)', swatches: marigold },
+  { name: 'Camarone (groen)', swatches: camarone },
+  { name: 'Neutraal', swatches: neutral },
+];
+---
+
+<Base
+  title="Styleguide"
+  description="Interne stijlgids van de Jachtbus-site."
+  noindex
+>
+  <section class="styleguide_wrap u-section">
+    <div class="styleguide_contain u-container">
+      <div class="styleguide_intro_layout u-margin-trim">
+        <h1 class="styleguide_title u-text-style-h1">Styleguide</h1>
+        <p class="styleguide_text u-text-style-large">
+          Zo ziet de Jachtbus eruit. Kleuren, letters, knoppen en de
+          afspraken erachter. Wijkt een pagina hiervan af, dan is dat een
+          bug.
+        </p>
+      </div>
+
+      <div class="styleguide_colors_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Kleuren</h2>
+        <p class="styleguide_text">
+          Alle kleuren bestaan als token in <code>src/styles/tokens.css</code>.
+          Losse hexcodes in component-CSS zijn niet toegestaan.
+        </p>
+        {
+          scales.map((scale) => (
+            <div class="styleguide_scale_wrap u-margin-trim">
+              <h3 class="styleguide_scale_title u-text-style-h4">{scale.name}</h3>
+              <ul class="styleguide_swatch_list">
+                {scale.swatches.map((swatch) => (
+                  <li class="styleguide_swatch_wrap">
+                    <span
+                      class="styleguide_swatch_chip"
+                      style={`background-color: var(--color--${swatch.token})`}
+                    />
+                    <span class="styleguide_swatch_name u-text-style-small">
+                      <code>--color--{swatch.token}</code> · {swatch.hex}
+                    </span>
+                    {swatch.note && (
+                      <span class="styleguide_swatch_note u-text-style-small">{swatch.note}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="styleguide_type_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Typografie</h2>
+        <p class="styleguide_text">
+          Asap voor koppen, Open Sans voor lopende tekst. Alle koppen zijn
+          all caps, via CSS zodat screenreaders de normale tekst horen.
+          Nothing You Could Do alleen voor handgeschreven accenten, zoals
+          een quote van Peer. Nooit voor functionele tekst.
+        </p>
+        <p class="styleguide_type_sample u-text-style-h1">Kop 1 (Asap bold)</p>
+        <p class="styleguide_type_sample u-text-style-h2">Kop 2 (Asap bold)</p>
+        <p class="styleguide_type_sample u-text-style-h3">Kop 3 (Asap bold)</p>
+        <p class="styleguide_type_sample u-text-style-main">
+          Lopende tekst (Open Sans). Wij regelen het, kort en actief. Jij en
+          jou, nooit u.
+        </p>
+        <p class="styleguide_type_sample u-text-style-accent u-text-style-h4">
+          "Gewoon goed eten, daar draait het om." (handgeschreven accent)
+        </p>
+      </div>
+
+      <div class="styleguide_chat_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Chat bubble</h2>
+        <p class="styleguide_text">
+          Persoonlijke noot van Peer, als chatbericht. De tekst staat
+          gewoon in de HTML (dus leesbaar voor Google), en een
+          screenreader hoort "Peer:" voor het bericht. De bubble houdt
+          altijd de beige voorgrondkleur, ook op groene secties en in
+          hero's.
+        </p>
+        <ChatBubble />
+        <ChatBubble message="Ook bij jou in de buurt staan we zo. Van Assen tot Leeuwarden." />
+      </div>
+
+      <div class="styleguide_trust_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Trustwidgets</h2>
+        <p class="styleguide_text">
+          Google-reviewwidgets in drie maten. Score en aantal zijn
+          verplichte props zonder standaardwaarde: zo kan het widget nooit
+          per ongeluk met verzonnen cijfers op een pagina belanden. De 4,9
+          en 27 hieronder zijn voorbeeldwaardes uit de blueprint; live
+          gaan ze pas met echte reviews.
+        </p>
+        <p class="styleguide_text u-text-style-small">size="sm": topbar, footer, naast een kleine knop</p>
+        <TrustWidget size="sm" score="4,9" count={27} />
+        <p class="styleguide_text u-text-style-small">size="md": naast een CTA, in de hero</p>
+        <TrustWidget size="md" score="4,9" count={27} />
+        <p class="styleguide_text u-text-style-small">size="lg": boven het formulier, in de slotsectie</p>
+        <TrustWidget size="lg" score="4,9" count={27} />
+      </div>
+
+      <div class="styleguide_buttons_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Knoppen op licht</h2>
+        <p class="styleguide_text">
+          Op lichte achtergronden is de primaire knop
+          <code>--color--marigold-5</code> met <strong>witte</strong> tekst.
+        </p>
+        <div class="styleguide_buttons_row u-button-wrapper">
+          <Button variant="primary" label="Primair op licht" href="/aanvraag" />
+          <Button variant="secondary" label="Secundair op licht" href="/aanvraag" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="styleguide_dark_wrap u-section u-theme-brand">
+    <div class="styleguide_contain u-container">
+      <div class="styleguide_buttons_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Knoppen op donker</h2>
+        <p class="styleguide_text">
+          Ook op donkere secties is de primaire knop
+          <code>--color--marigold-5</code> met <strong>witte</strong> tekst:
+          één knopkleur door de hele site (wit haalt hier ruim 4,5:1). Het
+          lichtere goud <code>--color--marigold-4</code> is geen knopkleur:
+          wit daarop haalt maar ~2,9:1 en zakt onder de WCAG-eis van 4,5:1.
+          De afweging: deze knop steekt minder af tegen het groen (~1,9:1)
+          dan het lichte goud deed; bij hover verschijnt daarom een
+          lichtgouden rand.
+        </p>
+        <div class="styleguide_buttons_row u-button-wrapper">
+          <Button variant="primary" label="Primair op donker" href="/aanvraag" />
+          <Button variant="secondary" label="Secundair op donker" href="/aanvraag" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="styleguide_rules_wrap u-section u-theme-soft">
+    <div class="styleguide_contain u-container">
+      <div class="styleguide_rules_layout u-margin-trim">
+        <h2 class="styleguide_subtitle u-text-style-h2">Vaste afspraken</h2>
+        <ul class="styleguide_rules_list">
+          <li class="styleguide_rules_item">Eén <code>h1</code> per pagina, kopniveaus zonder overslaan.</li>
+          <li class="styleguide_rules_item">Focus altijd zichtbaar; ring in de merkkleur (op donker: crème).</li>
+          <li class="styleguide_rules_item">Kleur is nooit het enige signaal: links krijgen bijvoorbeeld een underline.</li>
+          <li class="styleguide_rules_item">Klikdoelen minimaal 44×44 px.</li>
+          <li class="styleguide_rules_item">Geen verzonnen reviewscores of aantallen, geen superlatieven zonder bewijs.</li>
+          <li class="styleguide_rules_item">Alle zichtbare tekst is Nederlands en informeel (jij/jou).</li>
+          <li class="styleguide_rules_item">Verboden: "culinaire beleving", "vrijblijvend informeren", "uw wensen inventariseren" en Engelse marketingtaal.</li>
+          <li class="styleguide_rules_item">Uitroeptekens spaarzaam: maximaal één per sectie.</li>
+          <li class="styleguide_rules_item">Nergens een em dash. Gebruik een komma, dubbele punt of punt.</li>
+          <li class="styleguide_rules_item">Borders tussen voor- en achtergrond zijn de tekstkleur op 12% dekking, ook om avatars.</li>
+          <li class="styleguide_rules_item">UI-iconen zijn filled (geen outline) in de goudkleur, via de accent-variabele, en decoratief met aria-hidden.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .styleguide_swatch_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .styleguide_swatch_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .styleguide_swatch_chip {
+    display: block;
+    height: var(--_spacing---space--8);
+    border-radius: var(--radius--small);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .styleguide_swatch_note { color: var(--_theme---text-accent); }
+  .styleguide_intro_layout,
+  .styleguide_colors_layout,
+  .styleguide_type_layout,
+  .styleguide_chat_layout,
+  .styleguide_trust_layout,
+  .styleguide_buttons_layout,
+  .styleguide_rules_layout,
+  .styleguide_scale_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .styleguide_type_sample { max-width: 40ch; }
+  .styleguide_trust_layout { align-items: flex-start; }
+  .styleguide_rules_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+    max-width: 70ch;
+  }
+  .styleguide_rules_item {
+    padding-left: var(--_spacing---space--4);
+    border-left: var(--focus--width) solid var(--_theme---text-accent);
+  }
+</style>

@@ -1,15 +1,265 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CardGrid from '../components/CardGrid.astro';
+import ServiceTiles from '../components/ServiceTiles.astro';
+import StepList from '../components/StepList.astro';
+import MediaText from '../components/MediaText.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import RegionPill from '../components/RegionPill.astro';
+import CoreValues from '../components/CoreValues.astro';
+import LocationRequirements from '../components/LocationRequirements.astro';
+import RegionMap from '../components/RegionMap.astro';
+import FaqSection from '../components/FaqSection.astro';
+import CtaSection from '../components/CtaSection.astro';
+import heroImg from '../assets/jachtbus-bus.jpg';
+import busImg from '../assets/jachtbus-bus.jpg';
+
+const intentTiles = [
+  { href: '/aanvraag?gelegenheid=bruiloft', label: 'Bruiloft' },
+  { href: '/aanvraag?gelegenheid=bedrijfsfeest', label: 'Bedrijfsfeest' },
+  { href: '/aanvraag?gelegenheid=evenement', label: 'Evenement' },
+  { href: '/aanvraag?gelegenheid=bbq', label: 'BBQ' },
+];
+
+const doubts = [
+  {
+    title: 'Geen idee waar te beginnen?',
+    text: 'Hoeft ook niet. Jij vertelt wat je viert, wij denken mee over de rest.',
+  },
+  {
+    title: 'Eerder catering die tegenviel?',
+    text: 'Snappen we. Daarom bereiden we alles ter plekke, en dat proef je.',
+  },
+  {
+    title: 'Past dit bij mijn gasten?',
+    text: 'Het menu stellen we samen in overleg, van borrelhappen tot BBQ.',
+  },
+];
+
+const steps = [
+  {
+    title: 'Jij doet de aanvraag',
+    text: 'Vertel wat je viert, waar en met hoeveel gasten. Duurt een paar minuten.',
+  },
+  {
+    title: 'Wij komen met een voorstel',
+    text: 'Je krijgt een voorstel met menu en prijs, afgestemd op jouw feest.',
+  },
+  {
+    title: 'Wij regelen de rest',
+    text: 'Wij komen voorrijden, bouwen op, koken, serveren en laten alles netjes achter.',
+  },
+];
+
+const faqItems = [
+  {
+    question: 'Wat kost een foodtruck ongeveer?',
+    answer:
+      'Dat hangt af van het aantal gasten en wat er op het menu komt. Er is geen vaste kaart, dus je krijgt altijd een voorstel op maat. Doe de aanvraag, dan hoor je snel wat het voor jouw feest kost.',
+  },
+  {
+    question: 'Hoe ver van tevoren moet ik boeken?',
+    answer:
+      'Hoe eerder, hoe beter. Zomerse zaterdagen zijn het eerst weg. Check je datum via het aanvraagformulier, dan hoor je snel of we kunnen.',
+  },
+  {
+    question: 'Komen jullie ook buiten Noord-Nederland?',
+    answer:
+      'Ons werkgebied is Drenthe, Groningen en Friesland. Ligt jouw locatie daar net buiten? Vraag het gerust, in overleg kan er vaak meer.',
+  },
+];
 ---
 
 <Base
   title="Foodtruckcatering in Drenthe, Groningen en Friesland"
-  description="De Jachtbus komt naar jouw feest: bruiloft, bedrijfsfeest, evenement of BBQ. Alles ter plekke bereid, met eigen bediening."
+  description="De Jachtbus komt naar jouw feest. Goed, vers en ambachtelijk bereid, voor bruiloften, bedrijfsfeesten en evenementen in Noord-Nederland."
+  footerCta={false}
 >
-  <PageHero
-    title="Een foodtruck op jouw feest?"
-    text="De Jachtbus rijdt door Drenthe, Groningen en Friesland. Deze site is in aanbouw — bel of app ons gerust alvast."
-    theme="brand"
+  <section class="hero_wrap u-section u-theme-brand">
+    <Image class="hero_bg_img" src={heroImg} alt="" aria-hidden="true" width={1920} loading="eager" />
+    <div class="hero_overlay" aria-hidden="true"></div>
+    <div class="hero_contain u-container">
+      <div class="hero_layout">
+        <div class="hero_content u-margin-trim">
+          <div class="hero_region_wrap">
+            <RegionPill />
+          </div>
+          <div class="hero_title u-heading u-text-style-h1">
+            <h1>Een foodtruck op jouw feest?</h1>
+          </div>
+          <div class="hero_text u-text u-text-style-large">
+            <p>
+              De Jachtbus komt naar je toe. Goed, vers en ambachtelijk
+              bereid, voor bruiloften, bedrijfsfeesten en evenementen.
+            </p>
+          </div>
+        </div>
+        <div class="hero_form_wrap u-theme-soft u-margin-trim" data-aanvraag-form>
+          <h2 class="hero_form_title u-text-style-h4">Waarvoor zoek je een foodtruck?</h2>
+          <p class="hero_form_step u-text-style-small">Stap 1 van 4</p>
+          <ul class="hero_form_list">
+            {
+              intentTiles.map((tile) => (
+                <li class="hero_form_item">
+                  <a class="hero_form_tile" href={tile.href} data-trigger="hover focus">
+                    {tile.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="hero_form_divider u-text-style-small">of</p>
+          <div class="hero_form_actions u-button-wrapper">
+            <Button variant="secondary" label="Bellen" href="tel:+31592656363" />
+            <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <TrustBar />
+
+  <CoreValues />
+
+  <CardGrid title="Twijfel je nog?" cards={doubts} theme="soft" />
+
+  <ServiceTiles
+    title="Waar staat de Jachtbus straks?"
+    text="Elke gelegenheid heeft een eigen pagina met wat er kan en hoe het werkt."
+    theme="soft"
   />
+
+  <StepList
+    title="Hoe het werkt"
+    text="Dit gebeurt er na je aanvraag."
+    steps={steps}
+    theme="light"
+  />
+
+  <MediaText title="Waarom de Jachtbus" image={busImg} theme="soft">
+    <ul class="home_why_list">
+      <li class="home_why_item">Alles ter plekke bereid</li>
+      <li class="home_why_item">Lokale producten</li>
+      <li class="home_why_item">Eigen bediening</li>
+      <li class="home_why_item">Menu in overleg samengesteld</li>
+    </ul>
+  </MediaText>
+
+  <section class="home_refs_wrap u-section u-theme-light">
+    <div class="home_refs_contain u-container">
+      <SectionHeader
+        title="Echte feesten, echte reacties"
+        text="We verzamelen nu de eerste referenties en Google-reviews. Binnenkort zie je hier foto's en verhalen van eerdere events."
+      />
+      <div class="home_refs_actions u-button-wrapper">
+        <Button variant="secondary" label="Bekijk referenties" href="/referenties" />
+      </div>
+    </div>
+  </section>
+
+  <LocationRequirements theme="soft" />
+
+  <RegionMap theme="light" />
+
+  <FaqSection items={faqItems} theme="soft" />
+
+  <CtaSection />
 </Base>
+
+<style>
+  .hero_wrap {
+    overflow: clip;
+    padding-top: var(--_spacing---section-space--large);
+    padding-bottom: var(--_spacing---section-space--large);
+  }
+  .hero_bg_img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Dark scrim behind the text side only; the photo stays visible. */
+  .hero_overlay {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to right, var(--_theme---scrim), transparent 70%);
+  }
+  .hero_contain {
+    position: relative;
+    z-index: 1;
+  }
+  .hero_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: center;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  .hero_content { max-width: 55ch; }
+  .hero_region_wrap {
+    display: flex;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .hero_title {
+    display: flex;
+    max-width: 20ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .hero_text {
+    display: flex;
+    max-width: 50ch;
+  }
+  .hero_form_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    width: 100%;
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .hero_form_list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--3);
+  }
+  .hero_form_item { display: flex; }
+  .hero_form_tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--4);
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---background-2) calc(100% * var(--_trigger---on)),
+      var(--_theme---border) calc(100% * var(--_trigger---off))
+    );
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: none;
+    transition: background-color 300ms;
+  }
+  .hero_form_divider { text-align: center; }
+  .hero_form_actions { justify-content: center; }
+  .home_refs_actions { display: flex; }
+  .home_why_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .home_why_item {
+    padding-left: var(--_spacing---space--4);
+    border-left: var(--focus--width) solid var(--_theme---text-accent);
+  }
+</style>

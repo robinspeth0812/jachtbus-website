@@ -1,0 +1,64 @@
+---
+// Closing section: the request CTA plus direct contact. Optional slot
+// above the heading, e.g. for a ChatBubble from Peer.
+import Button from './Button.astro';
+
+interface Props {
+  /** Section heading. */
+  title?: string;
+  /** Optional line under the heading. */
+  text?: string;
+  /** Label on the primary button. */
+  buttonLabel?: string;
+  /** Where the primary button links to. */
+  buttonHref?: string;
+  /** Show the call and WhatsApp buttons next to the primary CTA. */
+  showContact?: boolean;
+}
+const {
+  title = 'Vertel ons wat je viert',
+  text = 'Aanvraag gedaan? Je hoort snel van ons.',
+  buttonLabel = 'Aanvraag starten',
+  buttonHref = '/aanvraag',
+  showContact = true,
+} = Astro.props;
+---
+
+<section class="cta-section_wrap u-section u-theme-brand">
+  <div class="cta-section_contain u-container">
+    <div class="cta-section_layout u-alignment-center u-margin-trim">
+      <slot />
+      <div class="cta-section_title u-heading u-text-style-h2">
+        <h2>{title}</h2>
+      </div>
+      {
+        text && (
+          <div class="cta-section_text u-text u-text-style-large">
+            <p>{text}</p>
+          </div>
+        )
+      }
+      <div class="cta-section_actions u-button-wrapper">
+        <Button variant="primary" label={buttonLabel} href={buttonHref} />
+        {showContact && <Button variant="secondary" label="Bellen" href="tel:+31592656363" />}
+        {showContact && <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-section_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--5);
+  }
+  .cta-section_title {
+    display: flex;
+    max-width: 25ch;
+  }
+  .cta-section_text {
+    display: flex;
+    max-width: 50ch;
+  }
+</style>

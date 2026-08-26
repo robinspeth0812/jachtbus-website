@@ -1,0 +1,41 @@
+---
+// Heading block used at the top of most sections.
+interface Props {
+  /** Section heading (rendered as h2). */
+  title: string;
+  /** Optional intro text under the heading. */
+  text?: string;
+  /** Center the header. */
+  center?: boolean;
+}
+const { title, text = '', center = false } = Astro.props;
+---
+
+<div class:list={['section-header_wrap', 'u-margin-trim', center && 'u-alignment-center']}>
+  <div class="section-header_title u-heading u-text-style-h2">
+    <h2>{title}</h2>
+  </div>
+  {
+    text && (
+      <div class="section-header_text u-text u-text-style-large">
+        <p>{text}</p>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .section-header_wrap {
+    display: flex;
+    flex-direction: column;
+  }
+  .section-header_title {
+    display: flex;
+    max-width: 25ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .section-header_text {
+    display: flex;
+    max-width: 60ch;
+  }
+</style>

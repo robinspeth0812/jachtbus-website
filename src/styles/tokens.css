@@ -1,26 +1,30 @@
 /*
- * Design tokens — the ONLY file where hex codes and raw size values
+ * Design tokens - the ONLY file where hex codes and raw size values
  * are allowed. Everything else references these custom properties.
  */
 :root {
   /* --- Color palette --- */
   /* Marigold (gold), light to dark */
-  --color--marigold-1: #f8f3ea; /* soft section background */
-  --color--marigold-2: #f1e8d5;
+  --color--marigold-1: #f8f3ea; /* the default light background site-wide */
+  --color--marigold-2: #f1e8d5; /* foreground on the cream background - cards, pills */
   --color--marigold-3: #d0af6c;
-  --color--marigold-4: #bc8e2d; /* button on dark sections only, with camarone-7 text */
-  --color--marigold-5: #8a6820; /* button color / gold text on light. Adjusted from #967124 (4.48:1 with white, under WCAG 4.5:1) — do not revert */
+  --color--marigold-4: #bc8e2d; /* decorative gold accent - never a button, never with white text (~2.9:1) */
+  --color--marigold-5: #8a6820; /* the button color on all themes (white text) / gold text on light. Adjusted from #967124 (4.48:1 with white, under WCAG 4.5:1) - do not revert */
   --color--marigold-6: #4b3812;
   --color--marigold-7: #382a0d;
 
   /* Camarone (green), light to dark */
   --color--camarone-1: #e5ede8;
   --color--camarone-2: #ccdcd1;
-  --color--camarone-3: #4c845f; /* too light for text — decorative only */
+  --color--camarone-3: #4c845f; /* too light for text - decorative only */
   --color--camarone-4: #00501b; /* brand: dark section background + focus ring */
   --color--camarone-5: #004015;
   --color--camarone-6: #00200a; /* main text color */
   --color--camarone-7: #001808;
+
+  /* Google brand colors, only for the review trust widgets */
+  --color--google-grey: #f8f9fa;
+  --color--google-star: #fdd663;
 
   /* Neutral */
   --color--white: #ffffff;
@@ -36,6 +40,7 @@
   --_typography---font--primary-medium: 500;
   --_typography---font--primary-bold: 700;
   --_typography---letter-spacing--tight: -0.02em;
+  --_typography---letter-spacing--caps: 0.06em;
   --_typography---line-height--heading: 1.15;
   --_typography---line-height--body: 1.6;
 
@@ -76,9 +81,13 @@
   --site--gutter: var(--_spacing---space--5);
   --radius--small: 0.25rem;
   --radius--main: 0.5rem;
+  --radius--large: 1.25rem; /* chat bubbles and other soft cards */
   --radius--round: 100rem;
   --border-width--main: 0.0625rem;
   --nav--height-total: 4.5rem;
+  --nav--logo-size: 7.5rem; /* round badge, overhangs the bar bottom */
+  --nav--logo-size-mobile: 5rem; /* smaller badge with a modest overhang */
+  --ctabar--height: 4rem; /* sticky mobile CTA bar at the viewport bottom */
 
   /* --- Accessibility --- */
   --target--min: 2.75rem; /* 44px minimum target size (WCAG 2.2) */
