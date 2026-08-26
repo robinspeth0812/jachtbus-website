@@ -30,6 +30,8 @@
   /* Dark scrim for text readability over hero photos; near-black so it
      reads as shade, not as a green film. */
   --_theme---scrim: color-mix(in srgb, var(--color--camarone-7) 82%, transparent);
+  /* Very light drop shadow, e.g. under the navbar. */
+  --_theme---shadow: color-mix(in srgb, var(--color--camarone-7) 10%, transparent);
   /* Border between foreground and background: the text color at low
      opacity (same trick as smakenvan.nl), which reads as a subtle warm
      line on cream and white. */
