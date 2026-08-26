@@ -26,10 +26,19 @@ const momentOptions = [
   { value: 'diner', label: 'Het diner' },
   { value: 'avondsnack', label: 'De avondsnack' },
 ];
-const locationChecks = [
-  { value: 'ruimte', label: 'Er is minstens 6,5 bij 2,5 meter ruimte' },
-  { value: 'ondergrond', label: 'De ondergrond is stevig en vlak' },
-  { value: 'stroom', label: 'Er is 230V of 16A binnen 25 meter' },
+// Place suggestions for the location field: towns in the service area,
+// served through a native datalist (free, offline, no API key).
+const places = [
+  'Assen', 'Groningen', 'Leeuwarden', 'Emmen', 'Hoogeveen', 'Meppel',
+  'Drachten', 'Roden', 'Sneek', 'Heerenveen', 'Coevorden', 'Stadskanaal',
+  'Veendam', 'Winschoten', 'Delfzijl', 'Hoogezand', 'Leek', 'Zuidlaren',
+  'Gieten', 'Gasselte', 'Rolde', 'Beilen', 'Westerbork', 'Dwingeloo',
+  'Diever', 'Norg', 'Vries', 'Eelde', 'Peize', 'Annen', 'Borger',
+  'Klazienaveen', 'Dalen', 'Zuidwolde', 'Ruinen', 'Havelte', 'Franeker',
+  'Harlingen', 'Bolsward', 'Joure', 'Lemmer', 'Wolvega', 'Gorredijk',
+  'Burgum', 'Dokkum', 'Kollum', 'Surhuisterveen', 'Grou', 'Akkrum',
+  'Appingedam', 'Winsum', 'Zuidhorn', 'Uithuizen', 'Haren', 'Paterswolde',
+  'Schoonoord', 'Sleen', 'Exloo', 'Odoorn', 'Nieuw-Amsterdam',
 ];
 ---
 
@@ -90,13 +99,21 @@ const locationChecks = [
 
       <fieldset class="aanvraag_step is-2">
         <legend class="aanvraag_step_title u-text-style-h4">Wanneer is het feest?</legend>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-datum">Datum</label>
-          <input class="aanvraag_input" type="date" id="aanvraag-datum" name="datum" required />
-          <p class="aanvraag_hint u-text-style-small">
-            Nog geen vaste datum? Kies een richtdatum en zet het straks in je opmerking.
-          </p>
+        <div class="aanvraag_field_row">
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-datum">Datum</label>
+            <input class="aanvraag_input" type="date" id="aanvraag-datum" name="datum" required />
+          </div>
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-tijd">
+              Tijd <span class="aanvraag_label_opt u-text-style-small">(optioneel)</span>
+            </label>
+            <input class="aanvraag_input" type="time" id="aanvraag-tijd" name="tijd" />
+          </div>
         </div>
+        <p class="aanvraag_hint u-text-style-small">
+          Nog geen vaste datum? Kies een richtdatum en zet het straks in je opmerking.
+        </p>
         <div class="aanvraag_field_wrap">
           <p class="aanvraag_label">Welke momenten mogen wij verzorgen?</p>
           <div class="aanvraag_options_row">
@@ -120,49 +137,34 @@ const locationChecks = [
 
       <fieldset class="aanvraag_step is-3">
         <legend class="aanvraag_step_title u-text-style-h4">Waar is het feest?</legend>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-plaats">Plaats of locatie</label>
-          <input
-            class="aanvraag_input"
-            type="text"
-            id="aanvraag-plaats"
-            name="plaats"
-            required
-            autocomplete="address-level2"
-          />
-        </div>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-gasten">Aantal gasten (schatting)</label>
-          <input
-            class="aanvraag_input is-short"
-            type="number"
-            id="aanvraag-gasten"
-            name="gasten"
-            min="1"
-            inputmode="numeric"
-            required
-          />
-        </div>
-        <div class="aanvraag_field_wrap">
-          <p class="aanvraag_label">Wat weet je al over de locatie?</p>
-          <div class="aanvraag_options_row">
-            {
-              locationChecks.map((check) => (
-                <label class="aanvraag_option_wrap">
-                  <input
-                    class="aanvraag_option_input"
-                    type="checkbox"
-                    name="locatiecheck"
-                    value={check.value}
-                  />
-                  <span class="aanvraag_option_text">{check.label}</span>
-                </label>
-              ))
-            }
+        <div class="aanvraag_field_row">
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-plaats">Plaats of locatie</label>
+            <input
+              class="aanvraag_input"
+              type="text"
+              id="aanvraag-plaats"
+              name="plaats"
+              required
+              autocomplete="address-level2"
+              list="aanvraag-plaatsen"
+            />
+            <datalist id="aanvraag-plaatsen">
+              {places.map((place) => <option value={place} />)}
+            </datalist>
           </div>
-          <p class="aanvraag_hint u-text-style-small">
-            Weet je iets niet? Geen punt, dan kijken we er samen naar.
-          </p>
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-gasten">Aantal gasten (schatting)</label>
+            <input
+              class="aanvraag_input"
+              type="number"
+              id="aanvraag-gasten"
+              name="gasten"
+              min="1"
+              inputmode="numeric"
+              required
+            />
+          </div>
         </div>
       </fieldset>
 
@@ -172,16 +174,22 @@ const locationChecks = [
           <label class="aanvraag_label" for="aanvraag-naam">Je naam</label>
           <input class="aanvraag_input" type="text" id="aanvraag-naam" name="naam" required autocomplete="name" />
         </div>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-email">E-mailadres</label>
-          <input class="aanvraag_input" type="email" id="aanvraag-email" name="email" required autocomplete="email" />
+        <div class="aanvraag_field_row">
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-email">E-mailadres</label>
+            <input class="aanvraag_input" type="email" id="aanvraag-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-telefoon">
+              Telefoonnummer <span class="aanvraag_label_opt u-text-style-small">(optioneel)</span>
+            </label>
+            <input class="aanvraag_input" type="tel" id="aanvraag-telefoon" name="telefoon" autocomplete="tel" />
+          </div>
         </div>
         <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-telefoon">Telefoonnummer (mag)</label>
-          <input class="aanvraag_input" type="tel" id="aanvraag-telefoon" name="telefoon" autocomplete="tel" />
-        </div>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-opmerking">Wil je nog iets kwijt?</label>
+          <label class="aanvraag_label is-small" for="aanvraag-opmerking">
+            Wil je nog iets kwijt? <span class="aanvraag_label_opt u-text-style-small">(optioneel)</span>
+          </label>
           <textarea class="aanvraag_input is-area" id="aanvraag-opmerking" name="opmerking" rows="4"></textarea>
         </div>
         <div class="aanvraag_trap_wrap" aria-hidden="true">
@@ -260,9 +268,12 @@ const locationChecks = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--target--min);
-    height: var(--target--min);
+    /* Smaller than the 44px house target (owner's call), still above
+       the WCAG AA minimum of 24px. */
+    width: calc(var(--_spacing---space--6) + var(--_spacing---space--1));
+    height: calc(var(--_spacing---space--6) + var(--_spacing---space--1));
     flex-shrink: 0;
+    font-size: var(--_typography---size--small);
     background-color: var(--_theme---text-link--text);
     color: var(--_theme---background);
     border: var(--border-width--main) solid var(--_theme---text-link--text);
@@ -311,6 +322,15 @@ const locationChecks = [
     gap: var(--_spacing---space--2);
   }
   .aanvraag_label { font-weight: var(--_typography---font--primary-bold); }
+  .aanvraag_label.is-small { font-size: var(--_typography---size--small); }
+  .aanvraag_label_opt { font-weight: var(--_typography---font--primary-regular); }
+  /* Two fields on one row where they fit; stacked on medium-down. */
+  .aanvraag_field_row {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--5);
+  }
   .aanvraag_input {
     width: 100%;
     min-height: var(--target--min);
@@ -320,8 +340,10 @@ const locationChecks = [
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--main);
   }
-  .aanvraag_input.is-short { max-width: 12rem; }
-  .aanvraag_input.is-area { min-height: calc(var(--target--min) * 2); }
+  .aanvraag_input.is-area {
+    min-height: calc(var(--target--min) * 2);
+    font-size: var(--_typography---size--small);
+  }
   .aanvraag_hint { max-width: 55ch; }
   .aanvraag_options_grid {
     display: grid;
