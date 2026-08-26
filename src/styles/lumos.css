@@ -124,6 +124,7 @@
 
 [aria-expanded='true'],
 [aria-pressed='true'],
+[aria-current='step'],
 details[open],
 :checked {
   --_state---true: 0;

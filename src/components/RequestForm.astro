@@ -14,8 +14,13 @@ const occasions = [
   { value: 'bruiloft', label: 'Bruiloft' },
   { value: 'bedrijfsfeest', label: 'Bedrijfsfeest' },
   { value: 'evenement', label: 'Evenement' },
+  { value: 'festival', label: 'Festival' },
   { value: 'bbq', label: 'BBQ' },
+  { value: 'verjaardag', label: 'Verjaardag' },
+  { value: 'jubileum', label: 'Jubileum' },
+  { value: 'overige', label: 'Overige' },
 ];
+const stepLabels = ['Gelegenheid', 'Datum', 'Locatie', 'Contact'];
 const momentOptions = [
   { value: 'borrel', label: 'De borrel' },
   { value: 'diner', label: 'Het diner' },
@@ -36,14 +41,28 @@ const locationChecks = [
       action={endpoint}
       data-endpoint={endpoint}
     >
-      <div class="aanvraag_progress_wrap" hidden>
-        <p class="aanvraag_progress_text u-text-style-small">
-          Stap <span class="aanvraag_progress_current">1</span> van 4
-        </p>
-        <div class="aanvraag_progress_track">
-          <div class="aanvraag_progress_bar"></div>
-        </div>
-      </div>
+      <ol class="aanvraag_steps_nav" hidden>
+        {
+          stepLabels.map((label, index) => (
+            <li class:list={['aanvraag_steps_item', index === stepLabels.length - 1 && 'is-last']}>
+              <button
+                class="aanvraag_steps_btn"
+                type="button"
+                data-step={index}
+                aria-label={`Stap ${index + 1}: ${label}`}
+              >
+                <span class="aanvraag_steps_num">{index + 1}</span>
+                <svg class="aanvraag_steps_check" viewBox="0 0 16 16" aria-hidden="true" fill="none">
+                  <path d="M3.5 8.5 6.5 11.5 12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </button>
+              {index < stepLabels.length - 1 && (
+                <span class="aanvraag_steps_line" aria-hidden="true" />
+              )}
+            </li>
+          ))
+        }
+      </ol>
 
       <fieldset class="aanvraag_step is-1">
         <legend class="aanvraag_step_title u-text-style-h4">Waarvoor zoek je een foodtruck?</legend>
@@ -62,6 +81,10 @@ const locationChecks = [
               </label>
             ))
           }
+        </div>
+        <div class="aanvraag_field_wrap is-overig">
+          <label class="aanvraag_label" for="aanvraag-overig">Waarvoor dan? Vertel het kort</label>
+          <input class="aanvraag_input" type="text" id="aanvraag-overig" name="gelegenheid_overig" />
         </div>
       </fieldset>
 
@@ -219,23 +242,59 @@ const locationChecks = [
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--large);
   }
-  .aanvraag_progress_wrap {
+  .aanvraag_steps_nav {
     display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--2);
+    align-items: center;
   }
-  .aanvraag_progress_track {
-    height: var(--_spacing---space--1);
-    background-color: var(--_theme---background-2);
-    border-radius: var(--radius--round);
-    overflow: clip;
+  .aanvraag_steps_item {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
   }
-  .aanvraag_progress_bar {
-    width: 25%;
-    height: 100%;
-    background-color: var(--_theme---text-accent);
+  .aanvraag_steps_item.is-last { flex: 0 0 auto; }
+  /* Step states: enabled and not current = done (green with check),
+     aria-current="step" = current (green with number), disabled =
+     upcoming (light border with number). */
+  .aanvraag_steps_btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--target--min);
+    height: var(--target--min);
+    flex-shrink: 0;
+    background-color: var(--_theme---text-link--text);
+    color: var(--_theme---background);
+    border: var(--border-width--main) solid var(--_theme---text-link--text);
     border-radius: var(--radius--round);
-    transition: width 300ms;
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+    transition: background-color 300ms, border-color 300ms, color 300ms;
+  }
+  .aanvraag_steps_btn:disabled {
+    --_state---true: 0;
+    --_state---false: 1;
+    background-color: transparent;
+    color: var(--_theme---text);
+    border-color: var(--_theme---border);
+    cursor: default;
+  }
+  .aanvraag_steps_num {
+    position: absolute;
+    opacity: var(--_state---false);
+  }
+  .aanvraag_steps_check {
+    position: absolute;
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    opacity: var(--_state---true);
+  }
+  .aanvraag_steps_line {
+    flex: 1 1 0;
+    height: var(--border-width--main);
+    margin-inline: var(--_spacing---space--2);
+    background-color: var(--_theme---border);
   }
   .aanvraag_step {
     display: flex;
@@ -361,9 +420,8 @@ const locationChecks = [
 
   document.querySelectorAll<HTMLFormElement>('.aanvraag_form_wrap').forEach((form) => {
     const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('.aanvraag_step'));
-    const progress = form.querySelector<HTMLElement>('.aanvraag_progress_wrap');
-    const progressCurrent = form.querySelector<HTMLElement>('.aanvraag_progress_current');
-    const progressBar = form.querySelector<HTMLElement>('.aanvraag_progress_bar');
+    const progress = form.querySelector<HTMLElement>('.aanvraag_steps_nav');
+    const stepButtons = Array.from(form.querySelectorAll<HTMLButtonElement>('.aanvraag_steps_btn'));
     const prevBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-prev');
     const nextBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-next');
     const submitBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-submit');
@@ -386,8 +444,11 @@ const locationChecks = [
       prevBtn.hidden = current === 0;
       nextBtn.hidden = current === steps.length - 1;
       submitBtn.hidden = current !== steps.length - 1;
-      if (progressCurrent) progressCurrent.textContent = String(current + 1);
-      if (progressBar) progressBar.style.width = `${((current + 1) / steps.length) * 100}%`;
+      stepButtons.forEach((btn, i) => {
+        btn.disabled = i > current;
+        if (i === current) btn.setAttribute('aria-current', 'step');
+        else btn.removeAttribute('aria-current');
+      });
       if (focus) {
         const legend = steps[current].querySelector<HTMLElement>('.aanvraag_step_title');
         if (legend) {
@@ -410,10 +471,19 @@ const locationChecks = [
       return true;
     };
 
+    const overigField = form.querySelector<HTMLElement>('.aanvraag_field_wrap.is-overig');
+    const overigInput = form.querySelector<HTMLInputElement>('input[name="gelegenheid_overig"]');
+
     const syncOptionStates = () => {
       form.querySelectorAll<HTMLInputElement>('.aanvraag_option_input').forEach((input) => {
         input.closest('.aanvraag_option_wrap')?.classList.toggle('is-active', input.checked);
       });
+      // "Overige" opens a short free-text field, required while shown.
+      const overigChecked = !!form.querySelector<HTMLInputElement>(
+        'input[name="gelegenheid"][value="overige"]:checked'
+      );
+      if (overigField) overigField.hidden = !overigChecked;
+      if (overigInput) overigInput.required = overigChecked;
     };
 
     const saveDraft = () => {
@@ -477,6 +547,14 @@ const locationChecks = [
     prevBtn.addEventListener('click', () => show(current - 1, true));
     nextBtn.addEventListener('click', () => {
       if (validateStep()) show(current + 1, true);
+    });
+    // The stepper only navigates back; upcoming steps stay disabled, so
+    // required fields can never be skipped.
+    stepButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = Number(btn.dataset.step ?? '0');
+        if (target < current) show(target, true);
+      });
     });
     form.addEventListener('input', () => {
       syncOptionStates();
