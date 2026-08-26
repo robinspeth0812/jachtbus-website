@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
-import TrustBar from '../components/TrustBar.astro';
 import CardGrid from '../components/CardGrid.astro';
 import ServiceTiles from '../components/ServiceTiles.astro';
 import StepList from '../components/StepList.astro';
@@ -111,17 +110,31 @@ const faqItems = [
               ))
             }
           </ul>
-          <p class="hero_form_divider u-text-style-small">of</p>
+          <div class="hero_form_divider" aria-hidden="true">
+            <span class="hero_form_divider_line"></span>
+            <span class="hero_form_divider_text u-text-style-small">of</span>
+            <span class="hero_form_divider_line"></span>
+          </div>
           <div class="hero_form_actions u-button-wrapper">
-            <Button variant="secondary" label="Bellen" href="tel:+31592656363" />
-            <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />
+            <a class="hero_form_contact" href="tel:+31592656363" data-trigger="hover focus">
+              Bel +31 592 656363
+            </a>
+            <a
+              class="hero_form_contact is-wa-link"
+              href="https://wa.me/31592656363"
+              rel="external"
+              data-trigger="hover focus"
+            >
+              WhatsApp
+            </a>
+            <button class="hero_form_contact is-wa-btn" type="button" data-trigger="hover focus">
+              WhatsApp
+            </button>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <TrustBar />
 
   <CoreValues />
 
@@ -250,8 +263,48 @@ const faqItems = [
     text-decoration: none;
     transition: background-color 300ms;
   }
-  .hero_form_divider { text-align: center; }
+  .hero_form_divider {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  .hero_form_divider_line {
+    flex: 1 1 0;
+    height: var(--border-width--main);
+    background-color: var(--_theme---border);
+  }
+  .hero_form_divider_text {
+    letter-spacing: var(--_typography---letter-spacing--caps);
+    text-transform: uppercase;
+  }
   .hero_form_actions { justify-content: center; }
+  .hero_form_contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    border-radius: var(--radius--main);
+    border-style: solid;
+    border-width: var(--border-width--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    font-size: var(--_typography---size--small);
+    text-decoration: none;
+    cursor: pointer;
+    background-color: color-mix(
+      in hsl,
+      var(--_theme---button-secondary--background) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-secondary--background-hover) calc(100% * var(--_trigger---off))
+    );
+    color: var(--_theme---button-secondary--text);
+    border-color: var(--_theme---button-secondary--border);
+    transition: background-color 300ms;
+  }
+  /* WhatsApp: direct link on mobile, opens the corner widget's QR and
+     WhatsApp Web panel on desktop. */
+  .hero_form_contact.is-wa-link { display: var(--flex-medium, none); }
+  .hero_form_contact.is-wa-btn { display: var(--none-medium, inline-flex); }
   .home_refs_actions { display: flex; }
   .home_why_list {
     display: flex;
@@ -263,3 +316,16 @@ const faqItems = [
     border-left: var(--focus--width) solid var(--_theme---text-accent);
   }
 </style>
+
+<script>
+  // Desktop WhatsApp button in the hero card opens the corner widget's
+  // panel (QR plus WhatsApp Web) instead of duplicating it here.
+  document.querySelectorAll<HTMLButtonElement>('.hero_form_contact.is-wa-btn').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      // Keep this click away from the widget's outside-click-closes
+      // listener on document.
+      event.stopPropagation();
+      document.querySelector<HTMLButtonElement>('.whatsapp_toggle_wrap')?.click();
+    });
+  });
+</script>
