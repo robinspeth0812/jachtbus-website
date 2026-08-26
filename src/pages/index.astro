@@ -9,6 +9,8 @@ import MediaText from '../components/MediaText.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import RegionPill from '../components/RegionPill.astro';
 import CoreValues from '../components/CoreValues.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import whatsappIcon from '../assets/whatsapp-icon.svg';
 import LocationRequirements from '../components/LocationRequirements.astro';
 import RegionMap from '../components/RegionMap.astro';
 import FaqSection from '../components/FaqSection.astro';
@@ -87,7 +89,7 @@ const faqItems = [
             <RegionPill />
           </div>
           <div class="hero_title u-heading u-text-style-h1">
-            <h1>Mobiele cateraar/foodtruck in Drenthe, Friesland, Groningen e.o.</h1>
+            <h1>Mobiele cateraar/<wbr />foodtruck in Drenthe, Friesland, Groningen e.o.</h1>
           </div>
           <div class="hero_text u-text u-text-style-large">
             <p>
@@ -115,21 +117,30 @@ const faqItems = [
             <span class="hero_form_divider_text u-text-style-small">of</span>
             <span class="hero_form_divider_line"></span>
           </div>
-          <div class="hero_form_actions u-button-wrapper">
-            <a class="hero_form_contact" href="tel:+31592656363" data-trigger="hover focus">
-              Bel +31 592 656363
-            </a>
-            <a
-              class="hero_form_contact is-wa-link"
-              href="https://wa.me/31592656363"
-              rel="external"
-              data-trigger="hover focus"
-            >
-              WhatsApp
-            </a>
-            <button class="hero_form_contact is-wa-btn" type="button" data-trigger="hover focus">
-              WhatsApp
-            </button>
+          <div class="hero_form_actions">
+            <ChatBubble message="Neem direct contact met mij op." />
+            <div class="hero_form_contact_row u-button-wrapper">
+              <a class="hero_form_contact" href="tel:+31592656363" data-trigger="hover focus">
+                +31 592 656363
+              </a>
+              <a
+                class="hero_form_contact is-wa is-wa-link"
+                href="https://wa.me/31592656363"
+                rel="external"
+                aria-label="App ons via WhatsApp"
+                data-trigger="hover focus"
+              >
+                <Image class="hero_form_wa_img" src={whatsappIcon} alt="" aria-hidden="true" width={32} />
+              </a>
+              <button
+                class="hero_form_contact is-wa is-wa-btn"
+                type="button"
+                aria-label="App ons via WhatsApp"
+                data-trigger="hover focus"
+              >
+                <Image class="hero_form_wa_img" src={whatsappIcon} alt="" aria-hidden="true" width={32} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -277,7 +288,18 @@ const faqItems = [
     letter-spacing: var(--_typography---letter-spacing--caps);
     text-transform: uppercase;
   }
-  .hero_form_actions { justify-content: center; }
+  .hero_form_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--3);
+  }
+  .hero_form_contact_row {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
   .hero_form_contact {
     display: inline-flex;
     align-items: center;
@@ -301,8 +323,17 @@ const faqItems = [
     border-color: var(--_theme---button-secondary--border);
     transition: background-color 300ms;
   }
-  /* WhatsApp: direct link on mobile, opens the corner widget's QR and
-     WhatsApp Web panel on desktop. */
+  /* Icon-only WhatsApp button: direct link on mobile, opens the corner
+     widget's QR and WhatsApp Web panel on desktop. */
+  .hero_form_contact.is-wa {
+    width: var(--target--min);
+    padding: 0;
+  }
+  .hero_form_wa_img {
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
+    object-fit: contain;
+  }
   .hero_form_contact.is-wa-link { display: var(--flex-medium, none); }
   .hero_form_contact.is-wa-btn { display: var(--none-medium, inline-flex); }
   .home_refs_actions { display: flex; }
