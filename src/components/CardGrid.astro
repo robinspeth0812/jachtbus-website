@@ -1,14 +1,29 @@
 ---
-// Grid of simple text cards: a title and one line each. Used for the
-// "herkenning" doubts, wedding day moments, rain questions, and the
-// serving styles.
+// Grid of cards built from the Card component. Each card can carry a
+// photo, a paragraph, block links, or be one big link; mixing within
+// one grid is fine.
 import SectionHeader from './SectionHeader.astro';
+import Card from './Card.astro';
 
-interface Card {
+interface CardLink {
+  /** Where the link goes. */
+  href: string;
+  /** Link label. */
+  label: string;
+}
+interface CardItem {
   /** Card heading. */
   title: string;
-  /** One supporting line. */
-  text: string;
+  /** Optional paragraph under the heading. */
+  text?: string;
+  /** Optional photo on top of the card. */
+  image?: ImageMetadata;
+  /** Alt text for the photo; keep empty when decorative. */
+  alt?: string;
+  /** Optional stacked block links at the bottom of the card. */
+  links?: CardLink[];
+  /** Makes the whole card one link; ignored when links are given. */
+  href?: string;
 }
 interface Props {
   /** Section heading. */
@@ -16,7 +31,7 @@ interface Props {
   /** Optional intro under the heading. */
   text?: string;
   /** The cards. */
-  cards: Card[];
+  cards: CardItem[];
   /** Section theme. */
   theme?: 'light' | 'soft' | 'brand';
 }
@@ -34,9 +49,16 @@ const themeClass = {
     <ul class="card-grid_layout">
       {
         cards.map((card) => (
-          <li class="card-grid_item u-margin-trim">
-            <h3 class="card-grid_item_title u-text-style-h5">{card.title}</h3>
-            <p class="card-grid_item_text u-text-style-main">{card.text}</p>
+          <li class="card-grid_item">
+            <Card
+              title={card.title}
+              headingLevel={3}
+              text={card.text}
+              image={card.image}
+              alt={card.alt}
+              links={card.links}
+              href={card.href}
+            />
           </li>
         ))
       }
@@ -50,14 +72,5 @@ const themeClass = {
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: var(--_spacing---space--5);
   }
-  .card-grid_item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--2);
-    padding: var(--_spacing---space--5);
-    background-color: var(--_theme---background-2);
-    border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--large);
-  }
-  .card-grid_item_text { max-width: 40ch; }
+  .card-grid_item { display: flex; }
 </style>

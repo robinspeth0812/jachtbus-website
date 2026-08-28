@@ -4,7 +4,6 @@
 // rules). Not linked in the nav and excluded from search engines.
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import TrustBar from '../components/TrustBar.astro';
 import CoreValues from '../components/CoreValues.astro';
 import CardGrid from '../components/CardGrid.astro';
 import ServiceTiles from '../components/ServiceTiles.astro';
@@ -18,9 +17,9 @@ import ChatBubble from '../components/ChatBubble.astro';
 import busImg from '../assets/jachtbus-bus.jpg';
 
 const specimens = [
-  { name: 'TrustBar', props: 'items' },
-  { name: 'CoreValues', props: 'title, text' },
-  { name: 'CardGrid', props: 'title, text, cards, theme' },
+  { name: 'CoreValues variant="bar"', props: 'title, text, signature, variant' },
+  { name: 'CoreValues', props: 'title, text, signature, variant' },
+  { name: 'CardGrid', props: 'title, text, cards (elk: title, text, image, alt, links, href), theme' },
   { name: 'ServiceTiles', props: 'title, text, theme' },
   { name: 'StepList', props: 'title, text, steps, theme' },
   { name: 'MediaText', props: 'title, image, alt, reversed, theme + vrije inhoud' },
@@ -31,9 +30,25 @@ const specimens = [
 ];
 
 const demoCards = [
-  { title: 'Kaart één', text: 'Korte kaart met titel en één zin, voor twijfels of vragen.' },
-  { title: 'Kaart twee', text: 'Het grid vult zichzelf: drie of vier kaarten, altijd netjes.' },
-  { title: 'Kaart drie', text: 'Op mobiel stapelen de kaarten automatisch onder elkaar.' },
+  {
+    title: 'Met afbeelding',
+    text: 'Vaste beeldverhouding, dus koppen en tekst staan op één hoogte.',
+    image: busImg,
+    href: '/catering',
+  },
+  {
+    title: 'Met linkjes',
+    text: 'Bloklinks onderaan, handig voor snel navigeren en interne linking.',
+    links: [
+      { href: '/catering/bruiloft', label: 'Bruiloft' },
+      { href: '/catering/bedrijfsfeest', label: 'Bedrijfsfeest' },
+      { href: '/catering/bbq-smoker', label: 'BBQ-smoker' },
+    ],
+  },
+  {
+    title: 'Alleen tekst',
+    text: 'De kale variant: kop met één zin, voor twijfels of vragen.',
+  },
 ];
 const demoSteps = [
   { title: 'Stap één', text: 'Genummerde stappen met een korte uitleg per stap.' },
@@ -70,7 +85,7 @@ const demoFaq = [
       </p>
     </div>
   </div>
-  <TrustBar />
+  <CoreValues variant="bar" />
 
   <div class="secties_label_wrap u-theme-brand">
     <div class="secties_label_contain u-container">

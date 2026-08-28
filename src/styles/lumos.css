@@ -334,8 +334,10 @@ details[open],
 .u-text-style-main { font-size: var(--_typography---size--main); }
 .u-text-style-small { font-size: var(--_typography---size--small); }
 
-/* Handwritten accent - use sparingly (Peer's quotes and the like). */
+/* Handwritten accent - use sparingly (Peer's quotes and the like).
+   Never uppercase, also when combined with a heading size utility. */
 .u-text-style-accent {
   font-family: var(--_typography---font--accent);
   line-height: var(--_typography---line-height--body);
+  text-transform: none;
 }

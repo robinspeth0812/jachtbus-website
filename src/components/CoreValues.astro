@@ -1,16 +1,24 @@
 ---
-// The three core values painted on the bus: local, honest, artisanal.
-// Four columns on the plain beige background: intro (h2) plus the three
-// values, each with a filled gold icon above an h3.
+// The three core values, set up like the Brasserie Jachtlust section
+// but in Jachtbus style: heading left with the intro (plus handwritten
+// signature) right, below that three columns. Each value is itself a
+// two-column row: a narrow icon column, with the title and text stacked
+// next to it. No underline under the headings.
 interface Props {
-  /** Section heading in the first column. */
+  /** Section heading. */
   title?: string;
-  /** Paragraph under the heading. */
+  /** Intro paragraph, shown to the right of the heading. */
   text?: string;
+  /** Handwritten signature under the intro; empty hides it. */
+  signature?: string;
+  /** Full section, or the compact bar under a hero. */
+  variant?: 'full' | 'bar';
 }
 const {
-  title = 'Waar we voor staan',
-  text = 'Dit staat op de bus geschilderd, en zo werken we ook. Drie beloftes die je terugproeft.',
+  title = 'Onze kernwaarden',
+  text = 'Bij ons draait alles om lokaal, eerlijk en voedzaam voedsel. We kiezen voor lokale producten om de economie te steunen en respect voor iedereen in de keten te waarborgen.',
+  signature = 'Peer',
+  variant = 'full',
 } = Astro.props;
 
 const values = [
@@ -38,61 +46,124 @@ const iconPaths: Record<string, string> = {
 };
 ---
 
+{
+  variant === 'bar' && (
+    <aside class="values_bar_wrap u-theme-soft">
+      <div class="values_bar_contain u-container">
+        <ul class="values_bar_list">
+          {values.map((value) => (
+            <li class="values_bar_item">
+              <svg class="values_bar_icon" aria-hidden="true" viewBox="0 0 16 16">
+                <path fill="currentColor" fill-rule="evenodd" d={iconPaths[value.icon]} />
+              </svg>
+              <span class="values_bar_text u-text-style-h6">{value.title}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  )
+}
+
+{variant === 'full' && (
 <section class="values_wrap u-section u-theme-light">
   <div class="values_contain u-container">
-    <div class="values_layout">
-      <div class="values_intro u-margin-trim">
-        <div class="values_title u-heading u-text-style-h2">
-          <h2>{title}</h2>
-        </div>
-        <div class="values_text u-text u-text-style-main">
-          <p>{text}</p>
-        </div>
+    <div class="values_header_layout">
+      <div class="values_title u-heading u-text-style-h2">
+        <h2>{title}</h2>
       </div>
+      <div class="values_intro u-margin-trim">
+        <p class="values_text u-text-style-main">{text}</p>
+        {signature && <p class="values_signature u-text-style-accent u-text-style-h5">{signature}</p>}
+      </div>
+    </div>
+    <div class="values_layout">
       {
         values.map((value) => (
-          <div class="values_item u-margin-trim">
+          <div class="values_item">
             <svg class="values_item_icon" aria-hidden="true" viewBox="0 0 16 16">
               <path fill="currentColor" fill-rule="evenodd" d={iconPaths[value.icon]} />
             </svg>
-            <h3 class="values_item_title u-text-style-h5">{value.title}</h3>
-            <p class="values_item_text u-text-style-main">{value.text}</p>
+            <div class="values_item_content u-margin-trim">
+              <h3 class="values_item_title u-text-style-h5">{value.title}</h3>
+              <p class="values_item_text u-text-style-main">{value.text}</p>
+            </div>
           </div>
         ))
       }
     </div>
   </div>
 </section>
+)}
 
 <style>
-  .values_layout {
+  .values_bar_wrap {
+    display: flex;
+    flex-flow: column;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-top: var(--_spacing---space--3);
+    padding-bottom: var(--_spacing---space--3);
+    border-bottom: var(--border-width--main) solid var(--_theme---border);
+  }
+  .values_bar_list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--_spacing---space--2) var(--_spacing---space--7);
+  }
+  .values_bar_item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  .values_bar_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    color: var(--_theme---text-accent);
+    flex-shrink: 0;
+  }
+  .values_header_layout {
     display: var(--flex-medium, grid);
     flex-direction: column;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--_spacing---space--6) var(--_spacing---space--6);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--_spacing---space--5) var(--_spacing---space--8);
+  }
+  .values_title {
+    display: flex;
+    max-width: 20ch;
   }
   .values_intro {
     display: flex;
     flex-direction: column;
-  }
-  .values_title {
-    display: flex;
-    max-width: 15ch;
-    margin-bottom: var(--_text-style---margin-bottom);
-  }
-  .values_text {
-    display: flex;
-    max-width: 35ch;
-  }
-  .values_item {
-    display: flex;
-    flex-direction: column;
     gap: var(--_spacing---space--3);
+    max-width: 55ch;
+  }
+  .values_signature { color: var(--_theme---text-accent); }
+  .values_layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: var(--_spacing---space--6) var(--_spacing---space--8);
+  }
+  /* Each value: narrow icon column, title and text stacked beside it. */
+  .values_item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--_spacing---space--3);
+    align-items: start;
   }
   .values_item_icon {
-    width: var(--_spacing---space--6);
-    height: var(--_spacing---space--6);
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
     color: var(--_theme---text-accent);
+    /* Optically align with the cap height of the title beside it. */
+    margin-top: calc(var(--_spacing---space--1) / 2);
   }
-  .values_item_text { max-width: 35ch; }
+  .values_item_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .values_item_text { max-width: 40ch; }
 </style>

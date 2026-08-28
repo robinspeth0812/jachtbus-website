@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Button from '../../components/Button.astro';
 import ChatBubble from '../../components/ChatBubble.astro';
-import TrustBar from '../../components/TrustBar.astro';
+import CoreValues from '../../components/CoreValues.astro';
 import CardGrid from '../../components/CardGrid.astro';
 import StepList from '../../components/StepList.astro';
 import MediaText from '../../components/MediaText.astro';
@@ -133,7 +133,7 @@ const faqItems = [
     </div>
   </section>
 
-  <TrustBar items={['Alles ter plekke bereid', 'Eigen bediening', 'Menu in overleg']} />
+  <CoreValues variant="bar" />
 
   <CardGrid
     title="Op welk moment van de dag?"
