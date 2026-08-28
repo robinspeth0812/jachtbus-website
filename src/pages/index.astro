@@ -102,7 +102,7 @@ const faqItems = [
                 regionPills.map((region) => (
                   <li class="hero_regions_item">
                     <a class="hero_regions_pill u-theme-light" href={region.href} data-trigger="hover focus">
-                      <span class="hero_regions_text u-hover-underline">{region.label}</span>
+                      <span class="hero_regions_text">{region.label}</span>
                     </a>
                   </li>
                 ))
@@ -227,7 +227,7 @@ const faqItems = [
   .hero_overlay {
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(to right, var(--_theme---scrim), transparent 70%);
+    background-image: linear-gradient(to right, var(--_theme---scrim), var(--_theme---scrim-fade) 70%);
   }
   .hero_contain {
     position: relative;
@@ -236,7 +236,7 @@ const faqItems = [
   .hero_layout {
     display: var(--flex-medium, grid);
     flex-direction: column;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
     gap: var(--_spacing---space--7) var(--_spacing---space--8);
   }
@@ -258,18 +258,28 @@ const faqItems = [
     gap: var(--_spacing---space--2);
   }
   .hero_regions_item { display: flex; }
-  /* Compact pill: slight radius with border, tight vertical padding. */
+  /* Compact pill; on hover the colors invert with a left-to-right fill:
+     the text color wipes in as background, the text flips to the old
+     background color. */
   .hero_regions_pill {
     display: inline-flex;
     align-items: center;
     min-height: var(--_spacing---space--6);
     padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
     background-color: var(--_theme---background-2);
-    color: var(--_theme---text);
+    background-image: linear-gradient(to right, var(--_theme---text), var(--_theme---text));
+    background-repeat: no-repeat;
+    background-size: calc(100% * var(--_trigger---off)) 100%;
+    color: color-mix(
+      in srgb,
+      var(--_theme---background-2) calc(100% * var(--_trigger---off)),
+      var(--_theme---text) calc(100% * var(--_trigger---on))
+    );
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--main);
     font-size: var(--_typography---size--small);
     text-decoration: none;
+    transition: background-size 300ms, color 300ms;
   }
   .hero_title {
     display: flex;

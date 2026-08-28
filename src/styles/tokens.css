@@ -21,6 +21,10 @@
   --color--camarone-5: #004015;
   --color--camarone-6: #00200a; /* main text color */
   --color--camarone-7: #001808;
+  /* Scrim endpoints as plain hex-with-alpha: color-mix() inside a
+     gradient rasterizes unreliably (Chrome painted it fully opaque). */
+  --color--scrim: #001808d1;
+  --color--scrim-fade: #00180800;
 
   /* Brown text colors for the beige scheme (owner, 2026-08-28) */
   --color--brown-dark: #1b1817; /* headings, secondary and link buttons on light */

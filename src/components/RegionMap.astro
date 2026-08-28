@@ -1,9 +1,11 @@
 ---
-// Where the Jachtbus comes: map plus links to the region pages. The
-// city chips point to their province page until dedicated city pages
-// exist (those follow from the keyword research).
+// Where the Jachtbus comes: map on the left, text on the right with
+// clickable region pills and a note card for everywhere else. The
+// pills point to their province page until dedicated city pages exist
+// (those follow from the keyword research).
 import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
+import Button from './Button.astro';
 import mapImg from '../assets/kaart-werkgebied.png';
 
 interface Props {
@@ -11,12 +13,21 @@ interface Props {
   title?: string;
   /** Optional intro under the heading. */
   text?: string;
+  /** Label above the region pills. */
+  listTitle?: string;
+  /** Heading of the somewhere-else note card. */
+  noteTitle?: string;
+  /** Text of the somewhere-else note card. */
+  noteText?: string;
   /** Section theme. */
   theme?: 'light' | 'soft' | 'brand';
 }
 const {
-  title = 'Waar we komen',
-  text = 'De Jachtbus rijdt door heel Noord-Nederland. Staat jouw plaats er niet bij? Grote kans dat we toch kunnen.',
+  title = 'Op locatie door heel Noord-Nederland',
+  text = 'De Jachtbus komt door heel Drenthe, Groningen en Friesland. Wij staan op locatie, waar jij dat wilt!',
+  listTitle = 'Regio locaties:',
+  noteTitle = 'Evenement ergens anders?',
+  noteText = 'Geen probleem. We denken graag mee. Neem contact met ons op, zodat we de mogelijkheden kunnen bespreken.',
   theme = 'light',
 } = Astro.props;
 const themeClass = {
@@ -26,10 +37,10 @@ const themeClass = {
 }[theme];
 
 const places = [
-  { label: 'Assen', href: '/foodtruck-drenthe' },
   { label: 'Groningen', href: '/foodtruck-groningen' },
+  { label: 'Assen', href: '/foodtruck-drenthe' },
   { label: 'Leeuwarden', href: '/foodtruck-friesland' },
-  { label: 'Roden', href: '/foodtruck-drenthe' },
+  { label: 'Rolde', href: '/foodtruck-drenthe' },
   { label: 'Emmen', href: '/foodtruck-drenthe' },
   { label: 'Meppel', href: '/foodtruck-drenthe' },
   { label: 'Drachten', href: '/foodtruck-friesland' },
@@ -45,17 +56,27 @@ const places = [
       </div>
       <div class="region_content u-margin-trim">
         <SectionHeader title={title} text={text} />
-        <ul class="region_list">
-          {
-            places.map((place) => (
-              <li class="region_list_item">
-                <a class="region_chip_wrap" href={place.href} data-trigger="hover focus">
-                  <span class="region_chip_text u-hover-underline">{place.label}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        <div class="region_list_wrap">
+          <h3 class="region_list_title u-text-style-small">{listTitle}</h3>
+          <ul class="region_list">
+            {
+              places.map((place) => (
+                <li class="region_list_item">
+                  <a class="region_chip_wrap" href={place.href} data-trigger="hover focus">
+                    <span class="region_chip_text">{place.label}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="region_note_wrap u-margin-trim">
+          <h3 class="region_note_title u-text-style-h4">{noteTitle}</h3>
+          <p class="region_note_text u-text-style-main">{noteText}</p>
+          <div class="region_note_actions">
+            <Button label="Contact" href="/contact" variant="link" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -65,7 +86,7 @@ const places = [
   .region_layout {
     display: var(--flex-medium, grid);
     flex-direction: column;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: center;
     gap: var(--_spacing---space--7) var(--_spacing---space--8);
   }
@@ -76,7 +97,7 @@ const places = [
   }
   .region_img {
     width: 100%;
-    max-width: 24rem;
+    max-width: 28rem;
     height: auto;
     object-fit: contain;
   }
@@ -85,21 +106,50 @@ const places = [
     flex-direction: column;
     gap: var(--_spacing---space--5);
   }
+  .region_list_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+  }
+  .region_list_title { letter-spacing: var(--_typography---letter-spacing--caps); }
   .region_list {
     display: flex;
     flex-wrap: wrap;
     gap: var(--_spacing---space--2) var(--_spacing---space--3);
   }
   .region_list_item { display: flex; }
-  /* Compact pill: slight radius with border, tight vertical padding. */
+  /* Compact pill; on hover the colors invert with a left-to-right fill:
+     the text color wipes in as background, the text flips to the old
+     background color. */
   .region_chip_wrap {
     display: inline-flex;
     align-items: center;
     min-height: var(--_spacing---space--6);
     padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
     background-color: var(--_theme---background-2);
+    background-image: linear-gradient(to right, var(--_theme---text), var(--_theme---text));
+    background-repeat: no-repeat;
+    background-size: calc(100% * var(--_trigger---off)) 100%;
+    color: color-mix(
+      in srgb,
+      var(--_theme---background-2) calc(100% * var(--_trigger---off)),
+      var(--_theme---text) calc(100% * var(--_trigger---on))
+    );
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--main);
     text-decoration: none;
+    transition: background-size 300ms, color 300ms;
   }
+  .region_note_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+    align-items: flex-start;
+    padding: var(--_spacing---space--5) var(--_spacing---space--6);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+  }
+  .region_note_text { max-width: 50ch; }
+  .region_note_actions { display: flex; }
 </style>
