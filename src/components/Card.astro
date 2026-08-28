@@ -94,7 +94,9 @@ const Wrap = isLinkCard ? 'a' : 'div';
   }
   .card_img {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    /* height:auto lets aspect-ratio win from the img height attribute. */
+    height: auto;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     transform: scale(calc(1 + 0.04 * var(--_trigger---off)));
     transition: transform 300ms;
