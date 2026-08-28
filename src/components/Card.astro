@@ -27,6 +27,8 @@ interface Props {
   links?: CardLink[];
   /** Makes the whole card one link; ignored when links are given. */
   href?: string;
+  /** Aspect ratio of the photo. */
+  aspect?: 'auto' | 'anamorphic' | 'univisium' | 'widescreen' | 'landscape' | 'portrait' | 'square';
 }
 const {
   title,
@@ -36,6 +38,7 @@ const {
   text = '',
   links = [],
   href = '',
+  aspect = 'widescreen',
 } = Astro.props;
 
 const Heading = headingLevel === 2 ? 'h2' : 'h3';
@@ -51,7 +54,7 @@ const Wrap = isLinkCard ? 'a' : 'div';
   {
     image && (
       <span class="card_visual">
-        <Image class="card_img" src={image} alt={alt} width={640} />
+        <Image class:list={['card_img', `is-${aspect}`]} src={image} alt={alt} width={640} />
       </span>
     )
   }
@@ -96,11 +99,17 @@ const Wrap = isLinkCard ? 'a' : 'div';
     width: 100%;
     /* height:auto lets aspect-ratio win from the img height attribute. */
     height: auto;
-    aspect-ratio: 16 / 9;
     object-fit: cover;
     transform: scale(calc(1 + 0.04 * var(--_trigger---off)));
     transition: transform 300ms;
   }
+  .card_img.is-auto { aspect-ratio: auto; }
+  .card_img.is-anamorphic { aspect-ratio: 2.39 / 1; }
+  .card_img.is-univisium { aspect-ratio: 2 / 1; }
+  .card_img.is-widescreen { aspect-ratio: 16 / 9; }
+  .card_img.is-landscape { aspect-ratio: 3 / 2; }
+  .card_img.is-portrait { aspect-ratio: 2 / 3; }
+  .card_img.is-square { aspect-ratio: 1 / 1; }
   .card_body {
     display: flex;
     flex-direction: column;

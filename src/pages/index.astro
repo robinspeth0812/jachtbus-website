@@ -16,6 +16,7 @@ import FaqSection from '../components/FaqSection.astro';
 import CtaSection from '../components/CtaSection.astro';
 import heroImg from '../assets/jachtbus-bus.jpg';
 import busImg from '../assets/bediening-serveert.jpg';
+import plankImg from '../assets/eten-serveerplank.jpg';
 
 const intentTiles = [
   { href: '/aanvraag?gelegenheid=bruiloft', label: 'Bruiloft' },
@@ -118,25 +119,22 @@ const faqItems = [
 
   <CoreValues />
 
-  <section class="home-doubts_wrap u-section u-theme-light">
-    <div class="home-doubts_contain u-container">
-      <div class="home-doubts_layout u-margin-trim">
-        <div class="home-doubts_title u-heading u-text-style-h2">
-          <h2>Op zoek naar écht goede foodtruckcatering?</h2>
-        </div>
-        <ul class="home-doubts_list">
-          <li class="home-doubts_item">Geen idee waar je originele catering voor je event kunt vinden?</li>
-          <li class="home-doubts_item">Je huurde eerder catering, maar het eten viel tegen of kwam te laat?</li>
-          <li class="home-doubts_item">Lastig om iets te vinden dat lekker én professioneel is voor elk type publiek?</li>
-        </ul>
-        <p class="home-doubts_text">
-          De Jachtbus biedt een complete, betrouwbare en smaakvolle
-          ervaring. Van de planning tot de laatste hap staan we voor je
-          klaar!
-        </p>
-      </div>
-    </div>
-  </section>
+  <MediaText
+    title="Op zoek naar écht goede foodtruckcatering?"
+    image={plankImg}
+    aspect="landscape"
+    theme="light"
+  >
+    <ul class="home-doubts_list">
+      <li class="home-doubts_item">Geen idee waar je originele catering voor je event kunt vinden?</li>
+      <li class="home-doubts_item">Je huurde eerder catering, maar het eten viel tegen of kwam te laat?</li>
+      <li class="home-doubts_item">Lastig om iets te vinden dat lekker én professioneel is voor elk type publiek?</li>
+    </ul>
+    <p class="home-doubts_text">
+      De Jachtbus biedt een complete, betrouwbare en smaakvolle ervaring.
+      Van de planning tot de laatste hap staan we voor je klaar!
+    </p>
+  </MediaText>
 
   <ServiceTiles
     title="Waar staat de Jachtbus straks?"
@@ -321,15 +319,6 @@ const faqItems = [
   .hero_form_contact.is-wa-link { display: var(--flex-medium, none); }
   .hero_form_contact.is-wa-btn { display: var(--none-medium, inline-flex); }
   .home_refs_actions { display: flex; }
-  .home-doubts_layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--4);
-  }
-  .home-doubts_title {
-    display: flex;
-    max-width: 25ch;
-  }
   .home-doubts_list {
     display: flex;
     flex-direction: column;
@@ -337,6 +326,7 @@ const faqItems = [
     list-style: disc;
     padding-left: var(--_spacing---space--5);
     max-width: 60ch;
+    margin-bottom: var(--_text-style---margin-bottom);
   }
   .home-doubts_item {
     display: list-item;

@@ -24,6 +24,8 @@ interface CardItem {
   links?: CardLink[];
   /** Makes the whole card one link; ignored when links are given. */
   href?: string;
+  /** Aspect ratio of the photo. */
+  aspect?: 'auto' | 'anamorphic' | 'univisium' | 'widescreen' | 'landscape' | 'portrait' | 'square';
 }
 interface Props {
   /** Section heading. */
@@ -58,6 +60,7 @@ const themeClass = {
               alt={card.alt}
               links={card.links}
               href={card.href}
+              aspect={card.aspect}
             />
           </li>
         ))

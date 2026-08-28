@@ -12,10 +12,19 @@ interface Props {
   alt?: string;
   /** Put the photo on the left instead of the right. */
   reversed?: boolean;
+  /** Aspect ratio of the photo. */
+  aspect?: 'auto' | 'anamorphic' | 'univisium' | 'widescreen' | 'landscape' | 'portrait' | 'square';
   /** Section theme. */
   theme?: 'light' | 'soft' | 'brand';
 }
-const { title, image, alt = '', reversed = false, theme = 'light' } = Astro.props;
+const {
+  title,
+  image,
+  alt = '',
+  reversed = false,
+  aspect = 'landscape',
+  theme = 'light',
+} = Astro.props;
 const themeClass = {
   light: 'u-theme-light',
   soft: 'u-theme-soft',
@@ -33,7 +42,7 @@ const themeClass = {
         <slot />
       </div>
       <div class="media-text_visual_wrap">
-        <Image class="media-text_img" src={image} alt={alt} width={880} />
+        <Image class:list={['media-text_img', `is-${aspect}`]} src={image} alt={alt} width={880} />
       </div>
     </div>
   </div>
@@ -61,9 +70,16 @@ const themeClass = {
   }
   .media-text_img {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: auto;
     object-fit: cover;
     border-radius: var(--radius--large);
     border: var(--border-width--main) solid var(--_theme---border);
   }
+  .media-text_img.is-auto { aspect-ratio: auto; }
+  .media-text_img.is-anamorphic { aspect-ratio: 2.39 / 1; }
+  .media-text_img.is-univisium { aspect-ratio: 2 / 1; }
+  .media-text_img.is-widescreen { aspect-ratio: 16 / 9; }
+  .media-text_img.is-landscape { aspect-ratio: 3 / 2; }
+  .media-text_img.is-portrait { aspect-ratio: 2 / 3; }
+  .media-text_img.is-square { aspect-ratio: 1 / 1; }
 </style>
