@@ -11,7 +11,8 @@ import RegionMap from '../../components/RegionMap.astro';
 import FaqSection from '../../components/FaqSection.astro';
 import CtaSection from '../../components/CtaSection.astro';
 import ServiceSchema from '../../components/ServiceSchema.astro';
-import etenImg from '../../assets/ambachtelijk-eten.jpg';
+import etenImg from '../../assets/eten-serveerplank.jpg';
+import drinkenImg from '../../assets/drinken-wijn.jpg';
 
 const servingStyles = [
   {
@@ -129,16 +130,13 @@ const faqItems = [
     theme="soft"
   />
 
-  <section class="catering-drinks_wrap u-section u-theme-light">
-    <div class="catering-drinks_contain u-container">
-      <div class="catering-drinks_layout u-margin-trim">
-        <SectionHeader
-          title="En het drinken?"
-          text="Kan allebei: wij leveren en schenken, of jij regelt het zelf en wij doen het eten. Tap of flessen, met of zonder bediening. We stemmen het af op je locatie en je gasten."
-        />
-      </div>
-    </div>
-  </section>
+  <MediaText title="En het drinken?" image={drinkenImg} reversed theme="light">
+    <p class="catering-drinks_text">
+      Kan allebei: wij leveren en schenken, of jij regelt het zelf en wij
+      doen het eten. Tap of flessen, met of zonder bediening. We stemmen
+      het af op je locatie en je gasten.
+    </p>
+  </MediaText>
 
   <section class="catering-custom_wrap u-section u-theme-brand">
     <div class="catering-custom_contain u-container">
@@ -182,5 +180,5 @@ const faqItems = [
   .catering-intro_text { max-width: 65ch; }
   .catering-food_text { margin-bottom: var(--_text-style---margin-bottom); }
   .catering-food_subtitle { margin-bottom: var(--_text-style---margin-bottom); }
-  .catering-drinks_layout { display: flex; }
+  .catering-drinks_text { max-width: 55ch; }
 </style>
