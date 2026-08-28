@@ -19,7 +19,7 @@ interface Props {
   text?: string;
   /** Chat bubble message from Peer in the intro column. */
   bubbleMessage?: string;
-  /** Label on the request button. */
+  /** Label on the request button; empty hides the button. */
   buttonLabel?: string;
   /** Where the request button links to. */
   buttonHref?: string;
@@ -34,24 +34,24 @@ const {
   title = "Hoe gaat dat eigenlijk in z'n werk?",
   text = 'Nou, heel makkelijk, van aanvraag tot afspraak wordt alles soepel geregeld.',
   bubbleMessage = 'En als je vragen hebt tussendoor, ben ik één appje van je vandaan!',
-  buttonLabel = 'Aanvraag starten',
+  buttonLabel = '',
   buttonHref = '/aanvraag',
   steps = [
     {
-      title: 'Aanvraag doen',
-      text: 'Vier korte stapjes: wat vier je, waar, en met hoeveel man?',
+      title: 'Je doet een aanvraag',
+      text: 'Via ons aanvraagformulier, een WhatsAppje, een telefoontje samen. Je laat ons je situatie en wensen weten.',
     },
     {
-      title: 'Samen inventariseren',
-      text: 'We bellen of appen even, en nemen samen door wat er bij jouw feest past.',
+      title: 'Samen gaan we vormgeven',
+      text: 'In persoon of in een online meeting bespreken we alles wat er nodig is om er een geslaagde samenwerking van te maken.',
     },
     {
-      title: 'Voorstel',
-      text: 'Daarna krijg je van ons een voorstel met menu en prijs. Op maat, niks standaard.',
+      title: 'Je krijgt een voorstel',
+      text: 'Op basis van je wensen en alles wat er bij komt kijken, maken we een voorstel. Jij kijkt er naar en we passen waar nodig nog wat aan.',
     },
     {
-      title: 'Regelen',
-      text: 'Wij doen de inkoop, de planning en de opbouw. Jij hoeft alleen nog zin te hebben.',
+      title: 'Wij gaan aan de slag',
+      text: 'We treffen voorbereidingen naar alles wat we in het geaccepteerde voorstel hebben afgesproken. Zo is alles klaar voor een geslaagde samenwerking!',
     },
   ],
   closing = 'We zien elkaar op de afgesproken dag en tijd!',
@@ -75,16 +75,20 @@ const themeClass = {
           <p>{text}</p>
         </div>
         {bubbleMessage && <ChatBubble message={bubbleMessage} />}
-        <div class="step-flow_actions u-button-wrapper">
-          <Button variant="primary" label={buttonLabel} href={buttonHref} />
-        </div>
+        {
+          buttonLabel && (
+            <div class="step-flow_actions u-button-wrapper">
+              <Button variant="primary" label={buttonLabel} href={buttonHref} />
+            </div>
+          )
+        }
       </div>
       <div class="step-flow_steps">
         <ol class="step-flow_list">
           {
             steps.map((step, index) => (
               <li class="step-flow_item">
-                <span class="step-flow_item_num u-text-style-h5" aria-hidden="true">
+                <span class="step-flow_item_num u-text-style-h6" aria-hidden="true">
                   {index + 1}
                 </span>
                 <div class="step-flow_item_content u-margin-trim">
@@ -124,13 +128,12 @@ const themeClass = {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--_spacing---space--4);
-    max-width: 45ch;
     position: var(--relative-medium, sticky);
     top: calc((var(--nav--height-total) + var(--_spacing---space--5)) * var(--_responsive---large));
   }
   .step-flow_title {
     display: flex;
-    max-width: 20ch;
+    max-width: 100%;
   }
   .step-flow_text {
     display: flex;
@@ -156,8 +159,8 @@ const themeClass = {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--_spacing---space--7);
-    height: var(--_spacing---space--7);
+    width: var(--_spacing---space--6);
+    height: var(--_spacing---space--6);
     background-color: var(--_theme---background-2);
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--round);
@@ -175,7 +178,7 @@ const themeClass = {
     align-items: center;
   }
   .step-flow_closing_icon {
-    width: var(--_spacing---space--7);
+    width: var(--_spacing---space--6);
     height: var(--_spacing---space--5);
     color: var(--_theme---text-accent);
   }
