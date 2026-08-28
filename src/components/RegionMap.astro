@@ -91,14 +91,15 @@ const places = [
     gap: var(--_spacing---space--2) var(--_spacing---space--3);
   }
   .region_list_item { display: flex; }
+  /* Compact pill: slight radius with border, tight vertical padding. */
   .region_chip_wrap {
     display: inline-flex;
     align-items: center;
-    min-height: var(--target--min);
-    padding: var(--_spacing---space--2) var(--_spacing---space--4);
+    min-height: var(--_spacing---space--6);
+    padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
     background-color: var(--_theme---background-2);
     border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--round);
+    border-radius: var(--radius--main);
     text-decoration: none;
   }
 </style>

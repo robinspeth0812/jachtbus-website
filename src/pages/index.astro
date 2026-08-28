@@ -87,32 +87,28 @@ const faqItems = [
             Mobiele cateraar/foodtruck in Drenthe, Friesland, Groningen e.o.
           </h1>
           <div class="hero_title u-heading u-text-style-h1">
-            <h2>Dé Foodtruck voor eerlijk, ambachtelijk bereid eten op locatie.</h2>
+            <h2>Dé Foodtruck voor eerlijk, ambachtelijk bereid eten op locatie</h2>
           </div>
           <div class="hero_text u-text u-text-style-large">
             <p>
-              (H)Eerlijke catering, vers bereid en zorgvuldig samengesteld,
-              op jouw locatie naar wens met de Jachtbus Foodtruck.
+              Eerlijke catering, vers bereid en zorgvuldig samengesteld.
+              Op jouw locatie naar wens met de Jachtbus Foodtruck.
             </p>
           </div>
-          <ul class="hero_regions_list">
-            {
-              regionPills.map((region) => (
-                <li class="hero_regions_item">
-                  <a class="hero_regions_pill u-theme-light" href={region.href} data-trigger="hover focus">
-                    <svg class="hero_regions_icon" aria-hidden="true" viewBox="0 0 16 16">
-                      <path
-                        fill="currentColor"
-                        fill-rule="evenodd"
-                        d="M8 1.5c-2.7 0-4.8 2.1-4.8 4.8 0 3.6 4.8 8.2 4.8 8.2s4.8-4.6 4.8-8.2c0-2.7-2.1-4.8-4.8-4.8Zm0 6.5a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z"
-                      />
-                    </svg>
-                    <span class="hero_regions_text u-hover-underline">{region.label}</span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
+          <div class="hero_regions_wrap">
+            <span class="hero_regions_label u-text-style-small">In:</span>
+            <ul class="hero_regions_list">
+              {
+                regionPills.map((region) => (
+                  <li class="hero_regions_item">
+                    <a class="hero_regions_pill u-theme-light" href={region.href} data-trigger="hover focus">
+                      <span class="hero_regions_text u-hover-underline">{region.label}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
         </div>
         <div class="hero_form_wrap u-theme-soft u-margin-trim" data-aanvraag-form>
           <h2 class="hero_form_title u-text-style-h4">Waarvoor zoek je een foodtruck?</h2>
@@ -244,46 +240,44 @@ const faqItems = [
     align-items: center;
     gap: var(--_spacing---space--7) var(--_spacing---space--8);
   }
-  .hero_content { max-width: 55ch; }
   .hero_tagline {
     letter-spacing: var(--_typography---letter-spacing--caps);
     font-size: var(--_typography---size--small);
     margin-bottom: var(--_text-style---margin-bottom);
   }
-  .hero_regions_list {
+  .hero_regions_wrap {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: var(--_spacing---space--2);
     margin-top: var(--_spacing---space--4);
   }
+  .hero_regions_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
   .hero_regions_item { display: flex; }
+  /* Compact pill: slight radius with border, tight vertical padding. */
   .hero_regions_pill {
     display: inline-flex;
     align-items: center;
-    gap: var(--_spacing---space--2);
-    min-height: var(--target--min);
-    padding: var(--_spacing---space--1) var(--_spacing---space--3);
+    min-height: var(--_spacing---space--6);
+    padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
     background-color: var(--_theme---background-2);
     color: var(--_theme---text);
     border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--round);
+    border-radius: var(--radius--main);
     font-size: var(--_typography---size--small);
     text-decoration: none;
   }
-  .hero_regions_icon {
-    width: 1em;
-    height: 1em;
-    flex-shrink: 0;
-    color: var(--_theme---text-accent);
-  }
   .hero_title {
     display: flex;
-    max-width: 24ch;
     margin-bottom: var(--_text-style---margin-bottom);
   }
   .hero_text {
     display: flex;
-    max-width: 50ch;
+    max-width: 55ch;
   }
   .hero_form_wrap {
     display: flex;
