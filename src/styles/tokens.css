@@ -22,6 +22,10 @@
   --color--camarone-6: #00200a; /* main text color */
   --color--camarone-7: #001808;
 
+  /* Brown text colors for the beige scheme (owner, 2026-08-28) */
+  --color--brown-dark: #1b1817; /* headings, secondary and link buttons on light */
+  --color--brown: #292524; /* paragraphs and body text on light */
+
   /* Google brand colors, only for the review trust widgets */
   --color--google-grey: #f8f9fa;
   --color--google-star: #fdd663;

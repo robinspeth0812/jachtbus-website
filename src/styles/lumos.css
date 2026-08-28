@@ -20,13 +20,16 @@
   --_theme---background: var(--color--marigold-1);
   --_theme---background-2: var(--color--marigold-2);
   --_theme---background-skeleton: var(--color--marigold-2);
-  --_theme---text: var(--color--camarone-6);
+  /* Warm near-blacks on beige: headings darker than body (owner,
+     2026-08-28). On green both stay marigold-1, see the brand block. */
+  --_theme---heading: var(--color--brown-dark);
+  --_theme---text: var(--color--brown);
   --_theme---text-accent: var(--color--marigold-5);
   /* Google brand values, constant across themes (not overridden in the
      dark/brand blocks): review stars and the trust widget surface. */
   --_theme---rating: var(--color--google-star);
   --_theme---google-surface: var(--color--google-grey);
-  --_theme---google-surface-text: var(--color--camarone-6);
+  --_theme---google-surface-text: var(--color--brown);
   /* Dark scrim for text readability over hero photos; near-black so it
      reads as shade, not as a green film. */
   --_theme---scrim: color-mix(in srgb, var(--color--camarone-7) 82%, transparent);
@@ -50,12 +53,14 @@
   --_theme---button-primary--border-hover: var(--color--marigold-6);
   --_theme---button-primary--text-hover: var(--color--white);
 
+  /* Secondary and link buttons on light in Brown Dark, matching the
+     heading color (owner, 2026-08-28). */
   --_theme---button-secondary--background: transparent;
-  --_theme---button-secondary--border: var(--color--camarone-4);
-  --_theme---button-secondary--text: var(--color--camarone-4);
-  --_theme---button-secondary--background-hover: var(--color--camarone-1);
-  --_theme---button-secondary--border-hover: var(--color--camarone-5);
-  --_theme---button-secondary--text-hover: var(--color--camarone-5);
+  --_theme---button-secondary--border: var(--color--brown-dark);
+  --_theme---button-secondary--text: var(--color--brown-dark);
+  --_theme---button-secondary--background-hover: var(--color--marigold-2);
+  --_theme---button-secondary--border-hover: var(--color--brown-dark);
+  --_theme---button-secondary--text-hover: var(--color--brown-dark);
 }
 
 /* u-theme-soft is identical to light (owner's rule: marigold-1 is the
@@ -73,6 +78,7 @@
   --_theme---background: var(--color--camarone-4);
   --_theme---background-2: var(--color--camarone-5);
   --_theme---background-skeleton: var(--color--camarone-5);
+  --_theme---heading: var(--color--marigold-1);
   --_theme---text: var(--color--marigold-1);
   --_theme---text-accent: var(--color--marigold-3);
   --_theme---border: var(--color--camarone-3);
@@ -310,6 +316,7 @@ details[open],
   font-weight: var(--_typography---font--primary-bold);
   line-height: var(--_typography---line-height--heading);
   letter-spacing: var(--_typography---letter-spacing--tight);
+  color: var(--_theme---heading);
   /* All caps via CSS so screen readers still get the normal text. */
   text-transform: uppercase;
 }

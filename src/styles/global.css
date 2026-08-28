@@ -30,6 +30,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: var(--_typography---font--primary-bold);
   line-height: var(--_typography---line-height--heading);
   font-size: inherit;
+  color: var(--_theme---heading);
   text-transform: uppercase;
   overflow-wrap: break-word;
 }

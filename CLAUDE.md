@@ -220,8 +220,13 @@ Fixed assignments (do not deviate):
 
 - `#00501b` is the **brand color**: background of dark (brand-themed)
   sections and the **focus ring** color.
-- `#00200a` is the **main text color** (green-black, on-brand) — not
-  pure black.
+- **Text on the beige scheme** (owner's decision 2026-08-28): headings
+  `#1b1817` ("Brown Dark", `--color--brown-dark`), paragraphs and body
+  `#292524` ("Brown", `--color--brown`). Secondary and link buttons on
+  light also use Brown Dark for text and border. On the green sections
+  headings and text are both `#f8f3ea` (marigold-1). `#00200a`
+  (camarone-6) is no longer the main text color; it remains in use for
+  the border color-mix and green-black accents.
 - `#8a6820` is the **button color on all themes** (white text on it)
   and the gold **text color on light backgrounds**. Deliberately
   adjusted from `#967124`, which hit only 4.48:1 with white — just
