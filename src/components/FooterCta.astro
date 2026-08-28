@@ -14,9 +14,9 @@ interface Props {
   buttonLabel?: string;
   /** Where the primary button links to. */
   buttonHref?: string;
-  /** Label on the secondary button; empty hides it. */
+  /** Label on the text-only link next to the button; empty hides it. */
   secondaryLabel?: string;
-  /** Where the secondary button links to. */
+  /** Where the text-only link goes. */
   secondaryHref?: string;
 }
 const {
@@ -24,8 +24,8 @@ const {
   text = 'Vertel ons wat je viert, dan hoor je snel van ons.',
   buttonLabel = 'Aanvraag starten',
   buttonHref = '/aanvraag',
-  secondaryLabel = 'Bellen',
-  secondaryHref = 'tel:+31592656363',
+  secondaryLabel = 'Contact',
+  secondaryHref = '/contact',
 } = Astro.props;
 ---
 
@@ -47,7 +47,7 @@ const {
       </div>
       <div class="footer-cta_actions u-button-wrapper">
         <Button variant="primary" label={buttonLabel} href={buttonHref} />
-        {secondaryLabel && <Button variant="secondary" label={secondaryLabel} href={secondaryHref} />}
+        {secondaryLabel && <Button variant="link" label={secondaryLabel} href={secondaryHref} />}
       </div>
     </div>
   </div>

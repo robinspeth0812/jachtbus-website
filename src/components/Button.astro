@@ -2,8 +2,8 @@
 // Standard site button. Colors come from the active section theme, so the
 // same variant renders correctly on light, soft, and brand sections.
 interface Props {
-  /** Visual style of the button. */
-  variant?: 'primary' | 'secondary';
+  /** Visual style: filled, outlined, or text-only link. */
+  variant?: 'primary' | 'secondary' | 'link';
   /** Text shown inside the button. */
   label?: string;
   /** Where the button links to. */
@@ -13,7 +13,7 @@ const { variant = 'primary', label = 'Aanvraag starten', href = '/aanvraag' } = 
 ---
 
 <a class:list={['button_wrap', `is-${variant}`]} href={href} data-trigger="hover focus">
-  {label}
+  <span class:list={['button_label', variant === 'link' && 'u-hover-underline']}>{label}</span>
 </a>
 
 <style>
@@ -50,6 +50,13 @@ const { variant = 'primary', label = 'Aanvraag starten', href = '/aanvraag' } = 
       var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
       var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off))
     );
+  }
+  /* Text-only variant: same type style, no fill or border. */
+  .button_wrap.is-link {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--_theme---button-secondary--text);
+    padding-inline: var(--_spacing---space--2);
   }
   .button_wrap.is-secondary {
     background-color: color-mix(
