@@ -1,11 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Button from '../components/Button.astro';
 import ServiceTiles from '../components/ServiceTiles.astro';
 import StepFlow from '../components/StepFlow.astro';
 import MediaText from '../components/MediaText.astro';
-import SectionHeader from '../components/SectionHeader.astro';
 import RegionPill from '../components/RegionPill.astro';
 import CoreValues from '../components/CoreValues.astro';
 import ChatBubble from '../components/ChatBubble.astro';
@@ -17,6 +15,31 @@ import CtaSection from '../components/CtaSection.astro';
 import heroImg from '../assets/jachtbus-bus.jpg';
 import busImg from '../assets/bediening-serveert.jpg';
 import plankImg from '../assets/eten-serveerplank.jpg';
+import TestimonialGrid from '../components/TestimonialGrid.astro';
+import drinkenImg from '../assets/drinken-wijn.jpg';
+import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
+import heleBusImg from '../assets/jachtbus-bus.jpg';
+
+// Placeholder testimonials, clearly labeled as samples: swap for real
+// quotes and ratings as soon as the first references exist.
+const homeTestimonials = [
+  {
+    quote: 'Voorbeeldquote: hier komt straks de echte reactie van een gast te staan.',
+    name: 'Voornaam Achternaam',
+    meta: 'Bruiloft · Plaatsnaam',
+    stars: 5,
+  },
+  { image: drinkenImg, alt: '' },
+  { image: bedrijfsfeestImg, alt: '' },
+  { image: heleBusImg, alt: '' },
+  {
+    quote: 'Nog een voorbeeldquote, iets langer, zodat je ziet hoe twee regels tekst in de kaart vallen.',
+    name: 'Voornaam Achternaam',
+    meta: 'Bedrijfsfeest · Plaatsnaam',
+    stars: 5,
+  },
+  { image: plankImg, alt: '' },
+];
 
 const intentTiles = [
   { href: '/aanvraag?gelegenheid=bruiloft', label: 'Bruiloft' },
@@ -153,17 +176,11 @@ const faqItems = [
     </ul>
   </MediaText>
 
-  <section class="home_refs_wrap u-section u-theme-light">
-    <div class="home_refs_contain u-container">
-      <SectionHeader
-        title="Echte feesten, echte reacties"
-        text="We verzamelen nu de eerste referenties en Google-reviews. Binnenkort zie je hier foto's en verhalen van eerdere events."
-      />
-      <div class="home_refs_actions u-button-wrapper">
-        <Button variant="secondary" label="Bekijk referenties" href="/referenties" />
-      </div>
-    </div>
-  </section>
+  <TestimonialGrid
+    text="Voorbeelddata: hier komen de echte quotes en foto's zodra de eerste referenties binnen zijn."
+    items={homeTestimonials}
+    theme="light"
+  />
 
   <LocationRequirements theme="soft" />
 
@@ -318,7 +335,6 @@ const faqItems = [
   }
   .hero_form_contact.is-wa-link { display: var(--flex-medium, none); }
   .hero_form_contact.is-wa-btn { display: var(--none-medium, inline-flex); }
-  .home_refs_actions { display: flex; }
   .home-doubts_list {
     display: flex;
     flex-direction: column;
