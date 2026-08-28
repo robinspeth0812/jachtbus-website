@@ -67,10 +67,12 @@
   --_spacing---space--7: 3rem;
   --_spacing---space--8: 4rem;
 
+  /* Tightened 2026-08-28 (owner: sections sat too far apart; each
+     boundary stacks two paddings, so these read doubled). */
   --_spacing---section-space--none: 0rem;
-  --_spacing---section-space--small: clamp(2rem, 1rem + 4vw, 4rem);
-  --_spacing---section-space--main: clamp(3rem, 1.5rem + 5vw, 6rem);
-  --_spacing---section-space--large: clamp(4rem, 2rem + 7vw, 8rem);
+  --_spacing---section-space--small: clamp(1.5rem, 0.75rem + 2.5vw, 3rem);
+  --_spacing---section-space--main: clamp(2.5rem, 1.25rem + 3.5vw, 4.5rem);
+  --_spacing---section-space--large: clamp(3rem, 1.5rem + 5vw, 6rem);
   --_spacing---section-space--page-top: calc(var(--nav--height-total) + clamp(2rem, 1rem + 4vw, 4rem));
 
   /* --- Site --- */

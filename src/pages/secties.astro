@@ -1,0 +1,174 @@
+---
+// Internal section library: every recurring section rendered live with
+// its props listed, as the counterpart of /styleguide (tokens and
+// rules). Not linked in the nav and excluded from search engines.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CoreValues from '../components/CoreValues.astro';
+import CardGrid from '../components/CardGrid.astro';
+import ServiceTiles from '../components/ServiceTiles.astro';
+import StepList from '../components/StepList.astro';
+import MediaText from '../components/MediaText.astro';
+import LocationRequirements from '../components/LocationRequirements.astro';
+import RegionMap from '../components/RegionMap.astro';
+import FaqSection from '../components/FaqSection.astro';
+import CtaSection from '../components/CtaSection.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import busImg from '../assets/jachtbus-bus.jpg';
+
+const specimens = [
+  { name: 'TrustBar', props: 'items' },
+  { name: 'CoreValues', props: 'title, text' },
+  { name: 'CardGrid', props: 'title, text, cards, theme' },
+  { name: 'ServiceTiles', props: 'title, text, theme' },
+  { name: 'StepList', props: 'title, text, steps, theme' },
+  { name: 'MediaText', props: 'title, image, alt, reversed, theme + vrije inhoud' },
+  { name: 'LocationRequirements', props: 'title, text, compact, theme + vrije inhoud' },
+  { name: 'RegionMap', props: 'title, text, theme' },
+  { name: 'FaqSection', props: 'title, text, items, theme (met FAQPage-schema)' },
+  { name: 'CtaSection', props: 'title, text, buttonLabel, buttonHref, showContact + vrije inhoud' },
+];
+
+const demoCards = [
+  { title: 'Kaart één', text: 'Korte kaart met titel en één zin, voor twijfels of vragen.' },
+  { title: 'Kaart twee', text: 'Het grid vult zichzelf: drie of vier kaarten, altijd netjes.' },
+  { title: 'Kaart drie', text: 'Op mobiel stapelen de kaarten automatisch onder elkaar.' },
+];
+const demoSteps = [
+  { title: 'Stap één', text: 'Genummerde stappen met een korte uitleg per stap.' },
+  { title: 'Stap twee', text: 'Drie of vier stappen, het grid schikt zichzelf.' },
+  { title: 'Stap drie', text: 'Gebruikt voor hoe-het-werkt en het bruiloftstraject.' },
+];
+const demoFaq = [
+  {
+    question: 'Wat is dit voor sectie?',
+    answer: 'Uitklapbare vragen met FAQPage-structured data voor Google, zonder JavaScript.',
+  },
+  {
+    question: 'Waar wordt hij gebruikt?',
+    answer: 'Op home, catering en bruiloft, elk met eigen vragen via de items-prop.',
+  },
+];
+---
+
+<Base
+  title="Sectiebibliotheek"
+  description="Interne bibliotheek van terugkerende secties."
+  noindex
+  footerCta={false}
+>
+  <PageHero
+    title="Sectiebibliotheek"
+    text="Alle terugkerende secties, live en met hun instelmogelijkheden. Interne pagina, hoort bij de styleguide. De volgorde hieronder is willekeurig; op een echte pagina wisselen thema's en vormen elkaar af."
+  />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[0].name}</code> · props: {specimens[0].props}
+      </p>
+    </div>
+  </div>
+  <TrustBar />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[1].name}</code> · props: {specimens[1].props}
+      </p>
+    </div>
+  </div>
+  <CoreValues />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[2].name}</code> · props: {specimens[2].props}
+      </p>
+    </div>
+  </div>
+  <CardGrid title="Kaartengrid" text="Voor twijfels, dagmomenten en regenvragen." cards={demoCards} theme="light" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[3].name}</code> · props: {specimens[3].props}
+      </p>
+    </div>
+  </div>
+  <ServiceTiles title="De vier diensten" text="Vaste inhoud, alleen kop en intro zijn instelbaar." theme="soft" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[4].name}</code> · props: {specimens[4].props}
+      </p>
+    </div>
+  </div>
+  <StepList title="Stappenlijst" text="Genummerd, drie of vier stappen." steps={demoSteps} theme="light" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[5].name}</code> · props: {specimens[5].props}
+      </p>
+    </div>
+  </div>
+  <MediaText title="Tekst naast foto" image={busImg} theme="soft">
+    <p class="secties_demo_text">
+      De inhoud is vrij: alinea's, lijstjes of een chatbubble. De foto kan
+      links of rechts via de reversed-prop.
+    </p>
+    <ChatBubble message="Zoals deze bubble, gewoon in de inhoud." />
+  </MediaText>
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[6].name}</code> · props: {specimens[6].props}
+      </p>
+    </div>
+  </div>
+  <LocationRequirements theme="light" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[7].name}</code> · props: {specimens[7].props}
+      </p>
+    </div>
+  </div>
+  <RegionMap theme="soft" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[8].name}</code> · props: {specimens[8].props}
+      </p>
+    </div>
+  </div>
+  <FaqSection items={demoFaq} theme="light" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[9].name}</code> · props: {specimens[9].props}
+      </p>
+    </div>
+  </div>
+  <CtaSection />
+</Base>
+
+<style>
+  .secties_label_wrap {
+    display: flex;
+    flex-flow: column;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-top: var(--_spacing---space--2);
+    padding-bottom: var(--_spacing---space--2);
+  }
+  .secties_label_text { opacity: 0.85; }
+  .secties_demo_text { margin-bottom: var(--_text-style---margin-bottom); }
+</style>

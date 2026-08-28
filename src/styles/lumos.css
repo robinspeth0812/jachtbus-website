@@ -213,7 +213,7 @@ details[open],
   display: flex;
   flex-flow: column;
   container-type: inline-size;
-  gap: var(--_spacing---space--8);
+  gap: var(--_spacing---space--7);
 }
 
 .u-margin-trim > :first-child { margin-top: 0; }
