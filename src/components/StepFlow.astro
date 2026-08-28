@@ -1,0 +1,186 @@
+---
+// Two-column step flow: intro column left (sticky on desktop) with
+// heading, paragraph, a chat bubble from Peer, and the request button;
+// numbered steps right, without a connecting line. The closing line
+// under the steps is deliberately not a numbered step.
+import Button from './Button.astro';
+import ChatBubble from './ChatBubble.astro';
+
+interface Step {
+  /** Step heading. */
+  title: string;
+  /** Short explanation. */
+  text: string;
+}
+interface Props {
+  /** Section heading. */
+  title?: string;
+  /** Paragraph under the heading. */
+  text?: string;
+  /** Chat bubble message from Peer in the intro column. */
+  bubbleMessage?: string;
+  /** Label on the request button. */
+  buttonLabel?: string;
+  /** Where the request button links to. */
+  buttonHref?: string;
+  /** The numbered steps. */
+  steps?: Step[];
+  /** Closing line under the steps; empty hides it. */
+  closing?: string;
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const {
+  title = 'Hoe het werkt',
+  text = 'Van aanvraag tot feest in vier stappen. Zo weet je precies waar je aan toe bent.',
+  bubbleMessage = 'Vragen tussendoor? App me gerust even.',
+  buttonLabel = 'Aanvraag starten',
+  buttonHref = '/aanvraag',
+  steps = [
+    {
+      title: 'Aanvraag doen',
+      text: 'Vertel in vier korte stappen wat je viert, waar en met hoeveel gasten.',
+    },
+    {
+      title: 'Samen inventariseren',
+      text: 'We nemen contact op en nemen samen door wat bij jullie feest past.',
+    },
+    {
+      title: 'Voorstel',
+      text: 'Je krijgt een voorstel met menu en prijs, afgestemd op jouw feest.',
+    },
+    {
+      title: 'Regelen',
+      text: 'Wij doen de inkoop, de planning en de opbouw. Jij hoeft niks meer te doen.',
+    },
+  ],
+  closing = 'We zien elkaar op de afgesproken dag en tijd!',
+  theme = 'light',
+} = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+---
+
+<section class:list={['step-flow_wrap', 'u-section', themeClass]}>
+  <div class="step-flow_contain u-container">
+    <div class="step-flow_layout">
+      <div class="step-flow_intro u-margin-trim">
+        <div class="step-flow_title u-heading u-text-style-h2">
+          <h2>{title}</h2>
+        </div>
+        <div class="step-flow_text u-text u-text-style-large">
+          <p>{text}</p>
+        </div>
+        {bubbleMessage && <ChatBubble message={bubbleMessage} />}
+        <div class="step-flow_actions u-button-wrapper">
+          <Button variant="primary" label={buttonLabel} href={buttonHref} />
+        </div>
+      </div>
+      <div class="step-flow_steps">
+        <ol class="step-flow_list">
+          {
+            steps.map((step, index) => (
+              <li class="step-flow_item">
+                <span class="step-flow_item_num u-text-style-h5" aria-hidden="true">
+                  {index + 1}
+                </span>
+                <div class="step-flow_item_content u-margin-trim">
+                  <h3 class="step-flow_item_title u-text-style-h5">{step.title}</h3>
+                  <p class="step-flow_item_text u-text-style-main">{step.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        {
+          closing && (
+            <div class="step-flow_closing">
+              <svg class="step-flow_closing_icon" aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8.5 6.5 12 13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <p class="step-flow_closing_text u-text-style-main">{closing}</p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .step-flow_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  /* The intro scrolls along on desktop while the steps pass by. */
+  .step-flow_intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--4);
+    max-width: 45ch;
+    position: var(--relative-medium, sticky);
+    top: calc((var(--nav--height-total) + var(--_spacing---space--5)) * var(--_responsive---large));
+  }
+  .step-flow_title {
+    display: flex;
+    max-width: 20ch;
+  }
+  .step-flow_text {
+    display: flex;
+    max-width: 45ch;
+  }
+  .step-flow_steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--6);
+  }
+  .step-flow_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--6);
+  }
+  .step-flow_item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--_spacing---space--4);
+    align-items: start;
+  }
+  .step-flow_item_num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--_spacing---space--7);
+    height: var(--_spacing---space--7);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+  }
+  .step-flow_item_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .step-flow_item_text { max-width: 45ch; }
+  .step-flow_closing {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--_spacing---space--4);
+    align-items: center;
+  }
+  .step-flow_closing_icon {
+    width: var(--_spacing---space--7);
+    height: var(--_spacing---space--5);
+    color: var(--_theme---text-accent);
+  }
+  .step-flow_closing_text {
+    font-weight: var(--_typography---font--primary-bold);
+    max-width: 45ch;
+  }
+</style>

@@ -1,0 +1,102 @@
+---
+// Compact CTA card that straddles the footer edge: the section's lower
+// half is footer green, so the foreground-colored card sits half above
+// the page and half over the footer. Rendered by the layout directly
+// above the footer; pages with their own closing CTA turn it off.
+import Button from './Button.astro';
+
+interface Props {
+  /** Card heading. */
+  title?: string;
+  /** Line under the heading. */
+  text?: string;
+  /** Label on the primary button. */
+  buttonLabel?: string;
+  /** Where the primary button links to. */
+  buttonHref?: string;
+  /** Label on the secondary button; empty hides it. */
+  secondaryLabel?: string;
+  /** Where the secondary button links to. */
+  secondaryHref?: string;
+}
+const {
+  title = 'Zin in de Jachtbus op jouw feest?',
+  text = 'Vertel ons wat je viert, dan hoor je snel van ons.',
+  buttonLabel = 'Aanvraag starten',
+  buttonHref = '/aanvraag',
+  secondaryLabel = 'Bellen',
+  secondaryHref = 'tel:+31592656363',
+} = Astro.props;
+---
+
+<section class="footer-cta_wrap">
+  <div class="footer-cta_bg u-theme-brand" aria-hidden="true"></div>
+  <div class="footer-cta_contain u-container">
+    <div class="footer-cta_card">
+      <div class="footer-cta_content u-margin-trim">
+        <div class="footer-cta_title u-heading u-text-style-h3">
+          <h2>{title}</h2>
+        </div>
+        {
+          text && (
+            <div class="footer-cta_text u-text u-text-style-main">
+              <p>{text}</p>
+            </div>
+          )
+        }
+      </div>
+      <div class="footer-cta_actions u-button-wrapper">
+        <Button variant="primary" label={buttonLabel} href={buttonHref} />
+        {secondaryLabel && <Button variant="secondary" label={secondaryLabel} href={secondaryHref} />}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .footer-cta_wrap {
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    padding-top: var(--_spacing---section-space--small);
+  }
+  /* Lower half in footer green, so the card straddles the edge. */
+  .footer-cta_bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50%;
+    background-color: var(--_theme---background);
+  }
+  .footer-cta_contain {
+    position: relative;
+    z-index: 1;
+  }
+  .footer-cta_card {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: center;
+    gap: var(--_spacing---space--4) var(--_spacing---space--6);
+    padding: var(--_spacing---space--6) var(--_spacing---space--7);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+    box-shadow: 0 var(--_spacing---space--1) var(--_spacing---space--4) var(--_theme---shadow);
+  }
+  .footer-cta_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .footer-cta_title {
+    display: flex;
+    max-width: 25ch;
+  }
+  .footer-cta_text {
+    display: flex;
+    max-width: 50ch;
+  }
+  .footer-cta_actions { justify-content: var(--start-medium, flex-end); }
+</style>

@@ -3,20 +3,12 @@
 // wider), and a bottom row with copyright, legal links, and site credits
 // over a faded logo watermark.
 import { Image } from 'astro:assets';
-import Button from './Button.astro';
 import TrustWidget from './TrustWidget.astro';
 import logo from '../assets/jachtbus-logo-wit.png';
 
 // Google trust widget under the brand column: renders only once real
 // reviews exist. Fill in with the live score, count, and GBP link.
 const reviews: { score: string; count: number; href: string } | null = null;
-
-interface Props {
-  /** Show the thin CTA bar above the footer. Turn off on pages that end
-      with their own closing CTA section. */
-  showCta?: boolean;
-}
-const { showCta = true } = Astro.props;
 
 const year = new Date().getFullYear();
 const creditsUrl =
@@ -56,23 +48,6 @@ const contactSubLinks = [
   { href: 'https://wa.me/31592656363', label: 'WhatsApp' },
 ];
 ---
-
-{
-  showCta && (
-    <section class="cta_wrap u-section u-theme-soft">
-      <div class="cta_contain u-container">
-        <div class="cta_layout">
-          <p class="cta_text u-text-style-large">
-            Zin in de Jachtbus op jouw feest? Vertel ons wat je viert.
-          </p>
-          <div class="cta_actions u-button-wrapper">
-            <Button variant="primary" label="Aanvraag starten" href="/aanvraag" />
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 <footer class="footer_wrap u-section u-theme-brand">
   <div class="footer_contain u-container">
@@ -203,22 +178,6 @@ const contactSubLinks = [
 </footer>
 
 <style>
-  .cta_wrap {
-    padding-top: var(--_spacing---space--6);
-    padding-bottom: var(--_spacing---space--6);
-  }
-  .cta_layout {
-    display: flex;
-    flex-direction: var(--column-medium, row);
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    text-align: var(--center-medium, left);
-    gap: var(--_spacing---space--4) var(--_spacing---space--6);
-  }
-  .cta_text { max-width: 45ch; }
-  .cta_actions { justify-content: var(--center-medium, flex-end); }
-
   .footer_wrap { overflow: clip; }
   .footer_contain {
     position: relative;

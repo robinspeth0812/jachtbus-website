@@ -8,13 +8,18 @@ import CoreValues from '../components/CoreValues.astro';
 import CardGrid from '../components/CardGrid.astro';
 import ServiceTiles from '../components/ServiceTiles.astro';
 import StepList from '../components/StepList.astro';
+import StepFlow from '../components/StepFlow.astro';
 import MediaText from '../components/MediaText.astro';
 import LocationRequirements from '../components/LocationRequirements.astro';
 import RegionMap from '../components/RegionMap.astro';
 import FaqSection from '../components/FaqSection.astro';
 import CtaSection from '../components/CtaSection.astro';
 import ChatBubble from '../components/ChatBubble.astro';
+import TestimonialGrid from '../components/TestimonialGrid.astro';
 import busImg from '../assets/jachtbus-bus.jpg';
+import etenImg from '../assets/ambachtelijk-eten.jpg';
+import evenementImg from '../assets/dienst-evenement.jpg';
+import regioImg from '../assets/jachtbus-regio.jpg';
 
 const specimens = [
   { name: 'CoreValues variant="bar"', props: 'title, text, signature, variant' },
@@ -22,11 +27,34 @@ const specimens = [
   { name: 'CardGrid', props: 'title, text, cards (elk: title, text, image, alt, links, href), theme' },
   { name: 'ServiceTiles', props: 'title, text, theme' },
   { name: 'StepList', props: 'title, text, steps, theme' },
+  { name: 'StepFlow', props: 'title, text, bubbleMessage, buttonLabel, buttonHref, steps, closing, theme' },
   { name: 'MediaText', props: 'title, image, alt, reversed, theme + vrije inhoud' },
   { name: 'LocationRequirements', props: 'title, text, compact, theme + vrije inhoud' },
   { name: 'RegionMap', props: 'title, text, theme' },
   { name: 'FaqSection', props: 'title, text, items, theme (met FAQPage-schema)' },
-  { name: 'CtaSection', props: 'title, text, buttonLabel, buttonHref, showContact + vrije inhoud' },
+  { name: 'CtaSection', props: 'title, text, noteText, buttonLabel, buttonHref, phone, image, alt + vrije inhoud' },
+  { name: 'TestimonialGrid', props: 'title, text, moreLabel, moreHref, items (quote of foto), theme. Alleen echte quotes en sterren.' },
+];
+
+// Sample testimonials, clearly labeled: real quotes replace these once
+// they exist (house rule: no invented reviews on live pages).
+const demoTestimonials = [
+  {
+    quote: 'Voorbeeldquote: hier komt straks de echte reactie van een gast te staan.',
+    name: 'Voornaam Achternaam',
+    meta: 'Bruiloft · Plaatsnaam',
+    stars: 5,
+  },
+  { image: etenImg, alt: '' },
+  { image: evenementImg, alt: '' },
+  { image: regioImg, alt: '' },
+  {
+    quote: 'Nog een voorbeeldquote, iets langer, zodat je ziet hoe twee regels tekst in de kaart vallen bij dit formaat.',
+    name: 'Voornaam Achternaam',
+    meta: 'Bedrijfsfeest · Plaatsnaam',
+    stars: 5,
+  },
+  { image: busImg, alt: '' },
 ];
 
 const demoCards = [
@@ -130,7 +158,16 @@ const demoFaq = [
       </p>
     </div>
   </div>
-  <MediaText title="Tekst naast foto" image={busImg} theme="soft">
+  <StepFlow theme="soft" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[6].name}</code> · props: {specimens[6].props}
+      </p>
+    </div>
+  </div>
+  <MediaText title="Tekst naast foto" image={busImg} theme="light">
     <p class="secties_demo_text">
       De inhoud is vrij: alinea's, lijstjes of een chatbubble. De foto kan
       links of rechts via de reversed-prop.
@@ -141,20 +178,11 @@ const demoFaq = [
   <div class="secties_label_wrap u-theme-brand">
     <div class="secties_label_contain u-container">
       <p class="secties_label_text u-text-style-small">
-        <code>{specimens[6].name}</code> · props: {specimens[6].props}
-      </p>
-    </div>
-  </div>
-  <LocationRequirements theme="light" />
-
-  <div class="secties_label_wrap u-theme-brand">
-    <div class="secties_label_contain u-container">
-      <p class="secties_label_text u-text-style-small">
         <code>{specimens[7].name}</code> · props: {specimens[7].props}
       </p>
     </div>
   </div>
-  <RegionMap theme="soft" />
+  <LocationRequirements theme="soft" />
 
   <div class="secties_label_wrap u-theme-brand">
     <div class="secties_label_contain u-container">
@@ -163,7 +191,7 @@ const demoFaq = [
       </p>
     </div>
   </div>
-  <FaqSection items={demoFaq} theme="light" />
+  <RegionMap theme="light" />
 
   <div class="secties_label_wrap u-theme-brand">
     <div class="secties_label_contain u-container">
@@ -172,7 +200,29 @@ const demoFaq = [
       </p>
     </div>
   </div>
+  <FaqSection items={demoFaq} theme="soft" />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[10].name}</code> · props: {specimens[10].props}
+      </p>
+    </div>
+  </div>
   <CtaSection />
+
+  <div class="secties_label_wrap u-theme-brand">
+    <div class="secties_label_contain u-container">
+      <p class="secties_label_text u-text-style-small">
+        <code>{specimens[11].name}</code> · props: {specimens[11].props}
+      </p>
+    </div>
+  </div>
+  <TestimonialGrid
+    text="Voorbeelddata: deze sectie gaat pas live met echte quotes en sterren."
+    items={demoTestimonials}
+    theme="soft"
+  />
 </Base>
 
 <style>

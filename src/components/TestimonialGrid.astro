@@ -1,0 +1,182 @@
+---
+// Testimonial bento: quote cards (two columns wide) mixed with small
+// photo cards that fill the gaps. Header row: heading and paragraph
+// left, a "see more" link bottom-right. Only feed it REAL quotes and
+// ratings (house rule); the section library shows labeled samples.
+import { Image } from 'astro:assets';
+
+interface TestimonialItem {
+  /** Quote text; leave empty for a photo card. */
+  quote?: string;
+  /** Name of the guest, under the quote. */
+  name?: string;
+  /** Context line, e.g. "Bruiloft · Rolde". */
+  meta?: string;
+  /** Star rating 1 to 5; 0 hides the stars. Real ratings only. */
+  stars?: number;
+  /** Photo for a photo card. */
+  image?: ImageMetadata;
+  /** Alt text for the photo; keep empty when decorative. */
+  alt?: string;
+}
+interface Props {
+  /** Section heading. */
+  title?: string;
+  /** Paragraph under the heading. */
+  text?: string;
+  /** Label of the link on the right. */
+  moreLabel?: string;
+  /** Where the link on the right goes; empty hides it. */
+  moreHref?: string;
+  /** Quote and photo cards, in display order. */
+  items: TestimonialItem[];
+  /** Section theme. */
+  theme?: 'light' | 'soft' | 'brand';
+}
+const {
+  title = 'Echte feesten, echte reacties',
+  text = 'Dit zeiden gasten over de Jachtbus.',
+  moreLabel = 'Bekijk meer referenties',
+  moreHref = '/referenties',
+  items,
+  theme = 'light',
+} = Astro.props;
+const themeClass = {
+  light: 'u-theme-light',
+  soft: 'u-theme-soft',
+  brand: 'u-theme-brand',
+}[theme];
+
+const starPath =
+  'M8 1.5l1.9 3.9 4.3.6-3.1 3 .7 4.2L8 11.2l-3.8 2 .7-4.2-3.1-3 4.3-.6z';
+---
+
+<section class:list={['testimonials_wrap', 'u-section', themeClass]}>
+  <div class="testimonials_contain u-container">
+    <div class="testimonials_header_layout">
+      <div class="testimonials_intro u-margin-trim">
+        <div class="testimonials_title u-heading u-text-style-h2">
+          <h2>{title}</h2>
+        </div>
+        <div class="testimonials_text u-text u-text-style-large">
+          <p>{text}</p>
+        </div>
+      </div>
+      {
+        moreHref && (
+          <div class="testimonials_more_wrap">
+            <a class="testimonials_more_link" href={moreHref} data-trigger="hover focus">
+              <span class="testimonials_more_text u-underline">{moreLabel}</span>
+            </a>
+          </div>
+        )
+      }
+    </div>
+    <ul class="testimonials_layout">
+      {
+        items.map((item) =>
+          item.image ? (
+            <li class="testimonials_item is-photo">
+              <Image class="testimonials_img" src={item.image} alt={item.alt ?? ''} width={640} />
+            </li>
+          ) : (
+            <li class="testimonials_item is-quote u-margin-trim">
+              {(item.stars ?? 0) > 0 && (
+                <span class="testimonials_stars" aria-hidden="true">
+                  {Array.from({ length: item.stars ?? 0 }).map(() => (
+                    <svg class="testimonials_stars_icon" viewBox="0 0 16 16" fill="currentColor">
+                      <path d={starPath} />
+                    </svg>
+                  ))}
+                </span>
+              )}
+              <blockquote class="testimonials_quote u-text-style-main">{item.quote}</blockquote>
+              <p class="testimonials_source">
+                <span class="testimonials_source_name">{item.name}</span>
+                {item.meta && <span class="testimonials_source_meta u-text-style-small">{item.meta}</span>}
+              </p>
+            </li>
+          )
+        )
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .testimonials_header_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: end;
+    gap: var(--_spacing---space--4) var(--_spacing---space--8);
+  }
+  .testimonials_title {
+    display: flex;
+    max-width: 25ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .testimonials_text {
+    display: flex;
+    max-width: 55ch;
+  }
+  .testimonials_more_wrap {
+    display: flex;
+    justify-content: var(--start-medium, flex-end);
+  }
+  .testimonials_more_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--1);
+    text-decoration: none;
+  }
+  /* Bento: quote cards two columns wide, photos fill the gaps and crop
+     to the row height. Mobile refinement follows later. */
+  .testimonials_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: dense;
+    gap: var(--_spacing---space--5);
+  }
+  .testimonials_item {
+    display: flex;
+    border-radius: var(--radius--large);
+    overflow: clip;
+  }
+  .testimonials_item.is-quote {
+    grid-column: span 2;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .testimonials_item.is-photo {
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .testimonials_img {
+    width: 100%;
+    height: 100%;
+    min-height: var(--_spacing---space--8);
+    object-fit: cover;
+  }
+  .testimonials_stars {
+    display: inline-flex;
+    gap: 0;
+    color: var(--_theme---rating);
+  }
+  .testimonials_stars_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  .testimonials_quote { max-width: 50ch; }
+  .testimonials_source {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--_spacing---space--1) / 2);
+    margin-top: auto;
+  }
+  .testimonials_source_name { font-weight: var(--_typography---font--primary-bold); }
+</style>

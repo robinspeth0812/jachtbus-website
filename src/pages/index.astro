@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Button from '../components/Button.astro';
 import ServiceTiles from '../components/ServiceTiles.astro';
-import StepList from '../components/StepList.astro';
+import StepFlow from '../components/StepFlow.astro';
 import MediaText from '../components/MediaText.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import RegionPill from '../components/RegionPill.astro';
@@ -22,21 +22,6 @@ const intentTiles = [
   { href: '/aanvraag?gelegenheid=bedrijfsfeest', label: 'Bedrijfsfeest' },
   { href: '/aanvraag?gelegenheid=evenement', label: 'Evenement' },
   { href: '/aanvraag?gelegenheid=bbq', label: 'BBQ' },
-];
-
-const steps = [
-  {
-    title: 'Jij doet de aanvraag',
-    text: 'Vertel wat je viert, waar en met hoeveel gasten. Duurt een paar minuten.',
-  },
-  {
-    title: 'Wij komen met een voorstel',
-    text: 'Je krijgt een voorstel met menu en prijs, afgestemd op jouw feest.',
-  },
-  {
-    title: 'Wij regelen de rest',
-    text: 'Wij komen voorrijden, bouwen op, koken, serveren en laten alles netjes achter.',
-  },
 ];
 
 const faqItems = [
@@ -159,12 +144,7 @@ const faqItems = [
     theme="soft"
   />
 
-  <StepList
-    title="Hoe het werkt"
-    text="Dit gebeurt er na je aanvraag."
-    steps={steps}
-    theme="light"
-  />
+  <StepFlow theme="soft" />
 
   <MediaText title="Waarom de Jachtbus" image={busImg} theme="soft">
     <ul class="home_why_list">

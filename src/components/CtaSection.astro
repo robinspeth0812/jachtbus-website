@@ -1,64 +1,138 @@
 ---
-// Closing section: the request CTA plus direct contact. Optional slot
-// above the heading, e.g. for a ChatBubble from Peer.
+// Closing CTA as a two-column card: info left (heading, paragraph,
+// green consult note, request button plus phone), photo right. Extra
+// content like a ChatBubble comes in through the slot.
+import { Image } from 'astro:assets';
 import Button from './Button.astro';
+import defaultImage from '../assets/jachtbus-regio.jpg';
 
 interface Props {
-  /** Section heading. */
+  /** Card heading. */
   title?: string;
-  /** Optional line under the heading. */
+  /** Paragraph under the heading. */
   text?: string;
-  /** Label on the primary button. */
+  /** Green consult note under the paragraph; empty hides it. */
+  noteText?: string;
+  /** Label on the request button. */
   buttonLabel?: string;
-  /** Where the primary button links to. */
+  /** Where the request button links to. */
   buttonHref?: string;
-  /** Show the call and WhatsApp buttons next to the primary CTA. */
-  showContact?: boolean;
+  /** Phone number shown next to the button; empty hides it. */
+  phone?: string;
+  /** Photo in the right column. */
+  image?: ImageMetadata;
+  /** Alt text for the photo; keep empty when decorative. */
+  alt?: string;
 }
 const {
-  title = 'Vertel ons wat je viert',
-  text = 'Aanvraag gedaan? Je hoort snel van ons.',
+  title = 'Wij staan klaar voor een onvergetelijk event!',
+  text = 'Laat de Jachtbus jouw gasten verrassen met ambachtelijk eten en een vlekkeloze service. Wij denken mee, regelen alles en zorgen dat jij kunt genieten.',
+  noteText = 'Liever eerst even overleggen? Kom een kopje koffie drinken en we bespreken alles om er een succes van te maken.',
   buttonLabel = 'Aanvraag starten',
   buttonHref = '/aanvraag',
-  showContact = true,
+  phone = '+31 592 656363',
+  image = defaultImage,
+  alt = '',
 } = Astro.props;
+
+const phoneHref = `tel:${phone.replaceAll(' ', '')}`;
 ---
 
-<section class="cta-section_wrap u-section u-theme-brand">
+<section class="cta-section_wrap u-section u-theme-light">
   <div class="cta-section_contain u-container">
-    <div class="cta-section_layout u-alignment-center u-margin-trim">
-      <slot />
-      <div class="cta-section_title u-heading u-text-style-h2">
-        <h2>{title}</h2>
+    <div class="cta-section_card">
+      <div class="cta-section_content u-margin-trim">
+        <div class="cta-section_title u-heading u-text-style-h2">
+          <h2>{title}</h2>
+        </div>
+        {
+          text && (
+            <div class="cta-section_text u-text u-text-style-main">
+              <p>{text}</p>
+            </div>
+          )
+        }
+        <slot />
+        {noteText && <p class="cta-section_note u-text-style-main">{noteText}</p>}
+        <div class="cta-section_actions u-button-wrapper">
+          <Button variant="primary" label={buttonLabel} href={buttonHref} />
+          {
+            phone && (
+              <a class="cta-section_phone" href={phoneHref} data-trigger="hover focus">
+                <svg class="cta-section_phone_icon" aria-hidden="true" viewBox="0 0 16 16">
+                  <path
+                    fill="currentColor"
+                    d="M3.6 1.8c.5-.5 1.3-.4 1.7.1l1.5 1.9c.3.4.3 1 0 1.4l-.7 1c-.2.2-.2.5 0 .8.6 1 1.9 2.3 2.9 2.9.3.2.6.2.8 0l1-.7c.4-.3 1-.3 1.4 0l1.9 1.5c.5.4.6 1.2.1 1.7l-.9.9c-.5.5-1.2.7-1.9.5-2-.6-3.9-1.8-5.6-3.5S3.1 6.7 2.5 4.7c-.2-.7 0-1.4.5-1.9Z"
+                  />
+                </svg>
+                <span class="cta-section_phone_text u-hover-underline">{phone}</span>
+              </a>
+            )
+          }
+        </div>
       </div>
-      {
-        text && (
-          <div class="cta-section_text u-text u-text-style-large">
-            <p>{text}</p>
-          </div>
-        )
-      }
-      <div class="cta-section_actions u-button-wrapper">
-        <Button variant="primary" label={buttonLabel} href={buttonHref} />
-        {showContact && <Button variant="secondary" label="Bellen" href="tel:+31592656363" />}
-        {showContact && <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />}
+      <div class="cta-section_visual">
+        <Image class="cta-section_img" src={image} alt={alt} width={960} />
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .cta-section_layout {
+  .cta-section_card {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+    overflow: clip;
+  }
+  .cta-section_content {
     display: flex;
     flex-direction: column;
-    gap: var(--_spacing---space--5);
+    align-items: flex-start;
+    gap: var(--_spacing---space--4);
+    padding: var(--_spacing---space--7);
   }
   .cta-section_title {
     display: flex;
-    max-width: 25ch;
+    max-width: 22ch;
   }
   .cta-section_text {
     display: flex;
     max-width: 50ch;
+  }
+  /* Green consult note, tinted from the theme's link green. */
+  .cta-section_note {
+    max-width: 50ch;
+    padding: var(--_spacing---space--3) var(--_spacing---space--4);
+    color: var(--_theme---text-link--text);
+    background-color: color-mix(in srgb, var(--_theme---text-link--text) 8%, transparent);
+    border: var(--border-width--main) solid color-mix(in srgb, var(--_theme---text-link--text) 35%, transparent);
+    border-radius: var(--radius--main);
+  }
+  .cta-section_actions { align-items: center; }
+  .cta-section_phone {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--2);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: none;
+  }
+  .cta-section_phone_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    color: var(--_theme---text-accent);
+  }
+  .cta-section_visual { display: flex; }
+  .cta-section_img {
+    width: 100%;
+    height: 100%;
+    min-height: var(--_spacing---space--8);
+    object-fit: cover;
   }
 </style>
