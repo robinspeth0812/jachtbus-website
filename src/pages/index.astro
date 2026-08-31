@@ -6,6 +6,7 @@ import StepFlow from '../components/StepFlow.astro';
 import MediaText from '../components/MediaText.astro';
 import CoreValues from '../components/CoreValues.astro';
 import ChatBubble from '../components/ChatBubble.astro';
+import RequestForm from '../components/RequestForm.astro';
 import whatsappIcon from '../assets/whatsapp-icon.svg';
 import LocationRequirements from '../components/LocationRequirements.astro';
 import RegionMap from '../components/RegionMap.astro';
@@ -18,6 +19,7 @@ import TestimonialGrid from '../components/TestimonialGrid.astro';
 import drinkenImg from '../assets/drinken-wijn.jpg';
 import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
 import heleBusImg from '../assets/jachtbus-bus.jpg';
+import bruiloftImg from '../assets/bruiloft-veld.jpg';
 
 // Placeholder testimonials, clearly labeled as samples: swap for real
 // quotes and ratings as soon as the first references exist.
@@ -27,6 +29,8 @@ const homeTestimonials = [
     name: 'Voornaam Achternaam',
     meta: 'Bruiloft · Plaatsnaam',
     stars: 5,
+    image: bruiloftImg,
+    alt: '',
   },
   { image: drinkenImg, alt: '' },
   { image: bedrijfsfeestImg, alt: '' },
@@ -44,13 +48,6 @@ const regionPills = [
   { label: 'Drenthe', href: '/foodtruck-drenthe' },
   { label: 'Groningen', href: '/foodtruck-groningen' },
   { label: 'Friesland', href: '/foodtruck-friesland' },
-];
-
-const intentTiles = [
-  { href: '/aanvraag?gelegenheid=bruiloft', label: 'Bruiloft' },
-  { href: '/aanvraag?gelegenheid=bedrijfsfeest', label: 'Bedrijfsfeest' },
-  { href: '/aanvraag?gelegenheid=evenement', label: 'Evenement' },
-  { href: '/aanvraag?gelegenheid=bbq', label: 'BBQ' },
 ];
 
 const faqItems = [
@@ -111,19 +108,7 @@ const faqItems = [
           </div>
         </div>
         <div class="hero_form_wrap u-theme-soft u-margin-trim" data-aanvraag-form>
-          <h2 class="hero_form_title u-text-style-h4">Waarvoor zoek je een foodtruck?</h2>
-          <p class="hero_form_step u-text-style-small">Stap 1 van 4</p>
-          <ul class="hero_form_list">
-            {
-              intentTiles.map((tile) => (
-                <li class="hero_form_item">
-                  <a class="hero_form_tile" href={tile.href} data-trigger="hover focus">
-                    {tile.label}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
+          <RequestForm variant="embedded" />
           <div class="hero_form_divider" aria-hidden="true">
             <span class="hero_form_divider_line"></span>
             <span class="hero_form_divider_text u-text-style-small">of</span>
@@ -299,31 +284,6 @@ const faqItems = [
     color: var(--_theme---text);
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--large);
-  }
-  .hero_form_list {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--_spacing---space--3);
-  }
-  .hero_form_item { display: flex; }
-  .hero_form_tile {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: var(--target--min);
-    padding: var(--_spacing---space--3) var(--_spacing---space--4);
-    background-color: color-mix(
-      in hsl,
-      var(--_theme---background-2) calc(100% * var(--_trigger---on)),
-      var(--_theme---border) calc(100% * var(--_trigger---off))
-    );
-    border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--main);
-    font-family: var(--_typography---font--heading);
-    font-weight: var(--_typography---font--primary-bold);
-    text-decoration: none;
-    transition: background-color 300ms;
   }
   .hero_form_divider {
     display: flex;

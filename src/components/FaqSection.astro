@@ -26,6 +26,14 @@ const themeClass = {
   brand: 'u-theme-brand',
 }[theme];
 
+// Balanced two-column layout: up to five questions the header takes
+// the left column and all questions the right one; with more, the
+// header moves above and the questions split over both columns, the
+// left one getting the majority when the count is odd.
+const splitQuestions = items.length > 5;
+const splitAt = Math.ceil(items.length / 2);
+const columns = splitQuestions ? [items.slice(0, splitAt), items.slice(splitAt)] : [items];
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -39,19 +47,30 @@ const faqSchema = {
 
 <section class:list={['faq_wrap', 'u-section', themeClass]}>
   <div class="faq_contain u-container">
-    <SectionHeader title={title} text={text} />
+    {splitQuestions && <SectionHeader title={title} text={text} />}
     <div class="faq_layout">
       {
-        items.map((item) => (
-          <details class="faq_item_wrap">
-            <summary class="faq_question">
-              <span class="faq_question_text u-text-style-h5">{item.question}</span>
-              <svg class="faq_icon" aria-hidden="true" viewBox="0 0 16 16" fill="none">
-                <path d="M4 6.5 8 10.5 12 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </summary>
-            <p class="faq_answer u-text-style-main">{item.answer}</p>
-          </details>
+        !splitQuestions && (
+          <div class="faq_header_wrap">
+            <SectionHeader title={title} text={text} />
+          </div>
+        )
+      }
+      {
+        columns.map((column) => (
+          <div class="faq_list_wrap">
+            {column.map((item) => (
+              <details class="faq_item_wrap">
+                <summary class="faq_question">
+                  <span class="faq_question_text u-text-style-h5">{item.question}</span>
+                  <svg class="faq_icon" aria-hidden="true" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 6.5 8 10.5 12 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </summary>
+                <p class="faq_answer u-text-style-main">{item.answer}</p>
+              </details>
+            ))}
+          </div>
         ))
       }
     </div>
@@ -61,9 +80,20 @@ const faqSchema = {
 
 <style>
   .faq_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--_spacing---space--7) var(--_spacing---space--8);
+  }
+  .faq_header_wrap {
     display: flex;
     flex-direction: column;
-    max-width: var(--max-width--small);
+  }
+  .faq_list_wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .faq_item_wrap {
     border-bottom: var(--border-width--main) solid var(--_theme---border);

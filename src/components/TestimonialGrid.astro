@@ -1,9 +1,11 @@
 ---
 // Testimonial bento: quote cards (two columns wide) mixed with small
-// photo cards that fill the gaps. Header row: heading and paragraph
-// left, a "see more" link bottom-right. Only feed it REAL quotes and
+// photo cards that fill the gaps. A quote card with an image shows the
+// photo on top of the same card. Header row: heading and paragraph
+// left, a "see more" button bottom-right. Only feed it REAL quotes and
 // ratings (house rule); the section library shows labeled samples.
 import { Image } from 'astro:assets';
+import Button from './Button.astro';
 
 interface TestimonialItem {
   /** Quote text; leave empty for a photo card. */
@@ -14,7 +16,8 @@ interface TestimonialItem {
   meta?: string;
   /** Star rating 1 to 5; 0 hides the stars. Real ratings only. */
   stars?: number;
-  /** Photo for a photo card. */
+  /** Photo: alone it makes a photo card, with a quote it sits on top
+      of the quote card. */
   image?: ImageMetadata;
   /** Alt text for the photo; keep empty when decorative. */
   alt?: string;
@@ -65,9 +68,7 @@ const starPath =
       {
         moreHref && (
           <div class="testimonials_more_wrap">
-            <a class="testimonials_more_link" href={moreHref} data-trigger="hover focus">
-              <span class="testimonials_more_text u-underline">{moreLabel}</span>
-            </a>
+            <Button label={moreLabel} href={moreHref} variant="secondary" />
           </div>
         )
       }
@@ -75,26 +76,31 @@ const starPath =
     <ul class="testimonials_layout">
       {
         items.map((item) =>
-          item.image ? (
+          item.image && !item.quote ? (
             <li class="testimonials_item is-photo">
               <Image class="testimonials_img" src={item.image} alt={item.alt ?? ''} width={640} />
             </li>
           ) : (
-            <li class="testimonials_item is-quote u-margin-trim">
-              {(item.stars ?? 0) > 0 && (
-                <span class="testimonials_stars" aria-hidden="true">
-                  {Array.from({ length: item.stars ?? 0 }).map(() => (
-                    <svg class="testimonials_stars_icon" viewBox="0 0 16 16" fill="currentColor">
-                      <path d={starPath} />
-                    </svg>
-                  ))}
-                </span>
+            <li class="testimonials_item is-quote">
+              {item.image && (
+                <Image class="testimonials_quote_img" src={item.image} alt={item.alt ?? ''} width={640} />
               )}
-              <blockquote class="testimonials_quote u-text-style-main">{item.quote}</blockquote>
-              <p class="testimonials_source">
-                <span class="testimonials_source_name">{item.name}</span>
-                {item.meta && <span class="testimonials_source_meta u-text-style-small">{item.meta}</span>}
-              </p>
+              <div class="testimonials_quote_body u-margin-trim">
+                {(item.stars ?? 0) > 0 && (
+                  <span class="testimonials_stars" aria-hidden="true">
+                    {Array.from({ length: item.stars ?? 0 }).map(() => (
+                      <svg class="testimonials_stars_icon" viewBox="0 0 16 16" fill="currentColor">
+                        <path d={starPath} />
+                      </svg>
+                    ))}
+                  </span>
+                )}
+                <blockquote class="testimonials_quote u-text-style-main">{item.quote}</blockquote>
+                <p class="testimonials_source">
+                  <span class="testimonials_source_name">{item.name}</span>
+                  {item.meta && <span class="testimonials_source_meta u-text-style-small">{item.meta}</span>}
+                </p>
+              </div>
             </li>
           )
         )
@@ -124,13 +130,6 @@ const starPath =
     display: flex;
     justify-content: var(--start-medium, flex-end);
   }
-  .testimonials_more_link {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--target--min);
-    padding: 0 var(--_spacing---space--1);
-    text-decoration: none;
-  }
   /* Bento: quote cards two columns wide, photos fill the gaps and crop
      to the row height. Mobile refinement follows later. */
   .testimonials_layout {
@@ -148,10 +147,23 @@ const starPath =
   .testimonials_item.is-quote {
     grid-column: span 2;
     flex-direction: column;
-    gap: var(--_spacing---space--3);
-    padding: var(--_spacing---space--6);
     background-color: var(--_theme---background-2);
     border: var(--border-width--main) solid var(--_theme---border);
+  }
+  /* Optional photo on top of a quote card, bleeding to the card edge. */
+  .testimonials_quote_img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 1;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .testimonials_quote_body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    flex-grow: 1;
+    padding: var(--_spacing---space--6);
   }
   .testimonials_item.is-photo {
     border: var(--border-width--main) solid var(--_theme---border);

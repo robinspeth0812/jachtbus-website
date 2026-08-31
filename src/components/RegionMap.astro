@@ -52,7 +52,7 @@ const places = [
   <div class="region_contain u-container">
     <div class="region_layout">
       <div class="region_visual_wrap">
-        <Image class="region_img" src={mapImg} alt="" aria-hidden="true" width={520} />
+        <Image class="region_img" src={mapImg} alt="" aria-hidden="true" width={880} />
       </div>
       <div class="region_content u-margin-trim">
         <SectionHeader title={title} text={text} />
@@ -95,11 +95,14 @@ const places = [
     justify-content: center;
     width: 100%;
   }
+  /* Square map block, cover-cropped like the old-site example. */
   .region_img {
     width: 100%;
-    max-width: 28rem;
     height: auto;
-    object-fit: contain;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
   }
   .region_content {
     display: flex;

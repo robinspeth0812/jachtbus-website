@@ -8,6 +8,14 @@
 // without an endpoint the submit shows the direct-contact fallback.
 import ChatBubble from './ChatBubble.astro';
 
+interface Props {
+  /** Where the form lives: 'page' renders a full section with its own
+      card, 'embedded' strips section spacing and card chrome so the
+      form sits inside an existing card (e.g. the home hero). */
+  variant?: 'page' | 'embedded';
+}
+const { variant = 'page' } = Astro.props;
+
 const endpoint = import.meta.env.PUBLIC_AANVRAAG_ENDPOINT ?? '';
 
 const occasions = [
@@ -42,10 +50,13 @@ const places = [
 ];
 ---
 
-<section class="aanvraag_wrap u-section u-theme-light" data-aanvraag-form>
-  <div class="aanvraag_contain u-container">
+<section
+  class:list={['aanvraag_wrap', variant === 'page' && 'u-section', 'u-theme-light']}
+  data-aanvraag-form
+>
+  <div class:list={['aanvraag_contain', variant === 'page' && 'u-container']}>
     <form
-      class="aanvraag_form_wrap u-theme-soft"
+      class:list={['aanvraag_form_wrap', 'u-theme-soft', variant === 'embedded' && 'is-embedded']}
       method="post"
       action={endpoint}
       data-endpoint={endpoint}
@@ -259,6 +270,15 @@ const places = [
     color: var(--_theme---text);
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--large);
+  }
+  /* Embedded: the surrounding card supplies chrome and padding. */
+  .aanvraag_form_wrap.is-embedded {
+    gap: var(--_spacing---space--4);
+    max-width: 100%;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
   }
   .aanvraag_steps_nav {
     display: flex;
