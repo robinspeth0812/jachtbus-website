@@ -1,15 +1,44 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
+import MediaText from '../components/MediaText.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import CoreValues from '../components/CoreValues.astro';
+import bedieningImg from '../assets/bediening-serveert.jpg';
 ---
 
 <Base
   title="Over ons"
-  description="Het verhaal achter de Jachtbus: Peer Wagenaar en de keuken van Brasserie Jachtlust."
+  description="Het verhaal achter de Jachtbus: gestart in augustus 2025 en inmiddels zo'n 40 feesten en evenementen verder, door heel Noord-Nederland."
 >
   <PageHero
     title="Wie zit er achter de Jachtbus?"
-    text="Peer Wagenaar, met de keuken van Brasserie Jachtlust achter zich. Binnenkort lees je hier het hele verhaal."
+    text="Peer Wagenaar, met een eigen keukenploeg en bediening. In augustus 2025 reed de Jachtbus voor het eerst uit, en sindsdien ging het hard."
     theme="soft"
   />
+
+  <MediaText title="Van eerste rit tot zo'n 40 feesten" image={bedieningImg} theme="light">
+    <p class="about_story_text">
+      De Jachtbus ging in augustus 2025 van start. Inmiddels staat de
+      teller dit jaar op zo'n 40 evenementen en partijen: bruiloften,
+      tuinfeesten, bedrijfsevenementen en festivals door heel Drenthe,
+      Groningen en Friesland.
+    </p>
+    <p class="about_story_text">
+      Veel daarvan waren walking dinners en streetfoodarrangementen,
+      met eigen bediening en alles ter plekke bereid. Van Stiens tot
+      Stadskanaal en van Leeuwarden tot Gasselte: de bus komt overal
+      waar wat te vieren valt.
+    </p>
+    <ChatBubble message="Groot feest of klein bedrijfsevent, ik denk graag met je mee!" />
+  </MediaText>
+
+  <CoreValues />
 </Base>
+
+<style>
+  .about_story_text {
+    max-width: 60ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+</style>
