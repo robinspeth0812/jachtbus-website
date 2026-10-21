@@ -4,6 +4,7 @@
 // content like a ChatBubble comes in through the slot.
 import { Image } from 'astro:assets';
 import Button from './Button.astro';
+import Texture from './Texture.astro';
 import defaultImage from '../assets/jachtbus-regio.jpg';
 
 interface Props {
@@ -23,6 +24,8 @@ interface Props {
   image?: ImageMetadata;
   /** Alt text for the photo; keep empty when decorative. */
   alt?: string;
+  /** Handwritten background texture on the cream around the card; none hides it. */
+  texture?: 'none' | 'morning' | 'evening' | 'bus' | 'wedding' | 'smoker';
 }
 const {
   title = 'Wij staan klaar voor een onvergetelijk event!',
@@ -33,13 +36,15 @@ const {
   phone = '+31 592 656363',
   image = defaultImage,
   alt = '',
+  texture = 'none',
 } = Astro.props;
 
 const phoneHref = `tel:${phone.replaceAll(' ', '')}`;
 ---
 
-<section class="cta-section_wrap u-section u-theme-light">
-  <div class="cta-section_contain u-container">
+<section class="cta-section_wrap u-section u-theme-light u-texture-wrap">
+  {texture !== 'none' && <Texture story={texture} ink="green" />}
+  <div class="cta-section_contain u-container u-texture-content">
     <div class="cta-section_card">
       <div class="cta-section_content u-margin-trim">
         <div class="cta-section_title u-heading u-text-style-h2">

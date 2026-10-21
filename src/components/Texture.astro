@@ -1,0 +1,93 @@
+---
+// Handwritten background texture for colored surfaces. Purely
+// decorative: aria-hidden, not selectable, gone in print and under
+// prefers-contrast: more. The surrounding section needs
+// u-texture-wrap, its content u-texture-content (both in lumos.css).
+
+interface Props {
+  /** Which text runs across the surface. Each section gets its own story. */
+  story?: 'morning' | 'evening' | 'bus' | 'wedding' | 'smoker';
+  /** How strongly the ink shows through. */
+  strength?: 'subtle' | 'normal' | 'strong';
+  /** Ink color: white on green, green on cream, gold as an accent. */
+  ink?: 'white' | 'gold' | 'green';
+  /** Fills the whole surface, or sits as a strip along the right edge. */
+  shape?: 'fill' | 'strip';
+}
+
+const { story = 'morning', strength = 'normal', ink = 'white', shape = 'fill' } = Astro.props;
+
+const stories: Record<NonNullable<Props['story']>, string> = {
+  morning:
+    'We laden de bus ’s ochtends vol, rijden het erf op en zetten de ' +
+    'luiken open. De smoker aan, de grill heet, de messen op de plank. ' +
+    'Vanaf dat moment ruikt het hele terrein naar wat er komt. Geen ' +
+    'bakjes die ergens anders zijn gevuld, geen eten dat koud aankomt. ' +
+    'Alles wordt hier gemaakt, bij jullie, terwijl de eerste gasten ' +
+    'binnenlopen en vragen hoe lang het nog duurt.',
+  evening:
+    'De laatste borden gaan terug de bus in, de luiken dicht, het gras ' +
+    'weer netjes. Niemand ziet dat we er geweest zijn, behalve dat ' +
+    'iedereen het er nog over heeft. Morgen staan we ergens anders. ' +
+    'Volgend jaar misschien bij jullie op het erf.',
+  bus:
+    '3,5 ton · 6,5 meter lang · 2,5 meter breed · 16 ampère · binnen ' +
+    '25 meter · luiken open · het erf op · vlakke ondergrond · gras of ' +
+    'grind · ook bij regen · tent in overleg · opbouw buiten beeld · ' +
+    'netjes achtergelaten',
+  wedding:
+    'ja-woord · ceremonie · borrel in de tuin · walking dinner · taart ' +
+    'aansnijden · bubbels · avondsnack om elf uur · getuigen · tent op ' +
+    'het gras · eerste dans',
+  smoker:
+    'low en slow · rookhout · brisket · pulled pork · ribben · twaalf ' +
+    'uur op temperatuur · appelhout · eigen saus · kernthermometer',
+};
+
+// Enough text to cover a tall section after rotation; the host clips
+// what sticks out.
+const minLength = 3600;
+const text = `${stories[story]} `.repeat(Math.ceil(minLength / stories[story].length));
+---
+
+<span class:list={['texture_wrap', `is-${strength}`, `is-${ink}`, `is-${shape}`]} aria-hidden="true">{text}</span>
+
+<style>
+  /* Bleeds past the section edges so the rotation leaves no bare
+     corners; the u-texture-wrap parent clips the overflow. */
+  .texture_wrap {
+    --_texture---bleed: calc(var(--_spacing---space--7) * -1);
+    position: absolute;
+    inset: var(--_texture---bleed);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: var(--_typography---font--accent);
+    font-size: var(--_typography---size--h2);
+    line-height: var(--_typography---line-height--heading);
+    color: var(--_texture---ink);
+    opacity: var(--_texture---strength);
+    transform: rotate(-5deg);
+  }
+  .texture_wrap.is-strip {
+    inset: var(--_texture---bleed) var(--_texture---bleed) var(--_texture---bleed) auto;
+    width: 22%;
+  }
+
+  .texture_wrap.is-white { --_texture---ink: var(--_theme---ink-white); }
+  .texture_wrap.is-gold { --_texture---ink: var(--_theme---ink-gold); }
+  .texture_wrap.is-green { --_texture---ink: var(--_theme---ink-green); }
+
+  .texture_wrap.is-subtle { --_texture---strength: 0.04; }
+  .texture_wrap.is-normal { --_texture---strength: 0.055; }
+  .texture_wrap.is-strong { --_texture---strength: 0.09; }
+
+  /* Accessibility and print exceptions, like prefers-reduced-motion. */
+  @media print {
+    .texture_wrap { display: none; }
+  }
+  @media (prefers-contrast: more) {
+    .texture_wrap { display: none; }
+  }
+</style>

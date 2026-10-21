@@ -12,6 +12,7 @@ import LocationRequirements from '../components/LocationRequirements.astro';
 import RegionMap from '../components/RegionMap.astro';
 import FaqSection from '../components/FaqSection.astro';
 import CtaSection from '../components/CtaSection.astro';
+import Texture from '../components/Texture.astro';
 import heroImg from '../assets/jachtbus-bus.jpg';
 import busImg from '../assets/bediening-serveert.jpg';
 import plankImg from '../assets/eten-serveerplank.jpg';
@@ -84,10 +85,11 @@ const faqItems = [
   description="De Jachtbus komt naar jouw feest. Goed, vers en ambachtelijk bereid, voor bruiloften, bedrijfsfeesten en evenementen in Noord-Nederland."
   footerCta={false}
 >
-  <section class="hero_wrap u-section u-theme-brand">
+  <section class="hero_wrap u-section u-theme-brand u-texture-wrap">
     <Image class="hero_bg_img" src={heroImg} alt="" aria-hidden="true" width={1920} loading="eager" />
     <div class="hero_overlay" aria-hidden="true"></div>
-    <div class="hero_contain u-container">
+    <Texture story="morning" />
+    <div class="hero_contain u-container u-texture-content">
       <div class="hero_layout">
         <div class="hero_content u-margin-trim">
           <h1 class="hero_tagline u-text-style-small">
@@ -198,11 +200,11 @@ const faqItems = [
 
   <LocationRequirements theme="soft" />
 
-  <RegionMap theme="light" />
+  <RegionMap theme="brand" texture="bus" />
 
   <FaqSection items={faqItems} theme="soft" />
 
-  <CtaSection />
+  <CtaSection texture="evening" />
 </Base>
 
 <style>
@@ -284,11 +286,16 @@ const faqItems = [
     display: flex;
     max-width: 55ch;
   }
+  /* Narrower than its grid column: the fields need little room, so the
+     panel is capped and centered in the column (and when stacked). */
   .hero_form_wrap {
     display: flex;
     flex-direction: column;
     gap: var(--_spacing---space--3);
     width: 100%;
+    max-width: var(--max-width--form);
+    justify-self: center;
+    align-self: center;
     padding: var(--_spacing---space--6);
     background-color: var(--_theme---background);
     color: var(--_theme---text);

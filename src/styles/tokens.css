@@ -85,6 +85,7 @@
 
   /* --- Site --- */
   --max-width--small: 50rem;
+  --max-width--form: 38rem; /* request form panel in the hero */
   --max-width--main: 90rem;
   --max-width--full: 100%;
   --site--margin: clamp(1rem, 0.5rem + 3vw, 2.5rem);

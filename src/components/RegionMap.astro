@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
 import Button from './Button.astro';
+import Texture from './Texture.astro';
 import mapImg from '../assets/kaart-werkgebied.png';
 
 interface Props {
@@ -21,6 +22,8 @@ interface Props {
   noteText?: string;
   /** Section theme. */
   theme?: 'light' | 'soft' | 'brand';
+  /** Handwritten background texture behind the section; none hides it. */
+  texture?: 'none' | 'morning' | 'evening' | 'bus' | 'wedding' | 'smoker';
 }
 const {
   title = 'Op locatie door heel Noord-Nederland',
@@ -29,6 +32,7 @@ const {
   noteTitle = 'Evenement ergens anders?',
   noteText = 'Geen probleem. We denken graag mee. Neem contact met ons op, zodat we de mogelijkheden kunnen bespreken.',
   theme = 'light',
+  texture = 'none',
 } = Astro.props;
 const themeClass = {
   light: 'u-theme-light',
@@ -48,8 +52,9 @@ const places = [
 ];
 ---
 
-<section class:list={['region_wrap', 'u-section', themeClass]}>
-  <div class="region_contain u-container">
+<section class:list={['region_wrap', 'u-section', 'u-texture-wrap', themeClass]}>
+  {texture !== 'none' && <Texture story={texture} ink={theme === 'brand' ? 'white' : 'green'} />}
+  <div class="region_contain u-container u-texture-content">
     <div class="region_layout">
       <div class="region_visual_wrap">
         <Image class="region_img" src={mapImg} alt="" aria-hidden="true" width={880} />
