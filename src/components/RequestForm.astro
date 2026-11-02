@@ -11,12 +11,16 @@ import ChatBubble from './ChatBubble.astro';
 interface Props {
   /** Where the form lives: 'page' renders a full section with its own
       card, 'embedded' strips section spacing and card chrome so the
-      form sits inside an existing card (e.g. the home hero). */
-  variant?: 'page' | 'embedded';
+      form sits inside an existing card (e.g. the home hero), 'modal'
+      also drops the fixed theme so it follows the surrounding dialog. */
+  variant?: 'page' | 'embedded' | 'modal';
 }
 const { variant = 'page' } = Astro.props;
 
 const endpoint = import.meta.env.PUBLIC_AANVRAAG_ENDPOINT ?? '';
+const isModal = variant === 'modal';
+const stepTitleStyle = isModal ? 'u-text-style-poster-label' : 'u-text-style-h4';
+const buttonTrigger = isModal ? 'hover focus' : undefined;
 
 const occasions = [
   { value: 'bruiloft', label: 'Bruiloft' },
@@ -53,12 +57,12 @@ const places = [
 ---
 
 <section
-  class:list={['aanvraag_wrap', variant === 'page' && 'u-section', 'u-theme-light']}
+  class:list={['aanvraag_wrap', variant === 'page' && 'u-section', !isModal && 'u-theme-light']}
   data-aanvraag-form
 >
   <div class:list={['aanvraag_contain', variant === 'page' && 'u-container']}>
     <form
-      class:list={['aanvraag_form_wrap', 'u-theme-soft', variant === 'embedded' && 'is-embedded']}
+      class:list={['aanvraag_form_wrap', !isModal && 'u-theme-soft', variant === 'embedded' && 'is-embedded', isModal && 'is-modal']}
       method="post"
       action={endpoint}
       data-endpoint={endpoint}
@@ -87,7 +91,7 @@ const places = [
       </ol>
 
       <fieldset class="aanvraag_step is-1">
-        <legend class="aanvraag_step_title u-text-style-h4">Waarvoor zoek je een foodtruck?</legend>
+        <legend class:list={['aanvraag_step_title', stepTitleStyle]}>Waarvoor zoek je een foodtruck?</legend>
         <div class="aanvraag_options_grid">
           {
             occasions.map((occasion) => (
@@ -111,7 +115,7 @@ const places = [
       </fieldset>
 
       <fieldset class="aanvraag_step is-2">
-        <legend class="aanvraag_step_title u-text-style-h4">Wanneer is het feest?</legend>
+        <legend class:list={['aanvraag_step_title', stepTitleStyle]}>Wanneer is het feest?</legend>
         <div class="aanvraag_field_row">
           <div class="aanvraag_field_wrap">
             <label class="aanvraag_label" for="aanvraag-datum">Datum</label>
@@ -149,7 +153,7 @@ const places = [
       </fieldset>
 
       <fieldset class="aanvraag_step is-3">
-        <legend class="aanvraag_step_title u-text-style-h4">Waar is het feest?</legend>
+        <legend class:list={['aanvraag_step_title', stepTitleStyle]}>Waar is het feest?</legend>
         <div class="aanvraag_field_row">
           <div class="aanvraag_field_wrap">
             <label class="aanvraag_label" for="aanvraag-plaats">Plaats of locatie</label>
@@ -192,7 +196,7 @@ const places = [
       </fieldset>
 
       <fieldset class="aanvraag_step is-4">
-        <legend class="aanvraag_step_title u-text-style-h4">Hoe kunnen we je bereiken?</legend>
+        <legend class:list={['aanvraag_step_title', stepTitleStyle]}>Hoe kunnen we je bereiken?</legend>
         <div class="aanvraag_field_wrap">
           <label class="aanvraag_label" for="aanvraag-naam">Je naam</label>
           <input class="aanvraag_input" type="text" id="aanvraag-naam" name="naam" required autocomplete="name" />
@@ -230,9 +234,9 @@ const places = [
       </fieldset>
 
       <div class="aanvraag_nav_wrap u-button-wrapper">
-        <button class="aanvraag_nav_btn is-prev" type="button" hidden>Terug</button>
-        <button class="aanvraag_nav_btn is-next" type="button" hidden>Volgende</button>
-        <button class="aanvraag_nav_btn is-submit" type="submit">Verstuur aanvraag</button>
+        <button class="aanvraag_nav_btn is-prev" type="button" data-trigger={buttonTrigger} hidden>Terug</button>
+        <button class="aanvraag_nav_btn is-next" type="button" data-trigger={buttonTrigger} hidden>Volgende</button>
+        <button class="aanvraag_nav_btn is-submit" type="submit" data-trigger={buttonTrigger}>Verstuur aanvraag</button>
       </div>
 
       <p class="aanvraag_status u-text-style-small" aria-live="polite"></p>
@@ -251,8 +255,8 @@ const places = [
           bel ons direct, dan regelen we het zo.
         </p>
         <div class="aanvraag_fallback_actions u-button-wrapper">
-          <a class="aanvraag_nav_btn is-submit" href="https://wa.me/31592656363" rel="external">WhatsApp</a>
-          <a class="aanvraag_nav_btn is-prev" href="tel:+31592656363">Bellen</a>
+          <a class="aanvraag_nav_btn is-submit" href="https://wa.me/31592656363" rel="external" data-trigger={buttonTrigger}>WhatsApp</a>
+          <a class="aanvraag_nav_btn is-prev" href="tel:+31592656363" data-trigger={buttonTrigger}>Bellen</a>
         </div>
       </div>
     </form>
@@ -276,6 +280,24 @@ const places = [
   /* Embedded: the surrounding card supplies chrome and padding. */
   .aanvraag_form_wrap.is-embedded {
     gap: var(--_spacing---space--4);
+    max-width: 100%;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+  }
+  /* Modal: the dialog supplies theme and chrome, and the shared tokens
+     and button variables switch to the heavier bus styling. */
+  .aanvraag_form_wrap.is-modal {
+    --radius--main: 0rem;
+    --border-width--main: var(--focus--width);
+    --aanvraag--option-active: var(--color--bus-yellow);
+    --aanvraag--stretch: var(--_typography---stretch--poster);
+    --aanvraag--btn-case: none;
+    --aanvraag--btn-spacing: normal;
+    --aanvraag--btn-size: var(--_typography---size--h5);
+    --aanvraag--title-gap: var(--_spacing---space--4);
+    gap: var(--_spacing---space--5);
     max-width: 100%;
     padding: 0;
     background-color: transparent;
@@ -347,7 +369,10 @@ const places = [
     padding: 0;
     margin: 0;
   }
-  .aanvraag_step_title { margin-bottom: var(--_spacing---space--2); }
+  .aanvraag_step_title {
+    padding: 0;
+    margin-bottom: var(--aanvraag--title-gap, var(--_spacing---space--2));
+  }
   .aanvraag_field_wrap {
     display: flex;
     flex-direction: column;
@@ -396,7 +421,7 @@ const places = [
     background-color: color-mix(
       in srgb,
       var(--_theme---background-2) calc(100% * var(--_state---true)),
-      var(--_theme---border) calc(100% * var(--_state---false))
+      var(--aanvraag--option-active, var(--_theme---border)) calc(100% * var(--_state---false))
     );
     border: var(--border-width--main) solid var(--_theme---border);
     border-radius: var(--radius--main);
@@ -406,7 +431,9 @@ const places = [
   .aanvraag_option_wrap.is-tile {
     justify-content: flex-start;
     font-family: var(--_typography---font--heading);
+    font-stretch: var(--aanvraag--stretch, normal);
     font-weight: var(--_typography---font--primary-bold);
+    word-spacing: var(--_typography---word-spacing--poster, normal);
   }
   .aanvraag_option_input {
     width: var(--_spacing---space--4);
@@ -434,11 +461,14 @@ const places = [
     border-width: var(--border-width--main);
     font-family: var(--_typography---font--heading);
     font-weight: var(--_typography---font--primary-bold);
-    font-size: var(--_typography---size--small);
-    letter-spacing: var(--_typography---letter-spacing--caps);
-    text-transform: uppercase;
+    font-size: var(--aanvraag--btn-size, var(--_typography---size--small));
+    font-stretch: var(--aanvraag--stretch, normal);
+    letter-spacing: var(--aanvraag--btn-spacing, var(--_typography---letter-spacing--caps));
+    text-transform: var(--aanvraag--btn-case, uppercase);
+    word-spacing: var(--_typography---word-spacing--poster, normal);
     text-decoration: none;
     cursor: pointer;
+    transition: background-color 200ms, border-color 200ms, color 200ms;
   }
   .aanvraag_nav_btn.is-next,
   .aanvraag_nav_btn.is-submit {
@@ -447,13 +477,29 @@ const places = [
       var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)),
       var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off))
     );
-    color: var(--_theme---button-primary--text);
-    border-color: var(--_theme---button-primary--border);
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--text-hover, var(--_theme---button-primary--text)) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-primary--border-hover, var(--_theme---button-primary--border)) calc(100% * var(--_trigger---off))
+    );
   }
   .aanvraag_nav_btn.is-prev {
     background-color: var(--_theme---button-secondary--background);
-    color: var(--_theme---button-secondary--text);
-    border-color: var(--_theme---button-secondary--border);
+    color: color-mix(
+      in hsl,
+      var(--_theme---button-secondary--text) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-secondary--text-hover, var(--_theme---button-secondary--text)) calc(100% * var(--_trigger---off))
+    );
+    border-color: color-mix(
+      in hsl,
+      var(--_theme---button-secondary--border) calc(100% * var(--_trigger---on)),
+      var(--_theme---button-secondary--border-hover, var(--_theme---button-secondary--border)) calc(100% * var(--_trigger---off))
+    );
   }
   .aanvraag_done_wrap {
     display: flex;
@@ -495,7 +541,6 @@ const places = [
       current = Math.max(0, Math.min(index, steps.length - 1));
       steps.forEach((step, i) => {
         step.hidden = i !== current;
-        step.classList.toggle('is-active', i === current);
       });
       prevBtn.hidden = current === 0;
       nextBtn.hidden = current === steps.length - 1;
@@ -598,7 +643,32 @@ const places = [
     syncOptionStates();
     if (progress) progress.hidden = false;
     const checkedOccasion = form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked');
-    show(checkedOccasion ? 1 : 0, false);
+    // "Overige" stays on step 1: its required free-text field lives there.
+    show(checkedOccasion && checkedOccasion.value !== 'overige' ? 1 : 0, false);
+
+    // Sent by a surrounding modal each time it opens. A sent request starts
+    // fresh; after a failed send the answers stay, so nothing has to be retyped.
+    form.addEventListener('aanvraag:open', (event) => {
+      const { occasion } = (event as CustomEvent<{ occasion: string | null }>).detail;
+      const wasDone = !!done && !done.hidden;
+      if (wasDone) form.reset();
+      if (done) done.hidden = true;
+      if (fallback) fallback.hidden = true;
+      nav.hidden = false;
+      if (progress) progress.hidden = false;
+
+      const radio = occasion
+        ? form.querySelector<HTMLInputElement>(`input[name="gelegenheid"][value="${occasion}"]`)
+        : null;
+      if (radio) radio.checked = true;
+      syncOptionStates();
+      if (radio) {
+        saveDraft();
+        show(radio.value === 'overige' ? 0 : 1, false);
+      } else {
+        show(wasDone ? 0 : current, false);
+      }
+    });
 
     prevBtn.addEventListener('click', () => show(current - 1, true));
     nextBtn.addEventListener('click', () => {
@@ -627,7 +697,12 @@ const places = [
         steps.forEach((step) => (step.hidden = true));
         nav.hidden = true;
         if (progress) progress.hidden = true;
-        if (panel) panel.hidden = false;
+        if (panel) {
+          panel.hidden = false;
+          // The button that had focus is gone, so keyboard users move along.
+          panel.tabIndex = -1;
+          panel.focus();
+        }
       };
 
       if (honeypot && honeypot.value !== '') {

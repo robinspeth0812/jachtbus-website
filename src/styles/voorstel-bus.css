@@ -15,10 +15,11 @@
   --_typography---font--primary-black: 800;
   --_typography---stretch--poster: 75%;
   --_typography---line-height--poster: 0.92;
-  --_typography---size--poster: clamp(3rem, 1.75rem + 5vw, 6.5rem);
-  --_typography---size--poster-small: clamp(2.25rem, 1.5rem + 2.75vw, 4rem);
-  --_typography---size--poster-row: clamp(2rem, 1.5rem + 1.75vw, 3.25rem);
-  --_typography---size--poster-label: clamp(1.75rem, 0.75rem + 2vw, 2.75rem);
+  --_typography---word-spacing--poster: 0.1em; /* condensed Asap sets its words too close */
+  --_typography---size--poster: clamp(2.75rem, 1.75rem + 4vw, 5.5rem);
+  --_typography---size--poster-small: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  --_typography---size--poster-row: clamp(1.75rem, 1.5rem + 1.25vw, 2.75rem);
+  --_typography---size--poster-label: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
   --_typography---size--bus-title: 1.5rem;
   --_typography---size--hand: clamp(1.75rem, 1rem + 3vw, 3.5rem);
 
@@ -31,6 +32,16 @@
   --size--pattern-strip: 14rem;
   --size--row-img: 11rem;
   --bus-pattern--stroke: 3; /* user units of the pattern's viewBox */
+  --size--modal: 44rem; /* request modal from tablet up, full screen on phones */
+  --size--modal-max-height: 90dvh;
+  --size--modal-icon: 1.5rem;
+}
+
+/* The page behind an open modal stays put, without a layout jump. */
+:root:has(.bus-modal_wrap:modal) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+  background-color: color-mix(in hsl, var(--color--bus-black) 70%, var(--color--marigold-1)); /* dims the gutter along with the backdrop */
 }
 
 .u-theme-bus-beige,
@@ -117,8 +128,10 @@
   font-stretch: var(--_typography---stretch--poster);
   line-height: var(--_typography---line-height--poster);
   letter-spacing: var(--_typography---letter-spacing--tight);
+  word-spacing: var(--_typography---word-spacing--poster);
   color: var(--_theme---heading);
   text-transform: none;
+  text-wrap: balance;
 }
 .u-text-style-poster { font-size: var(--_typography---size--poster); }
 .u-text-style-poster-small { font-size: var(--_typography---size--poster-small); }
@@ -132,6 +145,7 @@
   font-weight: var(--_typography---font--primary-bold);
   font-stretch: var(--_typography---stretch--poster);
   line-height: var(--_typography---line-height--heading);
+  word-spacing: var(--_typography---word-spacing--poster);
   color: var(--_theme---heading);
   text-transform: none;
 }
