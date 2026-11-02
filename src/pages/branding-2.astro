@@ -21,10 +21,11 @@ import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
 import evenementImg from '../assets/dienst-evenement.jpg';
 import plankImg from '../assets/eten-serveerplank.jpg';
 import scriptLogo from '../assets/jachtbus-script-wit.svg';
+import ringLogo from '../assets/jachtbus-logo-wit-goud.svg';
 
 const origins = [
   { key: 'green', title: 'Felgroen', text: 'De cabine. Die zie je al van ver staan, dus dat wordt de hoofdkleur.' },
-  { key: 'yellow', title: 'Signaalgeel', text: 'De streep op het dak. Op de site voor knoppen en alles wat op moet vallen.' },
+  { key: 'yellow', title: 'Signaalgeel', text: 'De streep op het dak. Op de site voor details, lijnen en knoppen.' },
   { key: 'pattern', title: 'Zwart met lijnen', text: 'Het zijpaneel. Geen kleur erbij, maar een patroon dat niemand anders heeft.' },
   { key: 'script', title: 'Witte handletters', text: 'De naam op het dak. Groot en los, zoals op de bus, niet in een klein rondje.' },
 ] as const;
@@ -35,6 +36,7 @@ const GREEN = '#0b7d37';
 const YELLOW = '#f6b60f';
 const BLACK = '#1b1817';
 const WHITE = '#ffffff';
+const BEIGE = '#f8f3ea';
 function luminance(hex: string): number {
   const channel = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
   const [r, g, b] = [1, 3, 5].map((i) => channel(parseInt(hex.slice(i, i + 2), 16) / 255));
@@ -46,10 +48,10 @@ function ratio(a: string, b: string): string {
 }
 
 const palette = [
-  { theme: 'u-theme-bus-green', key: 'is-green', name: 'Felgroen', use: 'Grote vlakken en koppen op wit.', check: `Witte tekst: ${ratio(WHITE, GREEN)}` },
-  { theme: 'u-theme-bus-yellow', key: 'is-yellow', name: 'Signaalgeel', use: 'Knoppen en hele secties.', check: `Zwarte tekst: ${ratio(BLACK, YELLOW)}` },
-  { theme: 'u-theme-bus-black', key: 'is-black', name: 'Zwart', use: 'Tekst, patroon en de afsluiter.', check: `Gele tekst: ${ratio(YELLOW, BLACK)}` },
-  { theme: 'u-theme-bus-white', key: 'is-white', name: 'Wit', use: 'Rust om te lezen.', check: `Zwarte tekst: ${ratio(BLACK, WHITE)}` },
+  { theme: 'u-theme-bus-green', key: 'is-green', name: 'Felgroen', use: 'De grote vlakken.', check: `Witte tekst: ${ratio(WHITE, GREEN)}` },
+  { theme: 'u-theme-bus-beige', key: 'is-beige', name: 'Beige', use: 'Rust om te lezen.', check: `Donkere tekst: ${ratio(BLACK, BEIGE)}` },
+  { theme: 'u-theme-bus-black', key: 'is-black', name: 'Donker', use: 'Tekst, patroon en de afsluiter.', check: `Beige tekst: ${ratio(BEIGE, BLACK)}` },
+  { theme: '', key: 'is-accent', name: 'Geel', use: 'Details, lijnen en knoppen.', check: `Donkere tekst: ${ratio(BLACK, YELLOW)}` },
 ];
 
 const services = [
@@ -73,11 +75,10 @@ const copyPairs = [
 ];
 
 const needs = [
-  { title: 'De exacte kleuren', text: 'Groen en geel heb ik op het oog gekozen uit de foto’s. De wrap-leverancier heeft de echte codes.' },
+  { title: 'De exacte kleuren van Peer', text: 'Is het donker van de bus zwart of bruin? En welke codes hebben het groen en geel? Die heb ik nu op het oog gekozen uit de foto’s.' },
   { title: 'Het patroon als vectorbestand', text: 'Wat hier staat is mijn schets. Met het echte bestand klopt het precies met de bus.' },
   { title: 'Foto’s van het eten, van dichtbij', text: 'Nu is er vooral bus en mensen. Eén middag fotograferen in de bus scheelt enorm.' },
   { title: 'Foto’s zonder Jachtlust', text: 'Op de polo’s in de foto’s staat nog het logo van Brasserie Jachtlust. Dat botst met de splitsing.' },
-  { title: 'Jouw besluit over beige en goud', text: 'Dit voorstel gooit de afspraak “beige overal, gouden knoppen” overboord. Dat is jouw keuze.' },
 ];
 ---
 
@@ -90,7 +91,7 @@ const needs = [
     <title>Branding 2 | Jachtbus Foodtruck</title>
     <meta name="description" content="Interne werkpagina: een voorstel waarin de bus zelf het merk is." />
   </head>
-  <body class="u-theme-bus-white">
+  <body class="u-theme-bus-beige">
     <main class="voorstel_main">
       <div class="note_wrap u-theme-bus-black">
         <div class="note_contain u-container">
@@ -101,7 +102,7 @@ const needs = [
         </div>
       </div>
 
-      <section class="intro_wrap u-section u-theme-bus-yellow">
+      <section class="intro_wrap u-section u-theme-bus-green">
         <div class="intro_contain u-container">
           <h1 class="intro_title u-text-style-poster">De bus is het merk.</h1>
           <div class="intro_layout">
@@ -134,14 +135,14 @@ const needs = [
         </div>
       </section>
 
-      <section class="palette_wrap u-section u-theme-bus-white">
+      <section class="palette_wrap u-section u-theme-bus-beige">
         <div class="palette_contain u-container">
           <div class="palette_content u-margin-trim">
-            <h2 class="palette_title u-text-style-poster-small">Vier kleuren, meer niet</h2>
+            <h2 class="palette_title u-text-style-poster-small">Groen, beige en donker</h2>
             <p class="palette_text u-text-style-large">
-              De verhoudingen laten zien hoeveel ruimte elke kleur krijgt. Beige en
-              het donkere goud vervallen. Wit geeft de rust, en daardoor knallen
-              groen en geel juist wel.
+              De verhoudingen laten zien hoeveel ruimte elke kleur krijgt. Deze drie
+              dragen de site. Geel komt van de bus en is er voor details, lijnen en
+              knoppen, nooit als achtergrond.
             </p>
           </div>
           <div class="palette_layout">
@@ -177,7 +178,7 @@ const needs = [
         </div>
       </section>
 
-      <section class="type_wrap u-section u-theme-bus-white">
+      <section class="type_wrap u-section u-theme-bus-beige">
         <div class="type_contain u-container">
           <h2 class="type_title u-text-style-poster-small">Dezelfde letter, andere houding</h2>
           <div class="type_layout">
@@ -197,7 +198,7 @@ const needs = [
         </div>
       </section>
 
-      <section class="samples_wrap u-section u-theme-bus-white">
+      <section class="samples_wrap u-section u-theme-bus-beige">
         <div class="samples_contain u-container">
           <div class="samples_content u-margin-trim">
             <h2 class="samples_title u-text-style-poster-small">Zo ziet dat eruit op de site</h2>
@@ -214,14 +215,20 @@ const needs = [
         <div class="hero_stripe"></div>
         <div class="hero_contain u-container">
           <div class="hero_bar">
-            <a class="hero_logo_link" href="/" aria-label="Jachtbus, naar de homepage">
-              <Image class="hero_logo_img" src={scriptLogo} alt="" width={320} />
-            </a>
-            <div class="hero_bar_links">
+            <div class="hero_bar_left">
+              <a class="hero_bar_menu" href="/catering">Menu</a>
+              <div class="hero_bar_links">
               <a class="hero_bar_link" href="/catering" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Catering</span></a>
               <a class="hero_bar_link" href="/referenties" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Referenties</span></a>
               <a class="hero_bar_link" href="/over-ons" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Over ons</span></a>
               <a class="hero_bar_link" href="/contact" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Contact</span></a>
+              </div>
+            </div>
+            <a class="hero_logo_link" href="/" aria-label="Jachtbus Foodtruck, naar de homepage">
+              <Image class="hero_logo_img" src={ringLogo} alt="" width={240} />
+            </a>
+            <div class="hero_bar_right">
+              <BusButton label="Aanvraag" />
             </div>
           </div>
           <div class="hero_layout">
@@ -243,16 +250,16 @@ const needs = [
         </div>
       </section>
 
-      <section class="rows_wrap u-section u-theme-bus-white">
+      <section class="rows_wrap u-section u-theme-bus-beige">
         <div class="rows_contain u-container">
           <h3 class="rows_title u-text-style-poster-small">Waar staat de bus straks?</h3>
           <ul class="rows_list">
-            {services.map((service) => (
+            {services.map((service, index) => (
               <li class="rows_item">
                 <a class="rows_link_wrap" href={service.href} data-trigger="hover focus">
                   <h4 class="rows_link_title u-text-style-poster-row">{service.title}</h4>
                   <p class="rows_link_text u-text-style-large">{service.text}</p>
-                  <div class="rows_visual">
+                  <div class:list={['rows_visual', `is-${index + 1}`]}>
                     <Image class="rows_img" src={service.img} alt={service.alt} width={480} />
                   </div>
                 </a>
@@ -262,7 +269,7 @@ const needs = [
         </div>
       </section>
 
-      <section class="quote_wrap u-section u-theme-bus-yellow">
+      <section class="quote_wrap u-section u-theme-bus-green">
         <div class="quote_contain u-container">
           <div class="quote_layout">
             <div class="quote_visual">
@@ -279,7 +286,7 @@ const needs = [
         </div>
       </section>
 
-      <section class="steps_wrap u-section u-theme-bus-white">
+      <section class="steps_wrap u-section u-theme-bus-beige">
         <div class="steps_contain u-container">
           <h3 class="steps_title u-text-style-poster-small">Hoe gaat dat in z’n werk?</h3>
           <div class="steps_route">
@@ -320,7 +327,7 @@ const needs = [
         </div>
       </section>
 
-      <section class="copy_wrap u-section u-theme-bus-white">
+      <section class="copy_wrap u-section u-theme-bus-beige">
         <div class="copy_contain u-container">
           <div class="copy_content u-margin-trim">
             <h2 class="copy_title u-text-style-poster-small">En de tekst gaat mee</h2>
@@ -402,6 +409,7 @@ const needs = [
   }
   .intro_img {
     height: auto;
+    border-top-right-radius: var(--radius--shape);
     background-color: var(--_theme---background-skeleton);
   }
   .origin_list {
@@ -443,8 +451,12 @@ const needs = [
     background-color: var(--_theme---background);
     color: var(--_theme---text);
   }
-  .palette_block.is-white {
+  .palette_block.is-beige {
     border: var(--border-width--main) solid var(--color--bus-black);
+  }
+  .palette_block.is-accent {
+    background-color: var(--color--bus-yellow);
+    color: var(--color--bus-black);
   }
   .palette_use { margin-bottom: var(--_spacing---space--2); }
 
@@ -513,18 +525,31 @@ const needs = [
     height: var(--size--stripe);
     background-color: var(--color--bus-yellow);
   }
+  /* Equal outer columns keep the logo on the true center of the page. */
   .hero_bar {
-    display: flex;
-    flex-flow: row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
-    gap: var(--_spacing---space--5);
-    padding-top: var(--_spacing---space--4);
+    gap: var(--_spacing---space--3);
+    padding-top: var(--_spacing---space--3);
+  }
+  .hero_bar_right {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .hero_bar_menu {
+    display: var(--flex-medium, none);
+    align-items: center;
+    width: fit-content;
+    min-height: var(--target--min);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-weight: var(--_typography---font--primary-bold);
+    color: var(--_theme---text);
   }
   .hero_logo_link {
     display: block;
-    flex-shrink: 0;
-    width: var(--size--logo-bar);
+    width: calc(var(--nav--logo-size) * var(--_responsive---large) + var(--nav--logo-size-mobile) * (1 - var(--_responsive---large)));
   }
   .hero_logo_img { object-fit: contain; }
   .hero_bar_links {
@@ -599,6 +624,9 @@ const needs = [
     overflow: clip;
     background-color: var(--_theme---background-skeleton);
   }
+  .rows_visual.is-2 { border-radius: var(--radius--round); }
+  .rows_visual.is-3 { border-radius: 0 100% 0 0; }
+  .rows_visual.is-4 { border-radius: 0 0 var(--radius--round) var(--radius--round); }
   .rows_img { height: 100%; }
 
   /* Sample: Peer in his own words */
