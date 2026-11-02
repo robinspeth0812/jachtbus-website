@@ -1,0 +1,66 @@
+---
+// Geometric line pattern, sketched after the side panel of the bus. A
+// stand-in until the wrap supplier's vector file arrives. Purely
+// decorative: it takes its color from the surrounding text color.
+
+interface Props {
+  /** Number of cells across. */
+  columns?: number;
+  /** Number of cells down. */
+  rows?: number;
+}
+
+const { columns = 12, rows = 2 } = Astro.props;
+
+type Shape = 'circle' | 'arch' | 'bowl' | 'quarter' | 'lines' | 'bars' | 'dots' | 'triangle' | 'cross';
+
+// Fixed order, so the pattern never changes between builds.
+const sequence: Shape[] = ['circle', 'lines', 'dots', 'arch', 'cross', 'bars', 'quarter', 'bowl', 'lines', 'triangle', 'dots', 'circle', 'bars'];
+const cell = 100;
+const offsets = [12.5, 25, 37.5, 50, 62.5, 75, 87.5];
+const dotOffsets = [12.5, 31, 50, 69, 87.5];
+
+const cells = Array.from({ length: columns * rows }, (_, index) => {
+  const row = Math.floor(index / columns);
+  const column = index % columns;
+  return { x: column * cell, y: row * cell, shape: sequence[(column + row * 5) % sequence.length] };
+});
+---
+
+<svg
+  class="bus-pattern_svg"
+  viewBox={`0 0 ${columns * cell} ${rows * cell}`}
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+>
+  {cells.map(({ x, y, shape }) => (
+    <g transform={`translate(${x} ${y})`}>
+      <rect class="bus-pattern_line" width={cell} height={cell} />
+      {shape === 'circle' && <circle class="bus-pattern_line" cx="50" cy="50" r="50" />}
+      {shape === 'arch' && <path class="bus-pattern_line" d="M0 100 V50 A50 50 0 0 1 100 50 V100" />}
+      {shape === 'bowl' && <path class="bus-pattern_line" d="M0 0 V50 A50 50 0 0 0 100 50 V0" />}
+      {shape === 'quarter' && <path class="bus-pattern_line" d="M0 0 A100 100 0 0 1 100 100" />}
+      {shape === 'lines' && offsets.map((offset) => <line class="bus-pattern_line" x1="0" x2="100" y1={offset} y2={offset} />)}
+      {shape === 'bars' && offsets.map((offset) => <line class="bus-pattern_line" y1="0" y2="100" x1={offset} x2={offset} />)}
+      {shape === 'dots' && dotOffsets.flatMap((cx) => dotOffsets.map((cy) => <circle class="bus-pattern_dot" cx={cx} cy={cy} r="4" />))}
+      {shape === 'triangle' && <path class="bus-pattern_line" d="M0 100 L50 0 L100 100" />}
+      {shape === 'cross' && <path class="bus-pattern_line" d="M0 0 L100 100 M100 0 L0 100" />}
+    </g>
+  ))}
+</svg>
+
+<style>
+  .bus-pattern_svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .bus-pattern_line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--bus-pattern--stroke);
+  }
+  .bus-pattern_dot {
+    fill: currentColor;
+  }
+</style>

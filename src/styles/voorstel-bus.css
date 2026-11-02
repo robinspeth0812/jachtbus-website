@@ -1,0 +1,161 @@
+/*
+ * Proposal layer for /branding-2 only: tokens, themes and text styles
+ * taken from the bus itself. Imported by that page alone, so the live
+ * site is untouched and the whole direction can be removed in one go.
+ *
+ * Colors are matched by eye from the bus photos, so they are provisional
+ * until the wrap supplier gives the exact values.
+ */
+:root {
+  --color--bus-green: #0b7d37; /* cab and roof, white text passes AA on it */
+  --color--bus-green-dark: #075e29;
+  --color--bus-yellow: #f6b60f; /* roof stripe and side panel lines */
+  --color--bus-yellow-dark: #d99c00;
+  --color--bus-black: var(--color--brown-dark); /* side panel */
+
+  --_typography---font--primary-black: 800;
+  --_typography---stretch--poster: 75%;
+  --_typography---line-height--poster: 0.92;
+  --_typography---size--poster: clamp(3.75rem, 1rem + 11vw, 11.5rem);
+  --_typography---size--poster-small: clamp(2.75rem, 1rem + 6vw, 6.5rem);
+  --_typography---size--poster-row: clamp(2.5rem, 1.25rem + 4vw, 5rem);
+  --_typography---size--poster-label: clamp(2rem, 0.5rem + 3.2vw, 3.75rem);
+  --_typography---size--bus-title: 1.5rem;
+  --_typography---size--hand: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+
+  --size--crop: 9rem; /* round photo details */
+  --size--step: 4rem; /* route stops */
+  --size--stripe: 1rem; /* the yellow roof stripe */
+  --size--logo-bar: 15rem;
+  --size--logo-large: 30rem;
+  --size--palette-min: 24rem;
+  --size--pattern-strip: 14rem;
+  --size--row-img: 11rem;
+  --bus-pattern--stroke: 3; /* user units of the pattern's viewBox */
+}
+
+.u-theme-bus-white,
+.u-theme-bus-green,
+.u-theme-bus-yellow,
+.u-theme-bus-black {
+  --_theme---button-secondary--background: transparent;
+  --_theme---button-secondary--background-hover: transparent;
+}
+
+.u-theme-bus-white {
+  --_theme---background: var(--color--white);
+  --_theme---background-2: var(--color--white);
+  --_theme---background-skeleton: var(--color--neutral-2);
+  --_theme---heading: var(--color--bus-black);
+  --_theme---text: var(--color--bus-black);
+  --_theme---text-accent: var(--color--bus-green);
+  --_theme---border: var(--color--bus-black);
+  --_theme---focus-ring: var(--color--bus-green);
+  --_theme---text-link--text: var(--color--bus-green);
+  --_theme---button-primary--background: var(--color--bus-yellow);
+  --_theme---button-primary--border: var(--color--bus-black);
+  --_theme---button-primary--text: var(--color--bus-black);
+  --_theme---button-primary--background-hover: var(--color--bus-black);
+  --_theme---button-primary--border-hover: var(--color--bus-black);
+  --_theme---button-primary--text-hover: var(--color--bus-yellow);
+  --_theme---button-secondary--border: var(--color--bus-black);
+  --_theme---button-secondary--text: var(--color--bus-black);
+  --_theme---button-secondary--border-hover: var(--color--bus-green);
+  --_theme---button-secondary--text-hover: var(--color--bus-green);
+}
+
+.u-theme-bus-green {
+  --_theme---background: var(--color--bus-green);
+  --_theme---background-2: var(--color--bus-green-dark);
+  --_theme---background-skeleton: var(--color--bus-green-dark);
+  --_theme---heading: var(--color--white);
+  --_theme---text: var(--color--white);
+  --_theme---text-accent: var(--color--bus-yellow);
+  --_theme---border: var(--color--white);
+  --_theme---focus-ring: var(--color--white);
+  --_theme---text-link--text: var(--color--white);
+  --_theme---button-primary--background: var(--color--bus-yellow);
+  --_theme---button-primary--border: var(--color--bus-yellow);
+  --_theme---button-primary--text: var(--color--bus-black);
+  --_theme---button-primary--background-hover: var(--color--white);
+  --_theme---button-primary--border-hover: var(--color--white);
+  --_theme---button-primary--text-hover: var(--color--bus-black);
+  --_theme---button-secondary--border: var(--color--white);
+  --_theme---button-secondary--text: var(--color--white);
+  --_theme---button-secondary--border-hover: var(--color--bus-yellow);
+  --_theme---button-secondary--text-hover: var(--color--bus-yellow);
+}
+
+.u-theme-bus-yellow {
+  --_theme---background: var(--color--bus-yellow);
+  --_theme---background-2: var(--color--bus-yellow-dark);
+  --_theme---background-skeleton: var(--color--bus-yellow-dark);
+  --_theme---heading: var(--color--bus-black);
+  --_theme---text: var(--color--bus-black);
+  --_theme---text-accent: var(--color--bus-black);
+  --_theme---border: var(--color--bus-black);
+  --_theme---focus-ring: var(--color--bus-black);
+  --_theme---text-link--text: var(--color--bus-black);
+  --_theme---button-primary--background: var(--color--bus-black);
+  --_theme---button-primary--border: var(--color--bus-black);
+  --_theme---button-primary--text: var(--color--white);
+  --_theme---button-primary--background-hover: var(--color--white);
+  --_theme---button-primary--border-hover: var(--color--bus-black);
+  --_theme---button-primary--text-hover: var(--color--bus-black);
+  --_theme---button-secondary--border: var(--color--bus-black);
+  --_theme---button-secondary--text: var(--color--bus-black);
+  --_theme---button-secondary--border-hover: var(--color--white);
+  --_theme---button-secondary--text-hover: var(--color--white);
+}
+
+.u-theme-bus-black {
+  --_theme---background: var(--color--bus-black);
+  --_theme---background-2: var(--color--bus-black);
+  --_theme---background-skeleton: var(--color--neutral-4);
+  --_theme---heading: var(--color--white);
+  --_theme---text: var(--color--white);
+  --_theme---text-accent: var(--color--bus-yellow);
+  --_theme---border: var(--color--bus-yellow);
+  --_theme---focus-ring: var(--color--bus-yellow);
+  --_theme---text-link--text: var(--color--bus-yellow);
+  --_theme---button-primary--background: var(--color--bus-yellow);
+  --_theme---button-primary--border: var(--color--bus-yellow);
+  --_theme---button-primary--text: var(--color--bus-black);
+  --_theme---button-primary--background-hover: var(--color--white);
+  --_theme---button-primary--border-hover: var(--color--white);
+  --_theme---button-primary--text-hover: var(--color--bus-black);
+  --_theme---button-secondary--border: var(--color--white);
+  --_theme---button-secondary--text: var(--color--white);
+  --_theme---button-secondary--border-hover: var(--color--bus-yellow);
+  --_theme---button-secondary--text-hover: var(--color--bus-yellow);
+}
+
+/* Poster type: Asap at its narrowest width, heavy and in sentence case,
+   the way the bus itself is lettered. */
+.u-text-style-poster,
+.u-text-style-poster-small,
+.u-text-style-poster-row,
+.u-text-style-poster-label {
+  font-family: var(--_typography---font--heading);
+  font-weight: var(--_typography---font--primary-black);
+  font-stretch: var(--_typography---stretch--poster);
+  line-height: var(--_typography---line-height--poster);
+  letter-spacing: var(--_typography---letter-spacing--tight);
+  color: var(--_theme---heading);
+  text-transform: none;
+}
+.u-text-style-poster { font-size: var(--_typography---size--poster); }
+.u-text-style-poster-small { font-size: var(--_typography---size--poster-small); }
+.u-text-style-poster-row { font-size: var(--_typography---size--poster-row); }
+.u-text-style-poster-label { font-size: var(--_typography---size--poster-label); }
+
+/* Small titles: same condensed letter, also in sentence case. */
+.u-text-style-bus-title {
+  font-family: var(--_typography---font--heading);
+  font-size: var(--_typography---size--bus-title);
+  font-weight: var(--_typography---font--primary-bold);
+  font-stretch: var(--_typography---stretch--poster);
+  line-height: var(--_typography---line-height--heading);
+  color: var(--_theme---heading);
+  text-transform: none;
+}

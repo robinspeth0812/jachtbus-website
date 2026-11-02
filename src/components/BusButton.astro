@@ -1,0 +1,44 @@
+---
+// Square button of the /branding-2 proposal, with its colors coming from
+// the surrounding bus theme.
+
+interface Props {
+  /** Text shown inside the button. */
+  label?: string;
+  /** Where the button links to. */
+  href?: string;
+  /** Visual style of the button. */
+  variant?: 'primary' | 'secondary';
+}
+
+const { label = 'Start je aanvraag', href = '/aanvraag', variant = 'primary' } = Astro.props;
+---
+
+<a class:list={['bus-button_wrap', `is-${variant}`]} href={href} data-trigger="hover focus">{label}</a>
+
+<style>
+  .bus-button_wrap {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    border-style: solid;
+    border-width: var(--focus--width);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-weight: var(--_typography---font--primary-bold);
+    line-height: var(--_typography---line-height--heading);
+    text-decoration: none;
+    transition: background-color 200ms, border-color 200ms, color 200ms;
+  }
+  .bus-button_wrap.is-primary {
+    background-color: color-mix(in hsl, var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off)));
+    border-color: color-mix(in hsl, var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off)));
+  }
+  .bus-button_wrap.is-secondary {
+    background-color: transparent;
+    border-color: color-mix(in hsl, var(--_theme---button-secondary--border) calc(100% * var(--_trigger---on)), var(--_theme---button-secondary--border-hover) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---button-secondary--text) calc(100% * var(--_trigger---on)), var(--_theme---button-secondary--text-hover) calc(100% * var(--_trigger---off)));
+  }
+</style>

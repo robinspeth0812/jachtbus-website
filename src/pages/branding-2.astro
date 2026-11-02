@@ -1,0 +1,736 @@
+---
+// Internal proposal page: a second branding direction in which the bus
+// itself is the brand, with worked examples of site sections. Not linked
+// from the site nav, noindex, and kept out of the sitemap. Standalone on
+// purpose: the current nav and footer would hide the point of the page.
+import { Image } from 'astro:assets';
+import '@fontsource-variable/asap/wdth.css';
+import '@fontsource-variable/open-sans';
+import '@fontsource/nothing-you-could-do';
+import '../styles/tokens.css';
+import '../styles/lumos.css';
+import '../styles/global.css';
+import '../styles/voorstel-bus.css';
+import BusButton from '../components/BusButton.astro';
+import BusPattern from '../components/BusPattern.astro';
+import busImg from '../assets/jachtbus-bus.jpg';
+import hatchImg from '../assets/jachtbus-regio.jpg';
+import peerImg from '../assets/drinken-wijn.jpg';
+import bruiloftImg from '../assets/bruiloft-veld.jpg';
+import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
+import evenementImg from '../assets/dienst-evenement.jpg';
+import plankImg from '../assets/eten-serveerplank.jpg';
+import scriptLogo from '../assets/jachtbus-script-wit.svg';
+
+const origins = [
+  { key: 'green', title: 'Felgroen', text: 'De cabine. Die zie je al van ver staan, dus dat wordt de hoofdkleur.' },
+  { key: 'yellow', title: 'Signaalgeel', text: 'De streep op het dak. Op de site voor knoppen en alles wat op moet vallen.' },
+  { key: 'pattern', title: 'Zwart met lijnen', text: 'Het zijpaneel. Geen kleur erbij, maar een patroon dat niemand anders heeft.' },
+  { key: 'script', title: 'Witte handletters', text: 'De naam op het dak. Groot en los, zoals op de bus, niet in een klein rondje.' },
+] as const;
+
+// WCAG contrast computed from the documented values, the same way as on
+// /branding, so the claims cannot drift from the numbers.
+const GREEN = '#0b7d37';
+const YELLOW = '#f6b60f';
+const BLACK = '#1b1817';
+const WHITE = '#ffffff';
+function luminance(hex: string): number {
+  const channel = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const [r, g, b] = [1, 3, 5].map((i) => channel(parseInt(hex.slice(i, i + 2), 16) / 255));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function ratio(a: string, b: string): string {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return ((hi + 0.05) / (lo + 0.05)).toFixed(1).replace('.', ',') + ':1';
+}
+
+const palette = [
+  { theme: 'u-theme-bus-green', key: 'is-green', name: 'Felgroen', use: 'Grote vlakken en koppen op wit.', check: `Witte tekst: ${ratio(WHITE, GREEN)}` },
+  { theme: 'u-theme-bus-yellow', key: 'is-yellow', name: 'Signaalgeel', use: 'Knoppen en hele secties.', check: `Zwarte tekst: ${ratio(BLACK, YELLOW)}` },
+  { theme: 'u-theme-bus-black', key: 'is-black', name: 'Zwart', use: 'Tekst, patroon en de afsluiter.', check: `Gele tekst: ${ratio(YELLOW, BLACK)}` },
+  { theme: 'u-theme-bus-white', key: 'is-white', name: 'Wit', use: 'Rust om te lezen.', check: `Zwarte tekst: ${ratio(BLACK, WHITE)}` },
+];
+
+const services = [
+  { href: '/catering/bruiloft', title: 'Bruiloft', text: 'Van de borrel na de ceremonie tot de snack op de dansvloer.', img: bruiloftImg, alt: 'De Jachtbus bij een bruiloft buiten, met gasten tussen de stoelen in het veld' },
+  { href: '/catering/bedrijfsfeest', title: 'Bedrijfsfeest', text: 'Personeelsfeest, jubileum of borrel. Wij regelen het eten.', img: bedrijfsfeestImg, alt: 'Peer aan de grill in de Jachtbus' },
+  { href: '/catering/evenement', title: 'Evenement', text: 'Festival, markt of open dag. De bus draait door.', img: evenementImg, alt: 'Een festivalterrein in de avond, met verlichte tenten' },
+  { href: '/catering/bbq-smoker', title: 'BBQ-smoker', text: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.', img: plankImg, alt: 'Een houten plank met kleine broodjes tussen de gasten' },
+];
+
+const steps = [
+  { title: 'Jij belt of appt', text: 'Of je vult het formulier in. Wat je handig vindt.' },
+  { title: 'We gaan om tafel', text: 'Live of online. Wat vieren we, en wat past daarbij?' },
+  { title: 'Je krijgt een voorstel', text: 'Klopt het nog niet helemaal? Dan schuiven we door tot het wel klopt.' },
+  { title: 'De luiken gaan open', text: 'We zetten de bus neer, koken en laten alles netjes achter.' },
+];
+
+const copyPairs = [
+  { now: 'Dé foodtruck voor eerlijk, ambachtelijk bereid eten op locatie', next: 'Zet ons neer, wij koken.' },
+  { now: 'De Jachtbus biedt een complete, betrouwbare en smaakvolle ervaring.', next: 'Wij koken, serveren en ruimen op. Jij hoeft alleen nog te eten.' },
+  { now: 'Onze kernwaarden', next: 'Wat op de bus staat, doen we ook.' },
+];
+
+const needs = [
+  { title: 'De exacte kleuren', text: 'Groen en geel heb ik op het oog gekozen uit de foto’s. De wrap-leverancier heeft de echte codes.' },
+  { title: 'Het patroon als vectorbestand', text: 'Wat hier staat is mijn schets. Met het echte bestand klopt het precies met de bus.' },
+  { title: 'Foto’s van het eten, van dichtbij', text: 'Nu is er vooral bus en mensen. Eén middag fotograferen in de bus scheelt enorm.' },
+  { title: 'Foto’s zonder Jachtlust', text: 'Op de polo’s in de foto’s staat nog het logo van Brasserie Jachtlust. Dat botst met de splitsing.' },
+  { title: 'Jouw besluit over beige en goud', text: 'Dit voorstel gooit de afspraak “beige overal, gouden knoppen” overboord. Dat is jouw keuze.' },
+];
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Branding 2 | Jachtbus Foodtruck</title>
+    <meta name="description" content="Interne werkpagina: een voorstel waarin de bus zelf het merk is." />
+  </head>
+  <body class="u-theme-bus-white">
+    <main class="voorstel_main">
+      <div class="note_wrap u-theme-bus-black">
+        <div class="note_contain u-container">
+          <p class="note_text u-text-style-small">
+            Interne werkpagina met een voorstel. De live site is niet aangepast.
+            <a class="note_link" href="/branding">Naar de huidige branding</a>
+          </p>
+        </div>
+      </div>
+
+      <section class="intro_wrap u-section u-theme-bus-yellow">
+        <div class="intro_contain u-container">
+          <h1 class="intro_title u-text-style-poster">De bus is het merk.</h1>
+          <div class="intro_layout">
+            <div class="intro_content u-margin-trim">
+              <p class="intro_text u-text-style-large">
+                De Jachtbus rijdt rond in felgroen en signaalgeel, met een zwart
+                zijpaneel vol lijnen en witte handletters op het dak. Daar kijk je
+                naar om. Op de site is er bijna niets van over.
+              </p>
+              <p class="intro_text u-text-style-large">
+                Dit voorstel verzint dus geen nieuwe stijl, maar haalt alles van de
+                bus af.
+              </p>
+            </div>
+            <div class="intro_visual">
+              <Image class="intro_img" src={busImg} alt="De Jachtbus in het gras: een felgroene cabine, gele dakstreep en een zwart zijpaneel met gele lijnen" widths={[800, 1200, 1503]} sizes="(max-width: 50em) 100vw, 60vw" loading="eager" />
+            </div>
+          </div>
+          <ul class="origin_list">
+            {origins.map((origin) => (
+              <li class="origin_item">
+                <div class="origin_crop_wrap">
+                  <Image class:list={['origin_crop_img', `is-${origin.key}`]} src={busImg} alt="" width={1503} />
+                </div>
+                <p class="origin_title u-text-style-bus-title">{origin.title}</p>
+                <p class="origin_text u-text-style-main">{origin.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="palette_wrap u-section u-theme-bus-white">
+        <div class="palette_contain u-container">
+          <div class="palette_content u-margin-trim">
+            <h2 class="palette_title u-text-style-poster-small">Vier kleuren, meer niet</h2>
+            <p class="palette_text u-text-style-large">
+              De verhoudingen laten zien hoeveel ruimte elke kleur krijgt. Beige en
+              het donkere goud vervallen. Wit geeft de rust, en daardoor knallen
+              groen en geel juist wel.
+            </p>
+          </div>
+          <div class="palette_layout">
+            {palette.map((color) => (
+              <div class:list={['palette_block', color.key, color.theme]}>
+                <p class="palette_name u-text-style-poster-label">{color.name}</p>
+                <div class="palette_meta u-margin-trim">
+                  <p class="palette_use u-text-style-main">{color.use}</p>
+                  <p class="palette_check u-text-style-small">{color.check}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="pattern_wrap u-section u-theme-bus-black">
+        <div class="pattern_contain u-container">
+          <div class="pattern_layout">
+            <h2 class="pattern_title u-text-style-poster-small">De lijnen van het zijpaneel</h2>
+            <div class="pattern_content u-margin-trim">
+              <p class="pattern_text u-text-style-large">
+                Dit patroon maakt de bus herkenbaar, en op de site speelt het nu geen
+                rol. Ik zou het gebruiken als strook tussen secties en als vorm voor
+                foto’s, zoals de boog en de cirkel hieronder. Nooit achter lopende tekst.
+              </p>
+              <p class="pattern_text u-text-style-small">Dit is mijn schets, niet het bestand van de bus.</p>
+            </div>
+          </div>
+        </div>
+        <div class="pattern_strip">
+          <BusPattern columns={16} rows={2} />
+        </div>
+      </section>
+
+      <section class="type_wrap u-section u-theme-bus-white">
+        <div class="type_contain u-container">
+          <h2 class="type_title u-text-style-poster-small">Dezelfde letter, andere houding</h2>
+          <div class="type_layout">
+            <div class="type_sample">
+              <p class="type_label u-text-style-small">Nu: Asap, breed, alles in hoofdletters</p>
+              <p class="type_now u-text-style-h1">Goed eten op jouw plek</p>
+            </div>
+            <div class="type_sample">
+              <p class="type_label u-text-style-small">Voorstel: Asap op z’n smalst en z’n zwaarst, gewoon met kleine letters, zoals op de bus</p>
+              <p class="type_next u-text-style-poster-small">Goed eten op jouw plek</p>
+            </div>
+            <div class="type_script u-theme-bus-green">
+              <Image class="type_script_img" src={scriptLogo} alt="Jachtbus, in de handletters van het logo" width={960} />
+              <p class="type_script_text u-text-style-large">De handletters blijven alleen voor de naam en voor de woorden van Peer. Dan blijven ze bijzonder.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="samples_wrap u-section u-theme-bus-white">
+        <div class="samples_contain u-container">
+          <div class="samples_content u-margin-trim">
+            <h2 class="samples_title u-text-style-poster-small">Zo ziet dat eruit op de site</h2>
+            <p class="samples_text u-text-style-large">
+              Vijf stukken site in deze stijl, van de bovenkant van de homepage tot de
+              afsluiter. Geen gelijke kaarten meer: elke sectie krijgt een eigen vorm.
+              Eerst de bovenkant, met het formulier pas verderop.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="hero_wrap u-section u-theme-bus-green">
+        <div class="hero_stripe"></div>
+        <div class="hero_contain u-container">
+          <div class="hero_bar">
+            <a class="hero_logo_link" href="/" aria-label="Jachtbus, naar de homepage">
+              <Image class="hero_logo_img" src={scriptLogo} alt="" width={320} />
+            </a>
+            <div class="hero_bar_links">
+              <a class="hero_bar_link" href="/catering" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Catering</span></a>
+              <a class="hero_bar_link" href="/referenties" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Referenties</span></a>
+              <a class="hero_bar_link" href="/over-ons" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Over ons</span></a>
+              <a class="hero_bar_link" href="/contact" data-trigger="hover focus"><span class="hero_bar_label u-hover-underline">Contact</span></a>
+            </div>
+          </div>
+          <div class="hero_layout">
+            <h3 class="hero_title u-text-style-poster">Zet ons neer, wij koken.</h3>
+            <div class="hero_content u-margin-trim">
+              <p class="hero_text u-text-style-large">
+                We rijden naar je tuin, je bedrijf of je weiland, zetten de luiken open
+                en koken ter plekke. In Drenthe, Groningen en Friesland.
+              </p>
+              <div class="hero_actions u-button-wrapper">
+                <BusButton label="Start je aanvraag" />
+                <BusButton label="Bel 0592 656363" href="tel:+31592656363" variant="secondary" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero_visual">
+          <Image class="hero_img" src={hatchImg} alt="Peer en een collega lachend in het open luik van de Jachtbus, met de gele lijnen van de bus eromheen" widths={[800, 1200, 1503]} sizes="100vw" />
+        </div>
+      </section>
+
+      <section class="rows_wrap u-section u-theme-bus-white">
+        <div class="rows_contain u-container">
+          <h3 class="rows_title u-text-style-poster-small">Waar staat de bus straks?</h3>
+          <ul class="rows_list">
+            {services.map((service) => (
+              <li class="rows_item">
+                <a class="rows_link_wrap" href={service.href} data-trigger="hover focus">
+                  <h4 class="rows_link_title u-text-style-poster-row">{service.title}</h4>
+                  <p class="rows_link_text u-text-style-large">{service.text}</p>
+                  <div class="rows_visual">
+                    <Image class="rows_img" src={service.img} alt={service.alt} width={480} />
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="quote_wrap u-section u-theme-bus-yellow">
+        <div class="quote_contain u-container">
+          <div class="quote_layout">
+            <div class="quote_visual">
+              <Image class="quote_img" src={peerImg} alt="Peer schenkt in de bus een glas rode wijn in" widths={[600, 900, 1200]} sizes="(max-width: 50em) 100vw, 40vw" />
+            </div>
+            <div class="quote_content u-margin-trim">
+              <h3 class="quote_title u-text-style-poster-small">En als het regent?</h3>
+              <blockquote class="quote_block">
+                <p class="quote_text">Dan draaien we gewoon door. Hooguit met een tent erbij.</p>
+              </blockquote>
+              <p class="quote_credit u-text-style-main">Peer Wagenaar</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="steps_wrap u-section u-theme-bus-white">
+        <div class="steps_contain u-container">
+          <h3 class="steps_title u-text-style-poster-small">Hoe gaat dat in z’n werk?</h3>
+          <div class="steps_route">
+            <div class="steps_line"></div>
+            <ol class="steps_list">
+              {steps.map((step, index) => (
+                <li class="steps_item">
+                  <div class="steps_stop u-text-style-h4">{index + 1}</div>
+                  <h4 class="steps_item_title u-text-style-bus-title">{step.title}</h4>
+                  <p class="steps_item_text u-text-style-main">{step.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing_wrap u-section u-theme-bus-black">
+        <div class="closing_strip">
+          <BusPattern columns={16} rows={1} />
+        </div>
+        <div class="closing_contain u-container">
+          <div class="closing_layout">
+            <h3 class="closing_title u-text-style-poster">Wat vieren we?</h3>
+            <div class="closing_content u-margin-trim">
+              <p class="closing_text u-text-style-large">
+                Sinds augustus 2025 op pad, in 2026 al zo’n 40 feesten gedraaid, van
+                Stiens tot Stadskanaal. We komen vanaf 40 personen.
+              </p>
+              <div class="closing_actions u-button-wrapper">
+                <BusButton label="Een bruiloft" />
+                <BusButton label="Een bedrijfsfeest" />
+                <BusButton label="Een evenement" />
+                <BusButton label="Iets anders" variant="secondary" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="copy_wrap u-section u-theme-bus-white">
+        <div class="copy_contain u-container">
+          <div class="copy_content u-margin-trim">
+            <h2 class="copy_title u-text-style-poster-small">En de tekst gaat mee</h2>
+            <p class="copy_text u-text-style-large">Alle tekst op deze pagina is een voorzet, ook de zin van Peer over de regen. De toets: zou Peer het zo zeggen?</p>
+          </div>
+          <ul class="copy_list">
+            {copyPairs.map((pair) => (
+              <li class="copy_item">
+                <div class="copy_now u-margin-trim">
+                  <p class="copy_label u-text-style-small">Nu</p>
+                  <p class="copy_now_text u-text-style-large">{pair.now}</p>
+                </div>
+                <div class="copy_next u-margin-trim">
+                  <p class="copy_label u-text-style-small">Voorstel</p>
+                  <p class="copy_next_text u-text-style-poster-label">{pair.next}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="needs_wrap u-section u-theme-bus-green">
+        <div class="needs_contain u-container">
+          <div class="needs_layout">
+            <h2 class="needs_title u-text-style-poster-small">Wat er nog nodig is</h2>
+            <ul class="needs_list">
+              {needs.map((need) => (
+                <li class="needs_item u-margin-trim">
+                  <h3 class="needs_item_title u-text-style-bus-title">{need.title}</h3>
+                  <p class="needs_item_text u-text-style-main">{need.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  .voorstel_main {
+    display: flex;
+    flex-flow: column;
+    overflow: clip;
+  }
+
+  /* Page note */
+  .note_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-block: var(--_spacing---space--2);
+  }
+  .note_link {
+    color: var(--_theme---text-link--text);
+    margin-left: var(--_spacing---space--2);
+  }
+
+  /* Intro */
+  .intro_title { max-width: 12ch; }
+  .intro_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--site--gutter);
+  }
+  .intro_content {
+    grid-column: 1 / span 4;
+    width: 100%;
+  }
+  .intro_text {
+    max-width: 44ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .intro_visual {
+    grid-column: 6 / span 7;
+    width: 100%;
+  }
+  .intro_img {
+    height: auto;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .origin_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 4 + var(--_responsive---medium) * 2 + var(--_responsive---small) * 1 + var(--_responsive---xsmall) * 1), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .origin_crop_wrap {
+    width: var(--size--crop);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+    overflow: clip;
+    margin-bottom: var(--_spacing---space--4);
+  }
+  .origin_crop_img { height: 100%; }
+  .origin_crop_img.is-green { object-position: 0% 50%; transform: scale(4); transform-origin: 23.3% 66%; }
+  .origin_crop_img.is-yellow { object-position: 0% 50%; transform: scale(8); transform-origin: 27.1% 9.4%; }
+  .origin_crop_img.is-pattern { transform: scale(4); transform-origin: 82% 63%; }
+  .origin_crop_img.is-script { object-position: 0% 50%; transform: scale(3); transform-origin: 30.5% 5.8%; }
+  .origin_title { margin-bottom: var(--_spacing---space--2); }
+  .origin_text { max-width: 34ch; }
+
+  /* Palette: the width of each block is its share of the page. */
+  .palette_content { max-width: 60ch; }
+  .palette_title { margin-bottom: var(--_spacing---space--4); }
+  .palette_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 3fr) minmax(0, 2fr);
+  }
+  .palette_block {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    gap: var(--_spacing---space--7);
+    width: 100%;
+    min-height: var(--unset-medium, var(--size--palette-min));
+    padding: var(--_spacing---space--4);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .palette_block.is-white {
+    border: var(--border-width--main) solid var(--color--bus-black);
+  }
+  .palette_use { margin-bottom: var(--_spacing---space--2); }
+
+  /* Pattern */
+  .pattern_wrap { padding-bottom: 0; }
+  .pattern_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .pattern_title {
+    grid-column: 1 / span 7;
+    width: 100%;
+  }
+  .pattern_content {
+    grid-column: 8 / span 5;
+    width: 100%;
+  }
+  .pattern_text {
+    max-width: 50ch;
+    margin-bottom: var(--_text-style---margin-bottom);
+  }
+  .pattern_strip {
+    height: var(--size--pattern-strip);
+    margin-top: var(--_spacing---space--7);
+    color: var(--_theme---text-accent);
+  }
+
+  /* Type */
+  .type_layout {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+  }
+  .type_label {
+    margin-bottom: var(--_spacing---space--2);
+    color: color-mix(in hsl, currentColor 80%, transparent);
+  }
+
+  .type_script {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--5);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .type_script_img {
+    max-width: var(--size--logo-large);
+    object-fit: contain;
+  }
+  .type_script_text { max-width: 52ch; }
+
+  /* Samples heading */
+  .samples_wrap { padding-bottom: var(--_spacing---space--4); }
+  .samples_content { max-width: 62ch; }
+  .samples_title { margin-bottom: var(--_spacing---space--4); }
+
+  /* Sample: hero */
+  .hero_wrap {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .hero_stripe {
+    height: var(--size--stripe);
+    background-color: var(--color--bus-yellow);
+  }
+  .hero_bar {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--5);
+    padding-top: var(--_spacing---space--4);
+  }
+  .hero_logo_link {
+    display: block;
+    flex-shrink: 0;
+    width: var(--size--logo-bar);
+  }
+  .hero_logo_img { object-fit: contain; }
+  .hero_bar_links {
+    display: var(--none-medium, flex);
+    flex-flow: row;
+    gap: var(--_spacing---space--5);
+  }
+  .hero_bar_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-weight: var(--_typography---font--primary-bold);
+    color: var(--_theme---text);
+    text-decoration: none;
+  }
+  .hero_layout {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+    padding-bottom: var(--_spacing---space--7);
+  }
+  .hero_title { max-width: 11ch; }
+  .hero_content {
+    width: 100%;
+    max-width: 52ch;
+  }
+  .hero_text { margin-bottom: var(--_spacing---space--5); }
+  .hero_visual {
+    aspect-ratio: 16 / 9;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .hero_img {
+    height: 100%;
+    object-position: 50% 62%;
+  }
+
+  /* Sample: service rows instead of four identical cards */
+  .rows_title { margin-bottom: var(--_spacing---space--4); }
+  .rows_item {
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .rows_link_wrap {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: var(--start-medium, center);
+    gap: var(--_spacing---space--4) var(--site--gutter);
+    padding-block: var(--_spacing---space--5);
+    color: var(--_theme---text);
+    text-decoration: none;
+  }
+  .rows_link_title {
+    grid-column: 1 / span 5;
+    width: 100%;
+    transform: translateX(calc(var(--_spacing---space--4) * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
+    transition: transform 200ms, color 200ms;
+  }
+  .rows_link_text {
+    grid-column: 6 / span 5;
+    width: 100%;
+    max-width: 40ch;
+  }
+  .rows_visual {
+    grid-column: 11 / span 2;
+    justify-self: end;
+    width: var(--size--row-img);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round) var(--radius--round) 0 0;
+    overflow: clip;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .rows_img { height: 100%; }
+
+  /* Sample: Peer in his own words */
+  .quote_wrap {
+    padding-bottom: 0;
+  }
+  .quote_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: end;
+  }
+  .quote_visual {
+    grid-column: 1 / span 5;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius--round) var(--radius--round) 0 0;
+    overflow: clip;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .quote_img {
+    height: 100%;
+    object-position: 50% 30%;
+  }
+  .quote_content {
+    grid-column: 7 / span 6;
+    width: 100%;
+    align-self: center;
+    padding-bottom: var(--_spacing---space--7);
+  }
+  .quote_title { margin-bottom: var(--_spacing---space--5); }
+  .quote_block { margin-bottom: var(--_spacing---space--4); }
+  .quote_text {
+    font-family: var(--_typography---font--accent);
+    font-size: var(--_typography---size--hand);
+    line-height: var(--_typography---line-height--heading);
+  }
+
+  /* Sample: the steps as a route */
+  .steps_route { position: relative; }
+  .steps_line {
+    display: var(--none-medium, block);
+    position: absolute;
+    top: calc(var(--size--step) / 2);
+    left: 0;
+    right: 0;
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .steps_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 4 + var(--_responsive---medium) * 2 + var(--_responsive---small) * 1 + var(--_responsive---xsmall) * 1), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    position: relative;
+  }
+  .steps_stop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--step);
+    aspect-ratio: 1 / 1;
+    margin-bottom: var(--_spacing---space--4);
+    border-radius: var(--radius--round);
+    background-color: var(--color--bus-yellow);
+    color: var(--color--bus-black);
+    border: var(--focus--width) solid var(--color--bus-black);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .steps_item_title { margin-bottom: var(--_spacing---space--2); }
+  .steps_item_text { max-width: 30ch; }
+
+  /* Sample: closing */
+  .closing_wrap { padding-top: 0; }
+  .closing_strip {
+    height: var(--size--crop);
+    margin-bottom: var(--_spacing---space--7);
+    color: var(--_theme---text-accent);
+  }
+  .closing_layout {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+  }
+  .closing_content {
+    width: 100%;
+    max-width: 60ch;
+  }
+  .closing_text { margin-bottom: var(--_spacing---space--5); }
+
+  /* Copy */
+  .copy_content { max-width: 60ch; }
+  .copy_title { margin-bottom: var(--_spacing---space--4); }
+  .copy_item {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--4) var(--site--gutter);
+    padding-block: var(--_spacing---space--5);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .copy_now {
+    grid-column: 1 / span 4;
+    width: 100%;
+  }
+  .copy_next {
+    grid-column: 6 / span 7;
+    width: 100%;
+  }
+  .copy_label {
+    margin-bottom: var(--_spacing---space--2);
+    color: color-mix(in hsl, currentColor 80%, transparent);
+  }
+
+  /* Open points */
+  .needs_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .needs_title {
+    grid-column: 1 / span 5;
+    width: 100%;
+  }
+  .needs_list {
+    grid-column: 7 / span 6;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--5);
+  }
+  .needs_item_title { margin-bottom: var(--_spacing---space--1); }
+  .needs_item_text { max-width: 55ch; }
+</style>
