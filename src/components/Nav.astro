@@ -4,7 +4,7 @@
 // external Brasserie link + request button right.
 import { Image } from 'astro:assets';
 import TrustWidget from './TrustWidget.astro';
-import logo from '../assets/jachtbus-logo-wit.png';
+import logo from '../assets/jachtbus-logo-wit-goud.svg';
 import whatsappIcon from '../assets/whatsapp-icon.svg';
 import instagramIcon from '../assets/instagram-icon.png';
 import facebookIcon from '../assets/facebook-icon.svg';
@@ -77,7 +77,7 @@ const topbarLinks: TopbarLink[] = [
         </button>
       </div>
       <a class="nav_logo_wrap" href="/">
-        <Image class="nav_logo_img" src={logo} alt="Jachtbus Foodtruck, naar de homepage" width={208} densities={[1, 2]} />
+        <Image class="nav_logo_img" src={logo} alt="Jachtbus Foodtruck, naar de homepage" width={208} />
       </a>
       <div class="nav_mobile_wrap is-end">
         <a class="nav_cta_link" href="/aanvraag" data-trigger="hover focus">Aanvraag starten</a>

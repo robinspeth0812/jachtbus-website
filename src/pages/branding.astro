@@ -1,0 +1,811 @@
+---
+// Internal branding page: the whole current style laid out in one
+// place (logo, colors with measured contrast, type, buttons, cards,
+// form, texture, shapes) so the owner can point at what has to change.
+// Not linked from the site nav, noindex, and kept out of the sitemap.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import RegionPill from '../components/RegionPill.astro';
+import RequestForm from '../components/RequestForm.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import Texture from '../components/Texture.astro';
+import TrustWidget from '../components/TrustWidget.astro';
+import logoWit from '../assets/jachtbus-logo-wit.png';
+import logoWitGoud from '../assets/jachtbus-logo-wit-goud.svg';
+import logoFc from '../assets/jachtbus-logo-fc.svg';
+import busImg from '../assets/jachtbus-bus.jpg';
+
+interface Swatch {
+  /** Token name without the --color-- prefix. */
+  token: string;
+  /** Hex value, shown as documentation text (the value itself lives in tokens.css). */
+  hex: string;
+  /** Agreed usage, if fixed. */
+  note?: string;
+}
+
+const marigold: Swatch[] = [
+  { token: 'marigold-1', hex: '#f8f3ea', note: 'De achtergrond overal buiten de groene secties' },
+  { token: 'marigold-2', hex: '#f1e8d5', note: 'Voorgrond op beige: cards, pills, velden' },
+  { token: 'marigold-3', hex: '#d0af6c', note: 'Lichtgoud: hover-rand op groen, inkt-accent' },
+  { token: 'marigold-4', hex: '#bc8e2d', note: 'Decoratief goud: nooit als knop, nooit met witte tekst' },
+  { token: 'marigold-5', hex: '#8a6820', note: 'De knopkleur op alle thema’s (witte tekst) en goudtekst op beige' },
+  { token: 'marigold-6', hex: '#4b3812', note: 'Knop-hover' },
+  { token: 'marigold-7', hex: '#382a0d' },
+];
+
+const camarone: Swatch[] = [
+  { token: 'camarone-1', hex: '#e5ede8' },
+  { token: 'camarone-2', hex: '#ccdcd1' },
+  { token: 'camarone-3', hex: '#4c845f', note: 'Te licht voor tekst: alleen decoratief, border op groen' },
+  { token: 'camarone-4', hex: '#00501b', note: 'Merkgroen: achtergrond van groene secties, focus-ring, links op beige' },
+  { token: 'camarone-5', hex: '#004015', note: 'Kaarten en velden op groen' },
+  { token: 'camarone-6', hex: '#00200a', note: 'Basis voor de borders op beige (12% dekking)' },
+  { token: 'camarone-7', hex: '#001808', note: 'Scrim over hero-foto’s' },
+];
+
+const brown: Swatch[] = [
+  { token: 'brown-dark', hex: '#1b1817', note: 'Koppen plus secundaire en link-knoppen op beige' },
+  { token: 'brown', hex: '#292524', note: 'Lopende tekst op beige' },
+];
+
+const neutral: Swatch[] = [
+  { token: 'white', hex: '#ffffff', note: 'Knoptekst, logo op groen' },
+  { token: 'neutral-2', hex: '#cccccc' },
+  { token: 'neutral-3', hex: '#666666' },
+  { token: 'neutral-4', hex: '#4c4c4c' },
+];
+
+const scales = [
+  { name: 'Marigold (goud en beige)', swatches: marigold },
+  { name: 'Camarone (groen)', swatches: camarone },
+  { name: 'Brown (tekst op beige)', swatches: brown },
+  { name: 'Neutraal', swatches: neutral },
+];
+
+// WCAG contrast of every color against the two section backgrounds,
+// computed here from the documented hex values so the table can never
+// drift from what is claimed.
+const BEIGE = '#f8f3ea';
+const GREEN = '#00501b';
+function luminance(hex: string): number {
+  const channel = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const [r, g, b] = [1, 3, 5].map((i) => channel(parseInt(hex.slice(i, i + 2), 16) / 255));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+function contrast(a: string, b: string): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+function ratio(a: string, b: string): string {
+  return contrast(a, b).toFixed(2).replace('.', ',') + ':1';
+}
+function verdict(a: string, b: string): 'tekst' | 'groot' | 'nee' {
+  const c = contrast(a, b);
+  return c >= 4.5 ? 'tekst' : c >= 3 ? 'groot' : 'nee';
+}
+const verdictLabel = { tekst: 'ok voor tekst', groot: 'alleen grote tekst', nee: 'geen tekst' };
+const allSwatches = scales.flatMap((s) => s.swatches);
+
+const typeScale = [
+  { cls: 'u-text-style-display', name: 'Display', size: '2,75 tot 4,25 rem' },
+  { cls: 'u-text-style-h1', name: 'Kop 1', size: '2,25 tot 3,25 rem' },
+  { cls: 'u-text-style-h2', name: 'Kop 2', size: '1,75 tot 2,5 rem' },
+  { cls: 'u-text-style-h3', name: 'Kop 3', size: '1,375 tot 1,75 rem' },
+  { cls: 'u-text-style-h4', name: 'Kop 4', size: '1,25 rem' },
+  { cls: 'u-text-style-h5', name: 'Kop 5', size: '1,125 rem' },
+  { cls: 'u-text-style-h6', name: 'Kop 6', size: '1 rem' },
+];
+
+const spacing = [1, 2, 3, 4, 5, 6, 7, 8];
+---
+
+<Base title="Branding" description="Interne werkpagina: de huisstijl van de Jachtbus-site." noindex footerCta={false}>
+  <section class="branding_wrap u-section">
+    <div class="branding_contain u-container">
+      <div class="branding_intro_layout u-margin-trim">
+        <h1 class="branding_title u-text-style-h1">Branding</h1>
+        <p class="branding_text u-text-style-large">
+          Alles wat de site nu aan stijl heeft, op een rij. Logo, kleuren met
+          gemeten contrast, letters, knoppen, kaarten, formulier, textuur en
+          vormen. Wijs aan wat niet klopt, dan passen we het hier eerst aan en
+          daarna op de site. De terugkerende secties staan op
+          <a class="branding_link u-underline" href="/secties" data-trigger="hover focus">/secties</a>.
+        </p>
+        <nav class="branding_toc" aria-label="Onderdelen van deze pagina">
+          <ul class="branding_toc_list">
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#logo">Logo</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#kleuren">Kleuren</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#typografie">Typografie</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#knoppen">Knoppen</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#onderdelen">Onderdelen</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#formulier">Formulier</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#textuur">Textuur</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#vorm">Vorm en ruimte</a></li>
+            <li class="branding_toc_item"><a class="branding_toc_link" href="#afspraken">Afspraken</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="logo">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Logo</h2>
+        <p class="branding_text">
+          Drie versies die nu bestaan. Links het oorspronkelijke witte logo
+          met eigen ring en stippen (PNG). In het midden het witte woordmerk
+          met de gouden Jachtlust-ring, nu in de nav. Rechts de
+          full-colorversie uit het logo-PDF, op beige. Daaronder elk logo op
+          de echte navmaat (7,5 rem badge).
+        </p>
+        <ul class="branding_logo_list">
+          <li class="branding_logo_wrap u-theme-brand">
+            <Image class="branding_logo_img" src={logoWit} alt="Wit logo met eigen witte ring" width={400} />
+            <span class="branding_caption u-text-style-small">Wit met witte ring (oud, nog in footer)</span>
+          </li>
+          <li class="branding_logo_wrap u-theme-brand">
+            <Image class="branding_logo_img" src={logoWitGoud} alt="Wit woordmerk met gouden ring" width={400} />
+            <span class="branding_caption u-text-style-small">Wit met gouden ring (nu in de nav)</span>
+          </li>
+          <li class="branding_logo_wrap">
+            <Image class="branding_logo_img" src={logoFc} alt="Full-colorlogo met gouden ring en donkere letters" width={400} />
+            <span class="branding_caption u-text-style-small">Full color op beige (uit het PDF)</span>
+          </li>
+        </ul>
+        <ul class="branding_badge_list u-theme-brand">
+          <li class="branding_badge_wrap">
+            <Image class="branding_badge_img" src={logoWit} alt="" width={208} />
+          </li>
+          <li class="branding_badge_wrap">
+            <Image class="branding_badge_img" src={logoWitGoud} alt="" width={208} />
+          </li>
+          <li class="branding_badge_wrap is-light">
+            <Image class="branding_badge_img" src={logoFc} alt="" width={208} />
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="kleuren">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Kleuren</h2>
+        <p class="branding_text">
+          Alle kleuren bestaan als token in <code>src/styles/tokens.css</code>.
+          Per kleur staat het gemeten contrast tegen beige
+          (<code>marigold-1</code>) en tegen merkgroen (<code>camarone-4</code>).
+          De grens voor gewone tekst is 4,5:1, voor grote tekst en iconen
+          3:1.
+        </p>
+        {
+          scales.map((scale) => (
+            <div class="branding_scale_wrap u-margin-trim">
+              <h3 class="branding_scale_title u-text-style-h4">{scale.name}</h3>
+              <ul class="branding_swatch_list">
+                {scale.swatches.map((swatch) => (
+                  <li class="branding_swatch_wrap">
+                    <span class="branding_swatch_chip" style={`background-color: var(--color--${swatch.token})`} />
+                    <span class="branding_swatch_name u-text-style-small">
+                      <code>{swatch.token}</code> · {swatch.hex}
+                    </span>
+                    {swatch.note && <span class="branding_swatch_note u-text-style-small">{swatch.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+
+        <h3 class="branding_scale_title u-text-style-h4">Contrast per kleur</h3>
+        <div class="branding_table_wrap">
+          <table class="branding_table u-text-style-small">
+            <thead class="branding_table_head">
+              <tr class="branding_table_row">
+                <th class="branding_table_cell is-head" scope="col">Kleur</th>
+                <th class="branding_table_cell is-head" scope="col">Op beige</th>
+                <th class="branding_table_cell is-head" scope="col">Oordeel</th>
+                <th class="branding_table_cell is-head" scope="col">Op groen</th>
+                <th class="branding_table_cell is-head" scope="col">Oordeel</th>
+              </tr>
+            </thead>
+            <tbody class="branding_table_body">
+              {
+                allSwatches.map((swatch) => (
+                  <tr class="branding_table_row">
+                    <th class="branding_table_cell is-name" scope="row">
+                      <span class="branding_table_dot" style={`background-color: var(--color--${swatch.token})`} aria-hidden="true" />
+                      <code>{swatch.token}</code>
+                    </th>
+                    <td class="branding_table_cell is-num">{ratio(swatch.hex, BEIGE)}</td>
+                    <td class:list={['branding_table_cell', `is-${verdict(swatch.hex, BEIGE)}`]}>{verdictLabel[verdict(swatch.hex, BEIGE)]}</td>
+                    <td class="branding_table_cell is-num">{ratio(swatch.hex, GREEN)}</td>
+                    <td class:list={['branding_table_cell', `is-${verdict(swatch.hex, GREEN)}`]}>{verdictLabel[verdict(swatch.hex, GREEN)]}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="branding_scale_title u-text-style-h4">De twee thema’s naast elkaar</h3>
+        <div class="branding_theme_layout">
+          <div class="branding_theme_wrap u-theme-light u-margin-trim">
+            <span class="branding_caption u-text-style-small">u-theme-light (beige)</span>
+            <h4 class="branding_theme_title u-text-style-h3">Kop in Brown Dark</h4>
+            <p class="branding_text">
+              Lopende tekst in Brown. Een <a class="branding_link u-underline" href="/contact" data-trigger="hover focus">tekstlink</a> is merkgroen.
+              Goudtekst via <span class="branding_accent">de accent-variabele</span>.
+            </p>
+            <div class="branding_theme_card">
+              <span class="branding_caption u-text-style-small">Voorgrond: marigold-2 met border</span>
+            </div>
+            <div class="branding_buttons_row u-button-wrapper">
+              <Button variant="primary" label="Primair" href="/aanvraag" />
+              <Button variant="secondary" label="Secundair" href="/aanvraag" />
+            </div>
+          </div>
+          <div class="branding_theme_wrap u-theme-brand u-margin-trim">
+            <span class="branding_caption u-text-style-small">u-theme-brand (groen)</span>
+            <h4 class="branding_theme_title u-text-style-h3">Kop in marigold-1</h4>
+            <p class="branding_text">
+              Lopende tekst in marigold-1. Een <a class="branding_link u-underline" href="/contact" data-trigger="hover focus">tekstlink</a> is marigold-2.
+              Goudtekst via <span class="branding_accent">de accent-variabele</span>.
+            </p>
+            <div class="branding_theme_card">
+              <span class="branding_caption u-text-style-small">Voorgrond: camarone-5 met border</span>
+            </div>
+            <div class="branding_buttons_row u-button-wrapper">
+              <Button variant="primary" label="Primair" href="/aanvraag" />
+              <Button variant="secondary" label="Secundair" href="/aanvraag" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="typografie">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Typografie</h2>
+        <p class="branding_text">
+          Asap bold voor koppen, Open Sans voor lopende tekst, Nothing You
+          Could Do voor handgeschreven accenten. Alle koppen en knoppen
+          staan in kapitalen via CSS (letterspatiëring -0,02em op koppen,
+          +0,06em op knoppen en labels). Regelafstand 1,15 op koppen, 1,6
+          op tekst.
+        </p>
+        <ul class="branding_type_list">
+          {
+            typeScale.map((step) => (
+              <li class="branding_type_wrap">
+                <span class="branding_caption u-text-style-small">{step.name} · {step.size}</span>
+                <p class:list={['branding_type_sample', step.cls]}>Goed eten op jouw plek</p>
+              </li>
+            ))
+          }
+          <li class="branding_type_wrap">
+            <span class="branding_caption u-text-style-small">Tekst groot · 1,125 rem</span>
+            <p class="branding_type_sample u-text-style-large">
+              De Jachtbus komt naar jouw feest. Goed, vers en ambachtelijk bereid, voor bruiloften, bedrijfsfeesten en evenementen in Noord-Nederland.
+            </p>
+          </li>
+          <li class="branding_type_wrap">
+            <span class="branding_caption u-text-style-small">Tekst normaal · 1 rem</span>
+            <p class="branding_type_sample u-text-style-main">
+              Wij regelen het, kort en actief. Jij en jou, nooit u. Geen culinaire beleving, wel gewoon goed eten. Een vraag mag een kop zijn, en een grapje mag, als het maar niet te hard roept.
+            </p>
+          </li>
+          <li class="branding_type_wrap">
+            <span class="branding_caption u-text-style-small">Tekst klein · 0,875 rem</span>
+            <p class="branding_type_sample u-text-style-small">
+              Kleine tekst voor bijschriften, labels en hints. Meerdere kiezen mag. Twijfel je? Sla over, dan bespreken we het.
+            </p>
+          </li>
+          <li class="branding_type_wrap">
+            <span class="branding_caption u-text-style-small">Handgeschreven accent (Nothing You Could Do)</span>
+            <p class="branding_type_sample u-text-style-accent u-text-style-h3">Gewoon goed eten, daar draait het om.</p>
+          </li>
+          <li class="branding_type_wrap">
+            <span class="branding_caption u-text-style-small">Label in kapitalen (tagline, lijsttitels, stappen)</span>
+            <p class="branding_type_sample branding_label u-text-style-small">Mobiele cateraar in Drenthe, Friesland, Groningen e.o.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="knoppen">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Knoppen op beige</h2>
+        <p class="branding_text">
+          Eén primaire knop door de hele site: <code>marigold-5</code> met
+          witte tekst, in kapitalen in de kopletter. Secundair en link-only
+          nemen op beige de kleur van de koppen.
+        </p>
+        <div class="branding_buttons_row u-button-wrapper">
+          <Button variant="primary" label="Primair op beige" href="/aanvraag" />
+          <Button variant="secondary" label="Secundair op beige" href="/aanvraag" />
+          <Button variant="link" label="Link only op beige" href="/aanvraag" />
+        </div>
+        <p class="branding_text u-text-style-small">Pill (zoals in hero’s) en region-pill met pin:</p>
+        <div class="branding_pill_row">
+          <span class="branding_pill u-text-style-small">Drenthe</span>
+          <span class="branding_pill u-text-style-small">Groningen</span>
+          <span class="branding_pill u-text-style-small">Friesland</span>
+          <RegionPill />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section u-theme-brand">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Knoppen op groen</h2>
+        <p class="branding_text">
+          Dezelfde gouden knop. Hij steekt hier zwak af tegen het groen
+          (circa 1,9:1), daarom krijgt hij bij hover een lichtgouden rand.
+          Secundair en link-only worden crème.
+        </p>
+        <div class="branding_buttons_row u-button-wrapper">
+          <Button variant="primary" label="Primair op groen" href="/aanvraag" />
+          <Button variant="secondary" label="Secundair op groen" href="/aanvraag" />
+          <Button variant="link" label="Link only op groen" href="/aanvraag" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="onderdelen">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <SectionHeader title="Onderdelen" text="Sectiekop (dit is er een), kaarten, chat bubble en trustwidgets zoals ze nu op de site staan." />
+        <div class="branding_card_layout">
+          <Card title="Kaart met foto" image={busImg} alt="" text="Kaart met foto, kop en tekst, afgeronde hoeken op radius large." href="/catering" />
+          <Card
+            title="Kaart met links"
+            text="Kaart zonder foto met gestapelde bloklinks onderin."
+            links={[
+              { href: '/catering/bruiloft', label: 'Bruiloft' },
+              { href: '/catering/bedrijfsfeest', label: 'Bedrijfsfeest' },
+            ]}
+          />
+          <div class="branding_stack_layout">
+            <ChatBubble />
+            <TrustWidget size="md" score="4,9" count={27} />
+            <span class="branding_caption u-text-style-small">Trustwidget met voorbeeldcijfers: live pas met echte reviews.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="formulier">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Formulier</h2>
+        <p class="branding_text">
+          Het aanvraagformulier in vier stappen, hier als los paneel. In de
+          hero staat dezelfde component ingebed in de witte kaart.
+        </p>
+        <RequestForm />
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="textuur">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Textuur</h2>
+        <p class="branding_text">
+          De handgeschreven achtergrondtekst in de drie sterktes, op groen
+          met witte inkt en op beige met groene inkt. Bovenop staat gewone
+          tekst zodat je ziet wat het met de leesbaarheid doet.
+        </p>
+        <ul class="branding_texture_list">
+          <li class="branding_texture_wrap u-theme-brand u-texture-wrap">
+            <Texture story="morning" strength="subtle" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Groen · wit · subtiel (4%)</span>
+              <p class="branding_text">We laden de bus ’s ochtends vol en rijden het erf op.</p>
+            </div>
+          </li>
+          <li class="branding_texture_wrap u-theme-brand u-texture-wrap">
+            <Texture story="bus" strength="normal" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Groen · wit · normaal (5,5%)</span>
+              <p class="branding_text">We laden de bus ’s ochtends vol en rijden het erf op.</p>
+            </div>
+          </li>
+          <li class="branding_texture_wrap u-theme-brand u-texture-wrap">
+            <Texture story="wedding" strength="strong" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Groen · wit · sterk (9%)</span>
+              <p class="branding_text">We laden de bus ’s ochtends vol en rijden het erf op.</p>
+            </div>
+          </li>
+          <li class="branding_texture_wrap u-theme-light u-texture-wrap">
+            <Texture story="evening" strength="normal" ink="green" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Beige · groen · normaal (5,5%)</span>
+              <p class="branding_text">De laatste borden gaan terug de bus in, de luiken dicht.</p>
+            </div>
+          </li>
+          <li class="branding_texture_wrap u-theme-light u-texture-wrap">
+            <Texture story="smoker" strength="strong" ink="green" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Beige · groen · sterk (9%)</span>
+              <p class="branding_text">De laatste borden gaan terug de bus in, de luiken dicht.</p>
+            </div>
+          </li>
+          <li class="branding_texture_wrap u-theme-brand u-texture-wrap">
+            <Texture story="bus" strength="normal" ink="gold" shape="strip" />
+            <div class="branding_texture_content u-texture-content u-margin-trim">
+              <span class="branding_caption u-text-style-small">Groen · goud · strook rechts</span>
+              <p class="branding_text">We laden de bus ’s ochtends vol en rijden het erf op.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="vorm">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Vorm en ruimte</h2>
+        <p class="branding_text">
+          Hoekradius, borders, focus-ring en de ruimteschaal die alle
+          afstanden bepaalt.
+        </p>
+        <ul class="branding_shape_list">
+          <li class="branding_shape_wrap">
+            <span class="branding_shape_sample is-small" aria-hidden="true"></span>
+            <span class="branding_caption u-text-style-small">radius small · 0,25 rem (chips in tabellen)</span>
+          </li>
+          <li class="branding_shape_wrap">
+            <span class="branding_shape_sample is-main" aria-hidden="true"></span>
+            <span class="branding_caption u-text-style-small">radius main · 0,5 rem (knoppen, velden, pills)</span>
+          </li>
+          <li class="branding_shape_wrap">
+            <span class="branding_shape_sample is-large" aria-hidden="true"></span>
+            <span class="branding_caption u-text-style-small">radius large · 1,25 rem (kaarten, formulierpaneel, bubble)</span>
+          </li>
+          <li class="branding_shape_wrap">
+            <span class="branding_shape_sample is-round" aria-hidden="true"></span>
+            <span class="branding_caption u-text-style-small">rond (logo-badge, avatars)</span>
+          </li>
+          <li class="branding_shape_wrap">
+            <span class="branding_shape_sample is-focus" aria-hidden="true"></span>
+            <span class="branding_caption u-text-style-small">focus-ring · 0,1875 rem merkgroen met 0,125 rem offset</span>
+          </li>
+        </ul>
+        <h3 class="branding_scale_title u-text-style-h4">Ruimteschaal</h3>
+        <ul class="branding_space_list">
+          {
+            spacing.map((n) => (
+              <li class="branding_space_wrap">
+                <span class="branding_space_bar" style={`width: var(--_spacing---space--${n})`} aria-hidden="true" />
+                <span class="branding_caption u-text-style-small">space {n}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="branding_wrap u-section" id="afspraken">
+    <div class="branding_contain u-container">
+      <div class="branding_block_layout u-margin-trim">
+        <h2 class="branding_subtitle u-text-style-h2">Vaste afspraken</h2>
+        <ul class="branding_rules_list">
+          <li class="branding_rules_item">Eén <code>h1</code> per pagina, kopniveaus zonder overslaan.</li>
+          <li class="branding_rules_item">Focus altijd zichtbaar; ring in de merkkleur (op groen: crème).</li>
+          <li class="branding_rules_item">Kleur is nooit het enige signaal: links krijgen een underline.</li>
+          <li class="branding_rules_item">Klikdoelen minimaal 44×44 px.</li>
+          <li class="branding_rules_item">Geen verzonnen reviewscores of aantallen, geen superlatieven zonder bewijs.</li>
+          <li class="branding_rules_item">Alle zichtbare tekst is Nederlands en informeel (jij/jou).</li>
+          <li class="branding_rules_item">Verboden: "culinaire beleving", "vrijblijvend informeren", "uw wensen inventariseren" en Engelse marketingtaal.</li>
+          <li class="branding_rules_item">Uitroeptekens spaarzaam: maximaal één per sectie.</li>
+          <li class="branding_rules_item">Nergens een em dash. Gebruik een komma, dubbele punt of punt.</li>
+          <li class="branding_rules_item">Borders tussen voor- en achtergrond zijn de tekstkleur op 12% dekking, ook om avatars.</li>
+          <li class="branding_rules_item">UI-iconen zijn filled (geen outline) in de goudkleur, via de accent-variabele, en decoratief met aria-hidden.</li>
+          <li class="branding_rules_item">Knoppen zijn altijd all caps, in de kopletter met caps-letterspatiëring.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Anchor targets land below the fixed nav. */
+  .branding_wrap { scroll-margin-top: var(--nav--height-total); }
+  .branding_intro_layout,
+  .branding_block_layout,
+  .branding_scale_wrap,
+  .branding_stack_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+  }
+  .branding_text { max-width: 65ch; }
+  .branding_caption { color: var(--_theme---text-accent); }
+  .branding_accent { color: var(--_theme---text-accent); }
+  .branding_label {
+    text-transform: uppercase;
+    letter-spacing: var(--_typography---letter-spacing--caps);
+  }
+
+  /* Table of contents */
+  .branding_toc_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  .branding_toc_item { display: flex; }
+  .branding_toc_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding: 0 var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+    text-decoration: none;
+  }
+
+  /* Logo */
+  .branding_logo_list {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .branding_logo_wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--_spacing---space--4);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .branding_logo_img {
+    width: 100%;
+    max-width: 25rem;
+    height: auto;
+    object-fit: contain;
+  }
+  .branding_badge_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--6);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    border-radius: var(--radius--large);
+  }
+  .branding_badge_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--nav--logo-size);
+    height: var(--nav--logo-size);
+    border-radius: var(--radius--round);
+    background-color: var(--_theme---background);
+  }
+  .branding_badge_wrap.is-light { background-color: var(--color--marigold-1); }
+  .branding_badge_img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Colors */
+  .branding_swatch_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .branding_swatch_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .branding_swatch_chip {
+    display: block;
+    height: var(--_spacing---space--8);
+    border-radius: var(--radius--small);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .branding_swatch_note { color: var(--_theme---text-accent); }
+  .branding_table_wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .branding_table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .branding_table_cell {
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
+    border-bottom: var(--border-width--main) solid var(--_theme---border);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .branding_table_cell.is-head { font-weight: var(--_typography---font--primary-bold); }
+  .branding_table_cell.is-name {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    font-weight: var(--_typography---font--primary-regular);
+  }
+  .branding_table_cell.is-num { font-variant-numeric: tabular-nums; }
+  .branding_table_cell.is-tekst { color: var(--_theme---text-link--text); }
+  .branding_table_cell.is-groot { color: var(--_theme---text-accent); }
+  .branding_table_cell.is-nee { text-decoration: line-through; }
+  .branding_table_dot {
+    display: inline-block;
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    border-radius: var(--radius--round);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .branding_theme_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .branding_theme_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--4);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .branding_theme_card {
+    padding: var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+  }
+
+  /* Type */
+  .branding_type_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--5);
+  }
+  .branding_type_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--1);
+    padding-bottom: var(--_spacing---space--4);
+    border-bottom: var(--border-width--main) solid var(--_theme---border);
+  }
+  .branding_type_sample { max-width: 30ch; }
+  .branding_type_sample.u-text-style-large,
+  .branding_type_sample.u-text-style-main,
+  .branding_type_sample.u-text-style-small { max-width: 65ch; }
+
+  /* Buttons and pills */
+  .branding_buttons_row { align-items: center; }
+  .branding_pill_row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  .branding_pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--_spacing---space--6);
+    padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--main);
+  }
+
+  /* Components */
+  .branding_card_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--_spacing---space--5);
+    align-items: start;
+  }
+  .branding_stack_layout { align-items: flex-start; }
+
+  /* Texture samples */
+  .branding_texture_list {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--_spacing---space--5);
+  }
+  .branding_texture_wrap {
+    display: flex;
+    min-height: var(--_spacing---space--8);
+    padding: var(--_spacing---space--6);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---border);
+    border-radius: var(--radius--large);
+  }
+  .branding_texture_content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+  }
+
+  /* Shapes and spacing */
+  .branding_shape_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--6);
+  }
+  .branding_shape_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+    max-width: 14rem;
+  }
+  .branding_shape_sample {
+    display: block;
+    width: var(--_spacing---space--8);
+    height: var(--_spacing---space--8);
+    background-color: var(--_theme---background-2);
+    border: var(--border-width--main) solid var(--_theme---border);
+  }
+  .branding_shape_sample.is-small { border-radius: var(--radius--small); }
+  .branding_shape_sample.is-main { border-radius: var(--radius--main); }
+  .branding_shape_sample.is-large { border-radius: var(--radius--large); }
+  .branding_shape_sample.is-round { border-radius: var(--radius--round); }
+  .branding_shape_sample.is-focus {
+    border-radius: var(--radius--main);
+    outline: var(--focus--width) solid var(--_theme---focus-ring);
+    outline-offset: var(--focus--offset);
+  }
+  .branding_space_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .branding_space_wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  .branding_space_bar {
+    display: block;
+    height: var(--_spacing---space--4);
+    background-color: var(--_theme---text-accent);
+    border-radius: var(--radius--small);
+  }
+
+  /* Rules */
+  .branding_rules_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+    max-width: 70ch;
+  }
+  .branding_rules_item {
+    padding-left: var(--_spacing---space--4);
+    border-left: var(--focus--width) solid var(--_theme---text-accent);
+  }
+</style>
