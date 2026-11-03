@@ -1,7 +1,7 @@
 ---
-// Sticky green bar with the round logo on the true center. The badge overhangs
-// the bar at the top of the page and tucks in on scroll. Phones get a full
-// screen menu in a dialog, so focus trap and Esc come for free.
+// Sticky green bar with the round logo on the true center, hanging out of the
+// bar. Phones get a full screen menu in a dialog, so focus trap and Esc come
+// for free.
 import { Image } from 'astro:assets';
 import ringLogo from '../../assets/jachtbus-logo-wit-goud.svg';
 import BusButton from '../BusButton.astro';
@@ -179,33 +179,19 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
     border-bottom: var(--border-width--main) solid var(--_theme---border);
   }
 
-  /* Logo badge: its own green disc, so it also reads over beige sections. */
+  /* The logo has its own gold ring. Its green disc hangs out of the bar, with
+     some padding, so it also reads over beige sections. */
   .bus-nav_logo {
-    --_size: calc(var(--size--nav-logo) * var(--_responsive---large) + var(--size--nav-logo-small) * (1 - var(--_responsive---large)));
     display: block;
     align-self: start;
-    width: var(--_size);
-    height: var(--_size);
-    margin-bottom: calc((var(--_size) - var(--size--nav-bar)) * -1);
-    padding: var(--_spacing---space--1);
+    width: var(--size--nav-logo-now);
+    height: var(--size--nav-logo-now);
+    margin-bottom: calc((var(--size--nav-logo-now) - var(--size--nav-bar)) * -1);
+    padding: var(--_spacing---space--2);
     background-color: var(--_theme---background);
-    border: var(--focus--width) solid var(--color--bus-yellow);
     border-radius: var(--radius--round);
-    transform-origin: 50% 0;
   }
   .bus-nav_logo_img { height: auto; }
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: scroll()) {
-      .bus-nav_logo {
-        animation: bus-logo-tuck linear both;
-        animation-timeline: scroll(root);
-        animation-range: 0 var(--size--nav-tuck);
-      }
-    }
-  }
-  @keyframes bus-logo-tuck {
-    to { transform: translateY(var(--_spacing---space--1)) scale(var(--size--nav-logo-tucked)); }
-  }
 
   /* Phone menu */
   .bus-menu_wrap {

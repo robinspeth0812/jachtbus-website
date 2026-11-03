@@ -29,8 +29,8 @@ rij gelijke kaarten: rijen (`BusRows`) of kolommen met een lijn erboven (`BusMom
 
 ## Beweging
 
-Eén gemaakt moment: bij het laden van de homepage zwaait het zijpaneel open als het
-luik van de bus, met Peer erachter. Al het andere loopt mee met de scroll (lijnen
-tekenen zich, foto's openen, plaatsnamen rollen, de bus rijdt over de route) of
-reageert op een handeling (`BusFit` parkeert de bus). Niets loopt vanzelf door, en
-bij `prefers-reduced-motion` staat alles meteen stil en leesbaar.
+De hero van de homepage is een slider: één hele foto, de volgende half, tot over de
+rand van de pagina. Die schuift elke 5 seconden door, stopt bij hover of focus en
+heeft een pauzeknop. Al het andere loopt mee met de scroll (lijnen tekenen zich,
+foto's openen, plaatsnamen rollen, de bus rijdt over de route) of reageert op een
+handeling (`BusFit` parkeert de bus). Bij `prefers-reduced-motion` staat alles stil.

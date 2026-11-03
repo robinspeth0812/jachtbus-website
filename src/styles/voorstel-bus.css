@@ -39,10 +39,9 @@
   /* The new site under /nieuw */
   --size--stripe-thin: 0.5rem;
   --size--nav-bar: 4.25rem;
-  --size--nav-logo: 6.5rem;
-  --size--nav-logo-small: 5rem;
-  --size--nav-logo-tucked: 0.56; /* scale of the badge once it fits the bar */
-  --size--nav-tuck: 16rem;
+  --size--nav-logo: 8.5rem;
+  --size--nav-logo-small: 6rem;
+  --size--nav-logo-now: calc(var(--size--nav-logo) * var(--_responsive---large) + var(--size--nav-logo-small) * (1 - var(--_responsive---large)));
   --size--nav-panel: 18rem;
   --size--mobile-bar: 3.5rem;
   --size--strip-min: 3rem;
