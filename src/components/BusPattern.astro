@@ -8,9 +8,11 @@ interface Props {
   columns?: number;
   /** Number of cells down. */
   rows?: number;
+  /** Draw the lines as the pattern scrolls into view. */
+  draw?: boolean;
 }
 
-const { columns = 12, rows = 2 } = Astro.props;
+const { columns = 12, rows = 2, draw = false } = Astro.props;
 
 type Shape = 'circle' | 'arch' | 'bowl' | 'quarter' | 'lines' | 'bars' | 'dots' | 'triangle' | 'cross';
 
@@ -28,23 +30,23 @@ const cells = Array.from({ length: columns * rows }, (_, index) => {
 ---
 
 <svg
-  class="bus-pattern_svg"
+  class:list={['bus-pattern_svg', draw && 'is-draw']}
   viewBox={`0 0 ${columns * cell} ${rows * cell}`}
   preserveAspectRatio="xMidYMid slice"
   aria-hidden="true"
 >
   {cells.map(({ x, y, shape }) => (
     <g transform={`translate(${x} ${y})`}>
-      <rect class="bus-pattern_line" width={cell} height={cell} />
-      {shape === 'circle' && <circle class="bus-pattern_line" cx="50" cy="50" r="50" />}
-      {shape === 'arch' && <path class="bus-pattern_line" d="M0 100 V50 A50 50 0 0 1 100 50 V100" />}
-      {shape === 'bowl' && <path class="bus-pattern_line" d="M0 0 V50 A50 50 0 0 0 100 50 V0" />}
-      {shape === 'quarter' && <path class="bus-pattern_line" d="M0 0 A100 100 0 0 1 100 100" />}
-      {shape === 'lines' && offsets.map((offset) => <line class="bus-pattern_line" x1="0" x2="100" y1={offset} y2={offset} />)}
-      {shape === 'bars' && offsets.map((offset) => <line class="bus-pattern_line" y1="0" y2="100" x1={offset} x2={offset} />)}
+      <rect class="bus-pattern_line" width={cell} height={cell} pathLength="1" />
+      {shape === 'circle' && <circle class="bus-pattern_line" cx="50" cy="50" r="50" pathLength="1" />}
+      {shape === 'arch' && <path class="bus-pattern_line" d="M0 100 V50 A50 50 0 0 1 100 50 V100" pathLength="1" />}
+      {shape === 'bowl' && <path class="bus-pattern_line" d="M0 0 V50 A50 50 0 0 0 100 50 V0" pathLength="1" />}
+      {shape === 'quarter' && <path class="bus-pattern_line" d="M0 0 A100 100 0 0 1 100 100" pathLength="1" />}
+      {shape === 'lines' && offsets.map((offset) => <line class="bus-pattern_line" x1="0" x2="100" y1={offset} y2={offset} pathLength="1" />)}
+      {shape === 'bars' && offsets.map((offset) => <line class="bus-pattern_line" y1="0" y2="100" x1={offset} x2={offset} pathLength="1" />)}
       {shape === 'dots' && dotOffsets.flatMap((cx) => dotOffsets.map((cy) => <circle class="bus-pattern_dot" cx={cx} cy={cy} r="4" />))}
-      {shape === 'triangle' && <path class="bus-pattern_line" d="M0 100 L50 0 L100 100" />}
-      {shape === 'cross' && <path class="bus-pattern_line" d="M0 0 L100 100 M100 0 L0 100" />}
+      {shape === 'triangle' && <path class="bus-pattern_line" d="M0 100 L50 0 L100 100" pathLength="1" />}
+      {shape === 'cross' && <path class="bus-pattern_line" d="M0 0 L100 100 M100 0 L0 100" pathLength="1" />}
     </g>
   ))}
 </svg>
@@ -62,5 +64,28 @@ const cells = Array.from({ length: columns * rows }, (_, index) => {
   }
   .bus-pattern_dot {
     fill: currentColor;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .bus-pattern_svg.is-draw .bus-pattern_line {
+        stroke-dasharray: 1;
+        animation: bus-pattern-draw linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 45%;
+      }
+      .bus-pattern_svg.is-draw .bus-pattern_dot {
+        animation: bus-pattern-dot linear both;
+        animation-timeline: view();
+        animation-range: entry 30% cover 50%;
+      }
+    }
+  }
+  @keyframes bus-pattern-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes bus-pattern-dot {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>

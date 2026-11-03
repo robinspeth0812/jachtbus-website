@@ -1,0 +1,25 @@
+---
+// Band of the side panel pattern. Its lines draw themselves as the band scrolls
+// into view (the scroll position is the clock, so nothing runs on its own).
+import BusPattern from '../BusPattern.astro';
+
+interface Props {
+  /** Number of rows of pattern cells. */
+  rows?: number;
+  /** Number of cells across. */
+  columns?: number;
+}
+const { rows = 1, columns = 20 } = Astro.props;
+---
+
+<div class="bus-strip_wrap" style={`--_rows: ${rows};`}>
+  <BusPattern columns={columns} rows={rows} draw />
+</div>
+
+<style>
+  .bus-strip_wrap {
+    height: calc(var(--_rows) * 5vw + var(--_rows) * var(--size--strip-min));
+    background-color: var(--color--bus-black);
+    color: var(--color--bus-yellow);
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+// The four steps as a route. The little bus drives along the line while you
+// scroll past, so reading the steps moves it to the last stop.
+import BusIcon from './BusIcon.astro';
+import { steps } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+}
+const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
+---
+
+<section class="bus-route_wrap u-section u-theme-bus-beige">
+  <div class="bus-route_contain u-container">
+    <h2 class="bus-route_title u-text-style-poster-small">{title}</h2>
+    <div class="bus-route_road">
+      <div class="bus-route_line"></div>
+      <div class="bus-route_marker"><BusIcon facing="right" /></div>
+      <ol class="bus-route_list">
+        {steps.map((step, index) => (
+          <li class="bus-route_item">
+            <div class="bus-route_stop u-text-style-h4">{index + 1}</div>
+            <div class="bus-route_body">
+              <h3 class="bus-route_name u-text-style-bus-title">{step.title}</h3>
+              <p class="bus-route_text u-text-style-main">{step.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-route_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-route_title { margin-bottom: var(--_spacing---space--7); }
+  .bus-route_road { position: relative; }
+  .bus-route_line {
+    position: absolute;
+    top: calc(var(--size--step) / 2 * var(--_responsive---large));
+    bottom: var(--unset-medium, auto);
+    left: calc(var(--size--step) / 2 * (1 - var(--_responsive---large)));
+    width: calc(100% * var(--_responsive---large) + var(--focus--width) * (1 - var(--_responsive---large)));
+    height: calc(var(--focus--width) * var(--_responsive---large) + 100% * (1 - var(--_responsive---large)));
+    background-color: var(--_theme---border);
+  }
+  .bus-route_marker {
+    display: var(--none-medium, block);
+    position: absolute;
+    bottom: calc(100% - var(--size--step) / 2 - var(--focus--width));
+    left: 0;
+    width: var(--size--bus-marker);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .bus-route_marker {
+        animation: bus-route-drive linear both;
+        animation-timeline: view();
+        animation-range: entry 60% cover 70%;
+      }
+    }
+  }
+  @keyframes bus-route-drive {
+    from { left: 0; }
+    to { left: 75%; }
+  }
+  .bus-route_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 4 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    position: relative;
+  }
+  .bus-route_item {
+    display: flex;
+    flex-flow: var(--row-medium, column);
+    gap: var(--_spacing---space--4);
+  }
+  .bus-route_stop {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--step);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+    background-color: var(--color--bus-yellow);
+    color: var(--color--bus-black);
+    border: var(--focus--width) solid var(--color--bus-black);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-route_name { margin-bottom: var(--_spacing---space--2); }
+  .bus-route_text { max-width: 32ch; }
+</style>

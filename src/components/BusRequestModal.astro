@@ -78,11 +78,11 @@ import RequestForm from './RequestForm.astro';
     height: var(--target--min);
     flex-shrink: 0;
     padding: 0;
-    background-color: transparent;
     border: none;
-    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
+    background-color: color-mix(in hsl, transparent calc(100% * var(--_trigger---on)), var(--_theme---background-2) calc(100% * var(--_trigger---off)));
+    color: var(--_theme---text);
     cursor: pointer;
-    transition: color 200ms;
+    transition: background-color 200ms;
   }
   .bus-modal_icon {
     width: var(--size--modal-icon);
@@ -117,14 +117,21 @@ import RequestForm from './RequestForm.astro';
 
     // Delegated from the document: the links live all over the page. New-tab
     // clicks keep going to the form page.
+    const open = (occasion: string | null, date: string | null) => {
+      form.dispatchEvent(new CustomEvent('aanvraag:open', { detail: { occasion, date } }));
+      dialog.showModal();
+    };
     document.addEventListener('click', (event) => {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="/aanvraag"]');
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="/aanvraag"], a[href^="/nieuw/aanvraag"]');
       if (!link) return;
       event.preventDefault();
-      const occasion = new URL(link.href).searchParams.get('gelegenheid');
-      form.dispatchEvent(new CustomEvent('aanvraag:open', { detail: { occasion } }));
-      dialog.showModal();
+      open(new URL(link.href).searchParams.get('gelegenheid'), null);
+    });
+    // Sent by the date check in the hero.
+    document.addEventListener('aanvraag:start', (event) => {
+      const { occasion, date } = (event as CustomEvent<{ occasion: string | null; date: string | null }>).detail;
+      open(occasion, date);
     });
 
     close.addEventListener('click', () => dialog.close());

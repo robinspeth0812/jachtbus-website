@@ -1,0 +1,116 @@
+---
+// Closing block of every page: the side panel pattern, the name large in the
+// lettering of the bus, and everything you might still look for.
+import { Image } from 'astro:assets';
+import scriptLogo from '../../assets/jachtbus-script-wit.svg';
+import BusStrip from './BusStrip.astro';
+import { contact, regions, services, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+
+const { email } = await getInhoud();
+const year = new Date().getFullYear();
+---
+
+<footer class="bus-footer_wrap u-theme-bus-black">
+  <BusStrip rows={1} />
+  <div class="bus-footer_contain u-container">
+    <div class="bus-footer_layout">
+      <div class="bus-footer_brand">
+        <Image class="bus-footer_logo" src={scriptLogo} alt="Jachtbus" width={480} />
+        <p class="bus-footer_tag u-text-style-large">Zet ons neer, wij koken. In Drenthe, Groningen en Friesland.</p>
+      </div>
+      <nav class="bus-footer_col" aria-label="Catering">
+        <h2 class="bus-footer_title u-text-style-bus-title">Catering</h2>
+        <ul class="bus-footer_list">
+          {services.map((service) => <li><a class="bus-footer_link" href={url(`catering/${service.slug}`)}>{service.nav}</a></li>)}
+        </ul>
+      </nav>
+      <nav class="bus-footer_col" aria-label="Werkgebied en meer">
+        <h2 class="bus-footer_title u-text-style-bus-title">Waar en wie</h2>
+        <ul class="bus-footer_list">
+          {regions.map((region) => <li><a class="bus-footer_link" href={url(region.slug)}>Foodtruck {region.naam}</a></li>)}
+          <li><a class="bus-footer_link" href={url('referenties')}>Referenties</a></li>
+          <li><a class="bus-footer_link" href={url('over-ons')}>Over ons</a></li>
+          <li><a class="bus-footer_link" href={url('veelgestelde-vragen')}>Veelgestelde vragen</a></li>
+        </ul>
+      </nav>
+      <div class="bus-footer_col">
+        <h2 class="bus-footer_title u-text-style-bus-title">Even bellen?</h2>
+        <ul class="bus-footer_list">
+          <li><a class="bus-footer_link" href={contact.telefoonHref}>{contact.telefoon}</a></li>
+          <li><a class="bus-footer_link" href={contact.whatsappHref} rel="external">WhatsApp</a></li>
+          <li><a class="bus-footer_link" href={`mailto:${email}`}>{email}</a></li>
+          <li><a class="bus-footer_link" href={contact.instagram} rel="external">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bus-footer_legal u-text-style-small">
+      <p class="bus-footer_legal_text">
+        © {year} {contact.bedrijf}, KvK {contact.kvk}, {contact.adres}, {contact.postcode} {contact.plaats}
+      </p>
+      <ul class="bus-footer_legal_list">
+        <li><a class="bus-footer_link" href={url('voorwaarden')}>Voorwaarden</a></li>
+        <li><a class="bus-footer_link" href={url('privacy')}>Privacy</a></li>
+        <li><a class="bus-footer_link" href={url('cookies')}>Cookies</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .bus-footer_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    /* Room for the fixed action bar on phones. */
+    padding-bottom: calc(var(--size--mobile-bar) * (1 - var(--_responsive---large)));
+  }
+  .bus-footer_contain {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--7);
+    padding-block: var(--_spacing---space--7) var(--_spacing---space--5);
+  }
+  .bus-footer_layout {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 12 + (1 - var(--_responsive---large)) * 2), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .bus-footer_brand {
+    grid-column: span calc(var(--_responsive---large) * 6 + (1 - var(--_responsive---large)) * 2);
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+  }
+  .bus-footer_logo {
+    height: auto;
+    max-width: var(--size--logo-footer);
+  }
+  .bus-footer_tag { max-width: 34ch; }
+  .bus-footer_col { grid-column: span 2; }
+  .bus-footer_title {
+    margin-bottom: var(--_spacing---space--3);
+    padding-bottom: var(--_spacing---space--2);
+    border-bottom: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .bus-footer_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--small);
+    color: inherit;
+    overflow-wrap: anywhere;
+  }
+  .bus-footer_legal {
+    display: flex;
+    flex-flow: var(--column-medium, row);
+    justify-content: space-between;
+    align-items: var(--start-medium, center);
+    gap: var(--_spacing---space--3);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--color--bus-yellow);
+  }
+  .bus-footer_legal_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--4);
+  }
+</style>

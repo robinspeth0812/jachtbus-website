@@ -1,0 +1,161 @@
+---
+// "Does the bus fit?" The location requirements as a checklist you tick off
+// yourself. Each tick moves the bus closer, and with all four it parks on the
+// drawn spot. Answers the biggest doubt before the form. Without JS it is a
+// readable list.
+import BusIcon from './BusIcon.astro';
+import BusButton from '../BusButton.astro';
+import { aanvraagUrl } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Occasion passed to the request form. */
+  occasion?: string;
+}
+const { title = 'Past de bus bij jou?', occasion } = Astro.props;
+const checks = [
+  { title: 'Plek van 6,5 bij 2,5 meter', text: 'Plus wat ruimte rondom om te werken.' },
+  { title: 'Stevige, vlakke ondergrond', text: 'Gras of grind kan ook.' },
+  { title: 'Doorgang voor 3,5 ton', text: 'Geen smal poortje of lage tak op de route.' },
+  { title: 'Stroom binnen 25 meter', text: 'Standaard 230V of 16A. Geen stroom? Dan denken we mee.' },
+];
+---
+
+<section class="bus-fit_wrap u-section u-theme-bus-black">
+  <div class="bus-fit_contain u-container">
+    <div class="bus-fit_layout" data-fit>
+      <div class="bus-fit_content">
+        <h2 class="bus-fit_title u-text-style-poster-small">{title}</h2>
+        <p class="bus-fit_intro u-text-style-large">Vink maar af wat klopt. Eén ding niet? Dat hoeft geen probleem te zijn, vraag het gewoon.</p>
+        <ul class="bus-fit_list">
+          {checks.map((check) => (
+            <li class="bus-fit_item">
+              <label class="bus-fit_label">
+                <input class="bus-fit_input" type="checkbox" />
+                <span class="bus-fit_body">
+                  <span class="bus-fit_name u-text-style-bus-title">{check.title}</span>
+                  <span class="bus-fit_text u-text-style-small">{check.text}</span>
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="bus-fit_scene">
+        <div class="bus-fit_lot">
+          <div class="bus-fit_bus"><BusIcon facing="right" /></div>
+          <div class="bus-fit_spot u-text-style-small">6,5 × 2,5 m</div>
+        </div>
+        <p class="bus-fit_result u-text-style-poster-label" aria-live="polite">Hoe ver komen we?</p>
+        <BusButton label="Check of de bus vrij is" href={aanvraagUrl(occasion)} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-fit_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-fit_layout {
+    --_ticked: 0;
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: center;
+  }
+  .bus-fit_content {
+    grid-column: 1 / span 6;
+    width: 100%;
+  }
+  .bus-fit_title { margin-bottom: var(--_spacing---space--4); }
+  .bus-fit_intro {
+    max-width: 44ch;
+    margin-bottom: var(--_spacing---space--5);
+  }
+  .bus-fit_item { border-top: var(--border-width--main) solid var(--color--bus-yellow); }
+  .bus-fit_item:last-child { border-bottom: var(--border-width--main) solid var(--color--bus-yellow); }
+  .bus-fit_label {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--4);
+    min-height: calc(var(--target--min) * 1.5);
+    padding-block: var(--_spacing---space--3);
+    cursor: pointer;
+  }
+  .bus-fit_input {
+    flex-shrink: 0;
+    width: var(--size--check);
+    height: var(--size--check);
+    accent-color: var(--color--bus-yellow);
+    cursor: pointer;
+  }
+  .bus-fit_body {
+    display: flex;
+    flex-flow: column;
+  }
+  .bus-fit_scene {
+    grid-column: 8 / span 5;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--5);
+    width: 100%;
+  }
+  .bus-fit_lot {
+    position: relative;
+    width: 100%;
+    min-height: var(--size--fit-lot);
+    border-bottom: var(--focus--width) solid var(--color--bus-yellow);
+    overflow: clip;
+  }
+  .bus-fit_spot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 62%;
+    height: var(--size--fit-spot);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--focus--width) dashed var(--color--bus-yellow);
+    border-bottom: none;
+    text-align: center;
+  }
+  /* Starts off the left edge; every tick covers a quarter of the way. */
+  .bus-fit_bus {
+    position: absolute;
+    right: 0;
+    bottom: var(--size--fit-spot);
+    width: 62%;
+    transform: translateX(calc(-65% * (4 - var(--_ticked))));
+    transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bus-fit_layout[data-all] .bus-fit_bus { transform: translateX(0); }
+  .bus-fit_result {
+    min-height: 2lh;
+    max-width: 18ch;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bus-fit_bus { transition: none; }
+  }
+</style>
+
+<script>
+  const lines = ['Hoe ver komen we?', 'We zijn onderweg.', 'Halverwege.', 'Bijna. Nog één ding.', 'Dat past. We rijden zo voor.'];
+  document.querySelectorAll<HTMLElement>('[data-fit]').forEach((fit) => {
+    const inputs = Array.from(fit.querySelectorAll<HTMLInputElement>('.bus-fit_input'));
+    const result = fit.querySelector<HTMLElement>('.bus-fit_result');
+    const update = () => {
+      const ticked = inputs.filter((input) => input.checked).length;
+      fit.style.setProperty('--_ticked', String(ticked));
+      fit.toggleAttribute('data-all', ticked === inputs.length);
+      if (result) result.textContent = lines[ticked];
+    };
+    inputs.forEach((input) => input.addEventListener('change', update));
+    update();
+  });
+</script>

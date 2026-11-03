@@ -1,0 +1,57 @@
+---
+// Region landing pages, with the towns where the bus actually stood. The final
+// set of location pages follows from keyword research.
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusPlaces from '../../components/bus/BusPlaces.astro';
+import BusStory from '../../components/bus/BusStory.astro';
+import BusRows from '../../components/bus/BusRows.astro';
+import BusFit from '../../components/bus/BusFit.astro';
+import BusFaq from '../../components/bus/BusFaq.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { photos, regions, url } from '../../data/nieuw';
+import type { Region } from '../../data/nieuw';
+import { faqSchema, serviceSchema } from '../../lib/schema';
+
+export function getStaticPaths() {
+  return regions.map((region) => ({ params: { region: region.slug }, props: { region } }));
+}
+interface Props {
+  region: Region;
+}
+const { region } = Astro.props;
+const crumbs = [{ label: `Foodtruck ${region.naam}`, href: url(region.slug) }];
+const others = regions.filter((other) => other.slug !== region.slug);
+---
+
+<BusBase
+  title={region.metaTitle}
+  description={region.metaDescription}
+  crumbs={crumbs}
+  schema={[serviceSchema(`Foodtruckcatering in ${region.naam}`, region.metaDescription, [region.naam]), faqSchema(region.faq)]}
+>
+  <BusPageHero
+    title={region.title}
+    text={region.intro}
+    photo={region.photo}
+    shape="corner"
+    crumbs={crumbs}
+    checkLabel="Check je datum"
+  />
+  <BusPlaces places={region.plaatsen} />
+  <BusStory title={`De bus in ${region.naam}`} paragraphs={region.verhaal} photo={photos.luik} shape="arch" focus="50% 45%">
+    <p class="region_more u-text-style-main">
+      Ook in {others.map((other, index) => (
+        <>{index > 0 && ' en '}<a class="region_link" href={url(other.slug)}>{other.naam}</a></>
+      ))} rijden we voor.
+    </p>
+  </BusStory>
+  <BusRows title={`Wat vieren we in ${region.naam}?`} />
+  <BusFit />
+  <BusFaq items={region.faq} />
+  <BusClosing />
+</BusBase>
+
+<style>
+  .region_link { color: var(--_theme---text-link--text); }
+</style>

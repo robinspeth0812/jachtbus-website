@@ -1,0 +1,68 @@
+---
+// Text next to a shaped photo. Used wherever a page tells more than a list.
+import BusPhoto from './BusPhoto.astro';
+import type { Photo, Shape } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title: string;
+  /** Paragraphs of text. */
+  paragraphs?: string[];
+  /** The photo. */
+  photo: Photo;
+  /** Shape of the photo. */
+  shape?: Shape;
+  /** Focal point of the photo. */
+  focus?: string;
+  /** Put the photo on the left. */
+  flip?: boolean;
+  /** Section theme. */
+  theme?: 'beige' | 'green' | 'black';
+}
+const { title, paragraphs = [], photo, shape = 'arch', focus, flip = false, theme = 'beige' } = Astro.props;
+---
+
+<section class:list={['bus-story_wrap', 'u-section', `u-theme-bus-${theme}`, flip && 'is-flip']}>
+  <div class="bus-story_contain u-container">
+    <div class="bus-story_layout">
+      <div class="bus-story_content">
+        <h2 class="bus-story_title u-text-style-poster-small">{title}</h2>
+        {paragraphs.map((text) => <p class="bus-story_text u-text-style-large">{text}</p>)}
+        <slot />
+      </div>
+      <div class="bus-story_visual">
+        <BusPhoto photo={photo} shape={shape} focus={focus} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-story_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-story_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .bus-story_content {
+    grid-column: 1 / span 6;
+    grid-row: 1;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+  }
+  .bus-story_text { max-width: 50ch; }
+  .bus-story_visual {
+    grid-column: 8 / span 5;
+    grid-row: 1;
+    width: 100%;
+  }
+  .bus-story_wrap.is-flip .bus-story_content { grid-column: 7 / span 6; }
+  .bus-story_wrap.is-flip .bus-story_visual { grid-column: 1 / span 5; }
+</style>

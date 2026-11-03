@@ -1,0 +1,39 @@
+---
+// Phones keep the three ways to reach us under the thumb.
+import { aanvraagUrl, contact } from '../../data/nieuw';
+---
+
+<nav class="bus-bar_wrap u-theme-bus-black" aria-label="Direct contact">
+  <a class="bus-bar_link" href={contact.telefoonHref}>Bellen</a>
+  <a class="bus-bar_link" href={contact.whatsappHref} rel="external">WhatsApp</a>
+  <a class="bus-bar_link is-primary" href={aanvraagUrl()}>Aanvraag</a>
+</nav>
+
+<style>
+  .bus-bar_wrap {
+    display: var(--flex-medium, none);
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 40;
+    background-color: var(--_theme---background);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bus-bar_link {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--size--mobile-bar);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    color: var(--_theme---text);
+    text-decoration: none;
+  }
+  .bus-bar_link.is-primary {
+    background-color: var(--color--bus-yellow);
+    color: var(--color--bus-black);
+  }
+</style>

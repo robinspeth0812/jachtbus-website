@@ -1,0 +1,54 @@
+---
+// One template for every service. The content lives in src/data/nieuw.ts.
+import BusBase from '../../../layouts/BusBase.astro';
+import BusPageHero from '../../../components/bus/BusPageHero.astro';
+import BusMoments from '../../../components/bus/BusMoments.astro';
+import BusStory from '../../../components/bus/BusStory.astro';
+import BusRoute from '../../../components/bus/BusRoute.astro';
+import BusFit from '../../../components/bus/BusFit.astro';
+import BusFaq from '../../../components/bus/BusFaq.astro';
+import BusRows from '../../../components/bus/BusRows.astro';
+import BusReviews from '../../../components/bus/BusReviews.astro';
+import BusClosing from '../../../components/bus/BusClosing.astro';
+import { services, url } from '../../../data/nieuw';
+import type { Service } from '../../../data/nieuw';
+import { faqSchema, serviceSchema } from '../../../lib/schema';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+interface Props {
+  service: Service;
+}
+const { service } = Astro.props;
+const crumbs = [
+  { label: 'Catering', href: url('catering') },
+  { label: service.nav, href: url(`catering/${service.slug}`) },
+];
+---
+
+<BusBase
+  title={service.metaTitle}
+  description={service.metaDescription}
+  crumbs={crumbs}
+  schema={[serviceSchema(service.schemaName, service.metaDescription), faqSchema(service.faq)]}
+>
+  <BusPageHero
+    title={service.title}
+    text={service.intro}
+    photo={service.photo}
+    shape={service.shape}
+    crumbs={crumbs}
+    occasion={service.gelegenheid}
+    checkLabel={service.cta}
+  />
+  <BusMoments title={service.momentsTitle} items={service.moments} />
+  <BusStory title={service.storyTitle} paragraphs={service.story} photo={service.storyPhoto} shape="arch" theme="green" flip />
+  <BusRoute />
+  <BusMoments title={service.worriesTitle} items={service.worries} theme="black" />
+  <BusReviews />
+  <BusFaq items={service.faq} />
+  <BusFit occasion={service.gelegenheid} />
+  <BusRows title="Of toch iets anders?" except={service.slug} />
+  <BusClosing title="Zullen we het regelen?" occasion={service.gelegenheid} label={service.cta} />
+</BusBase>

@@ -1,0 +1,136 @@
+---
+// Top of every inner page: breadcrumbs, one h1 and the photo in a shape that
+// runs into the next section.
+import BusPhoto from './BusPhoto.astro';
+import BusDateCheck from './BusDateCheck.astro';
+import BusPattern from '../BusPattern.astro';
+import type { Photo, Shape } from '../../data/nieuw';
+import { url } from '../../data/nieuw';
+
+interface Crumb {
+  /** Text of the breadcrumb. */
+  label: string;
+  /** Path of the breadcrumb. */
+  href: string;
+}
+interface Props {
+  /** The h1 of the page. */
+  title: string;
+  /** Short introduction under the title. */
+  text?: string;
+  /** Photo next to the title. Leave out for a text-only hero. */
+  photo?: Photo;
+  /** Shape of the photo. */
+  shape?: Shape;
+  /** Focal point of the photo. */
+  focus?: string;
+  /** Trail above the title, below home. */
+  crumbs?: Crumb[];
+  /** Occasion for the date check. Leave out both to hide the check. */
+  occasion?: string;
+  /** Text on the date check button. Shows the date check when set. */
+  checkLabel?: string;
+}
+const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = '', checkLabel = '' } = Astro.props;
+---
+
+<section class:list={['bus-hero_wrap', 'u-theme-bus-green', !photo && 'is-text']}>
+  <div class="bus-hero_contain u-container">
+    <nav class="bus-hero_crumbs u-text-style-small" aria-label="Kruimelpad">
+      <ol class="bus-hero_crumbs_list">
+        <li class="bus-hero_crumbs_item"><a class="bus-hero_crumbs_link" href={url()}>Home</a></li>
+        {crumbs.map((crumb, index) => (
+          <li class="bus-hero_crumbs_item">
+            {index === crumbs.length - 1
+              ? <span aria-current="page">{crumb.label}</span>
+              : <a class="bus-hero_crumbs_link" href={crumb.href}>{crumb.label}</a>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+    <div class="bus-hero_layout">
+      <div class="bus-hero_content">
+        <h1 class="bus-hero_title u-text-style-poster">{title}</h1>
+        {text && <p class="bus-hero_text u-text-style-large">{text}</p>}
+        {checkLabel && <BusDateCheck occasion={occasion} label={checkLabel} />}
+        <slot />
+      </div>
+      {photo ? (
+        <div class="bus-hero_visual">
+          <BusPhoto photo={photo} shape={shape} focus={focus} eager />
+        </div>
+      ) : (
+        <div class="bus-hero_panel"><BusPattern columns={4} rows={3} /></div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-hero_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    padding-top: var(--_spacing---space--5);
+  }
+  .bus-hero_contain {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+  }
+  .bus-hero_crumbs_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-hero_crumbs_item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-hero_crumbs_item + .bus-hero_crumbs_item::before {
+    content: '/';
+    color: var(--color--bus-yellow);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-hero_crumbs_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--small);
+    color: inherit;
+  }
+  .bus-hero_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .bus-hero_content {
+    grid-column: 1 / span 7;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--5);
+    width: 100%;
+    padding-bottom: var(--_spacing---space--6);
+  }
+  /* Without a photo the side panel of the bus fills the other half. */
+  .bus-hero_panel {
+    display: var(--none-medium, block);
+    grid-column: 8 / span 5;
+    align-self: stretch;
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--color--bus-black);
+    color: var(--color--bus-yellow);
+    border-top-right-radius: var(--radius--shape);
+    overflow: clip;
+  }
+  .bus-hero_title { max-width: 14ch; }
+  .bus-hero_text { max-width: 52ch; }
+  .bus-hero_visual {
+    grid-column: 8 / span 5;
+    width: 100%;
+    max-width: var(--unset-medium, var(--size--shape-max));
+    justify-self: end;
+  }
+</style>

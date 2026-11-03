@@ -1,0 +1,84 @@
+---
+// Services as big rows with a photo in a changing shape, instead of a grid of
+// identical cards. On hover the title shifts over and turns green.
+import { Image } from 'astro:assets';
+import { services, url } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Slug of a service to leave out, on that service's own page. */
+  except?: string;
+}
+const { title = 'Wat vieren we?', except = '' } = Astro.props;
+const rows = services.filter((service) => service.slug !== except);
+---
+
+<section class="bus-rows_wrap u-section u-theme-bus-beige">
+  <div class="bus-rows_contain u-container">
+    <h2 class="bus-rows_title u-text-style-poster-small">{title}</h2>
+    <ul class="bus-rows_list">
+      {rows.map((service) => (
+        <li class="bus-rows_item">
+          <a class="bus-rows_link" href={url(`catering/${service.slug}`)} data-trigger="hover focus">
+            <h3 class="bus-rows_name u-text-style-poster-row">{service.nav}</h3>
+            <p class="bus-rows_text u-text-style-large">{service.rowText}</p>
+            <div class:list={['bus-rows_visual', `is-${service.shape}`]}>
+              <Image class="bus-rows_img" src={service.photo.src} alt="" width={420} />
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bus-rows_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-rows_title { margin-bottom: var(--_spacing---space--5); }
+  .bus-rows_item { border-top: var(--focus--width) solid var(--_theme---border); }
+  .bus-rows_item:last-child { border-bottom: var(--focus--width) solid var(--_theme---border); }
+  .bus-rows_link {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 12 + (1 - var(--_responsive---large)) * 3), minmax(0, 1fr));
+    grid-auto-flow: dense;
+    align-items: center;
+    gap: var(--_spacing---space--2) var(--site--gutter);
+    padding-block: var(--_spacing---space--4);
+    color: var(--_theme---text);
+    text-decoration: none;
+  }
+  .bus-rows_name {
+    grid-column: span calc(var(--_responsive---large) * 5 + (1 - var(--_responsive---large)) * 2);
+    transform: translateX(calc(var(--_spacing---space--4) * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms;
+  }
+  .bus-rows_text {
+    grid-column: span calc(var(--_responsive---large) * 5 + (1 - var(--_responsive---large)) * 2);
+    max-width: 42ch;
+  }
+  .bus-rows_visual {
+    grid-column: calc(var(--_responsive---large) * 11 + (1 - var(--_responsive---large)) * 3) / span calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large)));
+    grid-row: span calc(1 + (1 - var(--_responsive---large)));
+    justify-self: end;
+    width: 100%;
+    max-width: var(--size--row-img);
+    aspect-ratio: 1 / 1;
+    overflow: clip;
+    background-color: var(--_theme---background-skeleton);
+    transition: border-radius 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bus-rows_visual.is-arch { border-radius: var(--radius--round) var(--radius--round) 0 0; }
+  .bus-rows_visual.is-circle { border-radius: var(--radius--round); }
+  .bus-rows_visual.is-corner { border-radius: 0 100% 0 0; }
+  .bus-rows_visual.is-bowl { border-radius: 0 0 var(--radius--round) var(--radius--round); }
+  .bus-rows_img {
+    height: 100%;
+    transform: scale(calc(1 + 0.08 * var(--_trigger---off)));
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+// The ways we serve, set like a menu board next to a round photo of the food.
+import BusPhoto from './BusPhoto.astro';
+import { photos } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Line under the title. */
+  text?: string;
+}
+const { title = 'Wat er uit de bus komt', text = 'Er is geen vaste kaart. We kijken samen naar het seizoen, je gasten en de vorm van je feest. Dit zijn de vormen waar we meestal mee beginnen.' } = Astro.props;
+const { arrangementen } = await getInhoud();
+---
+
+<section class="bus-menu-board_wrap u-section u-theme-bus-beige">
+  <div class="bus-menu-board_contain u-container">
+    <div class="bus-menu-board_layout">
+      <div class="bus-menu-board_visual">
+        <BusPhoto photo={photos.smoker} shape="circle" focus="50% 60%" />
+        <div class="bus-menu-board_second"><BusPhoto photo={photos.plank} shape="corner" /></div>
+      </div>
+      <div class="bus-menu-board_content">
+        <h2 class="bus-menu-board_title u-text-style-poster-small">{title}</h2>
+        <p class="bus-menu-board_text u-text-style-large">{text}</p>
+        <ul class="bus-menu-board_list">
+          {arrangementen.map((item) => (
+            <li class="bus-menu-board_item">
+              <h3 class="bus-menu-board_name u-text-style-poster-label">{item.title}</h3>
+              <p class="bus-menu-board_desc u-text-style-main">{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-menu-board_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-menu-board_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: start;
+  }
+  .bus-menu-board_visual {
+    grid-column: 1 / span 5;
+    position: relative;
+    width: 100%;
+    padding-bottom: 30%;
+  }
+  .bus-menu-board_second {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 55%;
+    border: var(--size--stripe-thin) solid var(--_theme---background);
+    border-top-right-radius: var(--radius--shape);
+  }
+  .bus-menu-board_content {
+    grid-column: 7 / span 6;
+    width: 100%;
+  }
+  .bus-menu-board_title { margin-bottom: var(--_spacing---space--4); }
+  .bus-menu-board_text {
+    max-width: 50ch;
+    margin-bottom: var(--_spacing---space--5);
+  }
+  .bus-menu-board_item {
+    padding-block: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .bus-menu-board_name { margin-bottom: var(--_spacing---space--1); }
+  .bus-menu-board_desc { max-width: 48ch; }
+</style>

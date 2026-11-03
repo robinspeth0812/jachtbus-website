@@ -1,0 +1,25 @@
+---
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusButton from '../../components/BusButton.astro';
+import BusIcon from '../../components/bus/BusIcon.astro';
+import { aanvraagUrl, url } from '../../data/nieuw';
+---
+
+<BusBase title="Deze pagina is er niet" description="Deze pagina bestaat niet (meer). Ga terug naar de homepage van de Jachtbus of start meteen je aanvraag.">
+  <BusPageHero title="Hier staat de bus niet" text="Deze pagina bestaat niet (meer). Misschien zijn we al doorgereden.">
+    <div class="lost_actions u-button-wrapper">
+      <BusButton label="Terug naar home" href={url()} />
+      <BusButton label="Start je aanvraag" href={aanvraagUrl()} variant="secondary" />
+    </div>
+    <div class="lost_bus"><BusIcon /></div>
+  </BusPageHero>
+</BusBase>
+
+<style>
+  .lost_actions { justify-content: flex-start; }
+  .lost_bus {
+    width: var(--size--crop);
+    margin-top: var(--_spacing---space--4);
+  }
+</style>

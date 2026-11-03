@@ -1,0 +1,133 @@
+---
+// References: only what really happened. Stories and reviews come from the
+// portal and show up as soon as they exist; until then the page carries the
+// towns and the photos, with no sample quotes.
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusPhoto from '../../components/bus/BusPhoto.astro';
+import BusPlaces from '../../components/bus/BusPlaces.astro';
+import BusReviews from '../../components/bus/BusReviews.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { photos, regions, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+
+const { referenties } = await getInhoud();
+const crumbs = [{ label: 'Referenties', href: url('referenties') }];
+const dateLabel = (date: string) => new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(new Date(date));
+---
+
+<BusBase
+  title="Referenties: waar de bus stond"
+  description="Van Stiens tot Stadskanaal: bruiloften, tuinfeesten en bedrijfsevenementen waar de Jachtbus al stond. In 2026 al zo'n 40 feesten in Noord-Nederland."
+  crumbs={crumbs}
+>
+  <BusPageHero
+    title="Hier stonden we al"
+    text="In augustus 2025 reden we voor het eerst uit, in 2026 stonden we al op zo’n 40 feesten. Veel walking dinners en streetfood, in tuinen, op erven en bij bedrijven."
+    crumbs={crumbs}
+  />
+  <BusPlaces />
+
+  {referenties.length > 0 && (
+    <section class="refs_wrap u-section u-theme-bus-beige">
+      <div class="refs_contain u-container">
+        <h2 class="refs_title u-text-style-poster-small">Een paar feesten</h2>
+        <ul class="refs_list">
+          {referenties.map((item) => (
+            <li class="refs_item">
+              {item.fotoUrl && <img class="refs_img" src={item.fotoUrl} alt={item.fotoAlt ?? ''} loading="lazy" />}
+              <h3 class="refs_name u-text-style-poster-label">{item.titel}</h3>
+              <p class="refs_meta u-text-style-small">
+                {item.gelegenheid} in {item.plaats}{item.gasten && `, ${item.gasten} gasten`}{item.datum && `, ${dateLabel(item.datum)}`}
+              </p>
+              <p class="refs_text u-text-style-main">{item.verhaal}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="wall_wrap u-section u-theme-bus-beige">
+    <div class="wall_contain u-container">
+      <h2 class="wall_title u-text-style-poster-small">Zo ziet dat eruit</h2>
+      <div class="wall_layout">
+        <div class="wall_item is-1"><BusPhoto photo={photos.veld} shape="corner" /></div>
+        <div class="wall_item is-2"><BusPhoto photo={photos.bediening} shape="arch" focus="50% 25%" /></div>
+        <div class="wall_item is-3"><BusPhoto photo={photos.plank} shape="circle" /></div>
+        <div class="wall_item is-4"><BusPhoto photo={photos.grill} shape="bowl" /></div>
+      </div>
+    </div>
+  </section>
+
+  <BusReviews />
+
+  <section class="where_wrap u-section u-theme-bus-green">
+    <div class="where_contain u-container">
+      <h2 class="where_title u-text-style-poster-small">Per provincie</h2>
+      <ul class="where_list">
+        {regions.map((region) => (
+          <li class="where_item">
+            <h3 class="where_name u-text-style-poster-label"><a class="where_link" href={url(region.slug)}>{region.naam}</a></h3>
+            <p class="where_text u-text-style-main">{region.plaatsen.join(', ')}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <BusClosing title="Staat jouw plek er straks ook bij?" />
+</BusBase>
+
+<style>
+  .refs_wrap,
+  .wall_wrap,
+  .where_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .refs_title,
+  .wall_title,
+  .where_title { margin-bottom: var(--_spacing---space--6); }
+  .refs_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .refs_img {
+    aspect-ratio: 4 / 3;
+    margin-bottom: var(--_spacing---space--3);
+    border-top-right-radius: var(--radius--shape);
+  }
+  .refs_meta { margin-block: var(--_spacing---space--1) var(--_spacing---space--2); }
+
+  .wall_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+    align-items: end;
+  }
+  .wall_item { width: 100%; }
+  .wall_item.is-1 { grid-column: 1 / span 7; }
+  .wall_item.is-2 { grid-column: 8 / span 5; }
+  .wall_item.is-3 { grid-column: 2 / span 4; }
+  .wall_item.is-4 { grid-column: 7 / span 6; }
+
+  .where_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .where_item {
+    padding-top: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .where_name { margin-bottom: var(--_spacing---space--2); }
+  .where_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: inherit;
+  }
+</style>

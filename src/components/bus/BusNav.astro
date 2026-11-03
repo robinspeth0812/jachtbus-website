@@ -1,0 +1,292 @@
+---
+// Sticky green bar with the round logo on the true center. The badge overhangs
+// the bar at the top of the page and tucks in on scroll. Phones get a full
+// screen menu in a dialog, so focus trap and Esc come for free.
+import { Image } from 'astro:assets';
+import ringLogo from '../../assets/jachtbus-logo-wit-goud.svg';
+import BusButton from '../BusButton.astro';
+import { aanvraagUrl, contact, nav, regions, services, url } from '../../data/nieuw';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || (href !== url() && path.startsWith(href));
+---
+
+<header class="bus-nav_wrap u-theme-bus-green">
+  <div class="bus-nav_stripe"></div>
+  <div class="bus-nav_contain u-container">
+    <div class="bus-nav_bar">
+      <div class="bus-nav_side">
+        <button class="bus-nav_menu" type="button" aria-haspopup="dialog" data-trigger="hover focus">
+          <svg class="bus-nav_menu_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="3" /></svg>
+          Menu
+        </button>
+        <nav class="bus-nav_links" aria-label="Hoofdmenu">
+          <details class="bus-nav_more">
+            <summary class="bus-nav_link is-summary" data-trigger="hover focus">
+              <span class="bus-nav_label u-hover-underline">Catering</span>
+              <svg class="bus-nav_chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2.500" /></svg>
+            </summary>
+            <div class="bus-nav_panel u-theme-bus-black">
+              <ul class="bus-nav_panel_list">
+                <li><a class="bus-nav_panel_link is-all" href={url('catering')} data-trigger="hover focus">Alles over onze catering</a></li>
+                {services.map((service) => (
+                  <li><a class="bus-nav_panel_link" href={url(`catering/${service.slug}`)} data-trigger="hover focus" aria-current={isCurrent(url(`catering/${service.slug}`)) ? 'page' : undefined}>{service.nav}</a></li>
+                ))}
+              </ul>
+            </div>
+          </details>
+          {nav.slice(1).map((item) => (
+            <a class="bus-nav_link" href={item.href} data-trigger="hover focus" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              <span class="bus-nav_label u-hover-underline">{item.label}</span>
+            </a>
+          ))}
+        </nav>
+      </div>
+      <a class="bus-nav_logo" href={url()} aria-label="Jachtbus Foodtruck, naar de homepage">
+        <Image class="bus-nav_logo_img" src={ringLogo} alt="" width={160} />
+      </a>
+      <div class="bus-nav_side is-end">
+        <a class="bus-nav_phone" href={contact.telefoonHref} data-trigger="hover focus">
+          <span class="bus-nav_label u-hover-underline">{contact.telefoon}</span>
+        </a>
+        <BusButton label="Aanvraag" href={aanvraagUrl()} />
+      </div>
+    </div>
+  </div>
+</header>
+
+<dialog class="bus-menu_wrap u-theme-bus-green" aria-label="Menu">
+  <div class="bus-menu_stripe"></div>
+  <div class="bus-menu_top">
+    <span class="bus-menu_title u-text-style-bus-title">Menu</span>
+    <button class="bus-menu_close" type="button" aria-label="Sluit het menu" autofocus>
+      <svg class="bus-menu_close_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19" stroke="currentColor" stroke-width="3" /></svg>
+    </button>
+  </div>
+  <nav class="bus-menu_nav" aria-label="Menu voor je telefoon">
+    <ul class="bus-menu_list">
+      <li><a class="bus-menu_link u-text-style-poster-small" href={url()}>Home</a></li>
+      {nav.map((item) => <li><a class="bus-menu_link u-text-style-poster-small" href={item.href}>{item.label}</a></li>)}
+      <li><a class="bus-menu_link u-text-style-poster-small" href={url('veelgestelde-vragen')}>Vragen</a></li>
+    </ul>
+    <ul class="bus-menu_sub">
+      {services.map((service) => <li><a class="bus-menu_sub_link" href={url(`catering/${service.slug}`)}>{service.nav}</a></li>)}
+      {regions.map((region) => <li><a class="bus-menu_sub_link" href={url(region.slug)}>{region.naam}</a></li>)}
+    </ul>
+  </nav>
+</dialog>
+
+<style>
+  .bus-nav_wrap {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    view-transition-name: bus-nav;
+  }
+  .bus-nav_stripe,
+  .bus-menu_stripe {
+    height: var(--size--stripe-thin);
+    background-color: var(--color--bus-yellow);
+  }
+  /* Equal outer columns keep the logo on the true center of the page. */
+  .bus-nav_bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--_spacing---space--3);
+    min-height: var(--size--nav-bar);
+  }
+  .bus-nav_side {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--5);
+  }
+  .bus-nav_side.is-end { justify-content: flex-end; }
+  .bus-nav_links {
+    display: var(--none-medium, flex);
+    align-items: center;
+    gap: var(--_spacing---space--5);
+  }
+  .bus-nav_link,
+  .bus-nav_phone,
+  .bus-nav_menu {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding: 0;
+    background: none;
+    border: none;
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    word-spacing: var(--_typography---word-spacing--poster);
+    color: var(--_theme---text);
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+  }
+  .bus-nav_link.is-summary::-webkit-details-marker { display: none; }
+  .bus-nav_link[aria-current='page'] .bus-nav_label {
+    text-decoration: underline;
+    text-decoration-color: var(--color--bus-yellow);
+    text-decoration-thickness: var(--focus--width);
+    text-underline-offset: var(--_spacing---space--2);
+  }
+  .bus-nav_phone { display: var(--none-medium, inline-flex); }
+  .bus-nav_menu { display: var(--flex-medium, none); }
+  .bus-nav_menu_icon {
+    width: var(--size--modal-icon);
+    height: var(--size--modal-icon);
+  }
+  .bus-nav_chevron {
+    width: var(--_spacing---space--3);
+    height: var(--_spacing---space--3);
+    transition: transform 200ms;
+  }
+  .bus-nav_more { position: relative; }
+  .bus-nav_more[open] .bus-nav_chevron { transform: rotate(180deg); }
+  .bus-nav_panel {
+    position: absolute;
+    top: 100%;
+    left: calc(var(--_spacing---space--4) * -1);
+    min-width: var(--size--nav-panel);
+    padding: var(--_spacing---space--3);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+  }
+  .bus-nav_panel_link {
+    display: flex;
+    align-items: center;
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--3);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    word-spacing: var(--_typography---word-spacing--poster);
+    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .bus-nav_panel_link.is-all {
+    margin-bottom: var(--_spacing---space--2);
+    padding-bottom: var(--_spacing---space--2);
+    border-bottom: var(--border-width--main) solid var(--_theme---border);
+  }
+
+  /* Logo badge: its own green disc, so it also reads over beige sections. */
+  .bus-nav_logo {
+    --_size: calc(var(--size--nav-logo) * var(--_responsive---large) + var(--size--nav-logo-small) * (1 - var(--_responsive---large)));
+    display: block;
+    align-self: start;
+    width: var(--_size);
+    height: var(--_size);
+    margin-bottom: calc((var(--_size) - var(--size--nav-bar)) * -1);
+    padding: var(--_spacing---space--1);
+    background-color: var(--_theme---background);
+    border: var(--focus--width) solid var(--color--bus-yellow);
+    border-radius: var(--radius--round);
+    transform-origin: 50% 0;
+  }
+  .bus-nav_logo_img { height: auto; }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .bus-nav_logo {
+        animation: bus-logo-tuck linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 var(--size--nav-tuck);
+      }
+    }
+  }
+  @keyframes bus-logo-tuck {
+    to { transform: translateY(var(--_spacing---space--1)) scale(var(--size--nav-logo-tucked)); }
+  }
+
+  /* Phone menu */
+  .bus-menu_wrap {
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: 0;
+    border: none;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    overflow-y: auto;
+  }
+  .bus-menu_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--_spacing---space--2) var(--site--margin);
+  }
+  .bus-menu_close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--target--min);
+    height: var(--target--min);
+    padding: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .bus-menu_close_icon {
+    width: var(--size--modal-icon);
+    height: var(--size--modal-icon);
+  }
+  .bus-menu_nav {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+    padding: var(--_spacing---space--4) var(--site--margin) var(--_spacing---space--7);
+  }
+  .bus-menu_link {
+    display: flex;
+    align-items: center;
+    min-height: calc(var(--target--min) * 1.25);
+    text-decoration: none;
+  }
+  .bus-menu_sub {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--_spacing---space--4);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .bus-menu_sub_link {
+    display: flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: inherit;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLDialogElement>('.bus-menu_wrap').forEach((menu) => {
+    document.querySelector('.bus-nav_menu')?.addEventListener('click', () => menu.showModal());
+    menu.querySelector('.bus-menu_close')?.addEventListener('click', () => menu.close());
+    // A link to the modal form closes the menu first.
+    menu.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('a')) menu.close();
+    });
+  });
+
+  // The catering panel closes on Esc and on a click elsewhere, like a menu.
+  document.querySelectorAll<HTMLDetailsElement>('.bus-nav_more').forEach((more) => {
+    document.addEventListener('click', (event) => {
+      if (more.open && !more.contains(event.target as Node)) more.open = false;
+    });
+    more.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !more.open) return;
+      more.open = false;
+      more.querySelector('summary')?.focus();
+    });
+  });
+</script>

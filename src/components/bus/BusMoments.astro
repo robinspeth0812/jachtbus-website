@@ -1,0 +1,50 @@
+---
+// Short list of what we do, as ruled columns on the page rather than cards.
+import type { Item } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title: string;
+  /** Items in the list. */
+  items: Item[];
+  /** Section theme. */
+  theme?: 'beige' | 'green' | 'black';
+}
+const { title, items, theme = 'beige' } = Astro.props;
+---
+
+<section class:list={['bus-moments_wrap', 'u-section', `u-theme-bus-${theme}`]}>
+  <div class="bus-moments_contain u-container">
+    <h2 class="bus-moments_title u-text-style-poster-small">{title}</h2>
+    <ul class="bus-moments_list" style={`--_count: ${items.length};`}>
+      {items.map((item) => (
+        <li class="bus-moments_item">
+          <h3 class="bus-moments_name u-text-style-poster-label">{item.title}</h3>
+          <p class="bus-moments_text u-text-style-main">{item.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bus-moments_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-moments_title {
+    max-width: 18ch;
+    margin-bottom: var(--_spacing---space--6);
+  }
+  .bus-moments_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * min(var(--_count), 4) + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .bus-moments_item {
+    padding-top: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--_theme---text-accent);
+  }
+  .bus-moments_name { margin-bottom: var(--_spacing---space--3); }
+  .bus-moments_text { max-width: 34ch; }
+</style>

@@ -1,0 +1,129 @@
+---
+import { Image } from 'astro:assets';
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusButton from '../../components/BusButton.astro';
+import BusFit from '../../components/bus/BusFit.astro';
+import BusFaq from '../../components/bus/BusFaq.astro';
+import { aanvraagUrl, contact, faqAlgemeen, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+import { faqSchema } from '../../lib/schema';
+import peerImg from '../../assets/peer-wagenaar.png';
+
+const { email } = await getInhoud();
+const crumbs = [{ label: 'Contact', href: url('contact') }];
+const faqItems = faqAlgemeen.slice(0, 3);
+const ways = [
+  { title: 'Bellen', value: contact.telefoon, href: contact.telefoonHref, text: 'Gewoon even overleggen. Staan we net in de bus, dan bellen we terug.', external: false },
+  { title: 'WhatsApp', value: 'Stuur een appje', href: contact.whatsappHref, text: 'Handig als je meteen een foto van de locatie wilt meesturen.', external: true },
+  { title: 'Mailen', value: email, href: `mailto:${email}`, text: 'Voor als je het liever even rustig opschrijft.', external: false },
+];
+---
+
+<BusBase
+  title="Contact"
+  description="Bel, app of mail de Jachtbus, of start meteen je aanvraag. Jachtbus Foodtruck & Catering B.V., Julianalaan 54, Gasselte."
+  crumbs={crumbs}
+  schema={[faqSchema(faqItems)]}
+>
+  <BusPageHero
+    title="Bel, app of vul iets in"
+    text="Wat je handig vindt. Weet je nog niet alles? Geeft niks, een richtdatum en een schatting van het aantal gasten is genoeg."
+    crumbs={crumbs}
+  >
+    <div class="contact-hero_actions u-button-wrapper">
+      <BusButton label="Start je aanvraag" href={aanvraagUrl()} />
+    </div>
+  </BusPageHero>
+
+  <section class="ways_wrap u-section u-theme-bus-beige">
+    <div class="ways_contain u-container">
+      <div class="ways_layout">
+        <ul class="ways_list">
+          {ways.map((way) => (
+            <li class="ways_item">
+              <h2 class="ways_title u-text-style-bus-title">{way.title}</h2>
+              <a class="ways_link u-text-style-poster-label" href={way.href} rel={way.external ? 'external' : undefined}>{way.value}</a>
+              <p class="ways_text u-text-style-main">{way.text}</p>
+            </li>
+          ))}
+        </ul>
+        <aside class="ways_aside">
+          <div class="ways_visual">
+            <Image class="ways_img" src={peerImg} alt="Portret van Peer Wagenaar" widths={[320, 640]} sizes="(max-width: 50em) 60vw, 25vw" />
+          </div>
+          <p class="ways_hand">Tot snel!</p>
+          <address class="ways_address u-text-style-small">
+            {contact.bedrijf}<br />
+            {contact.adres}<br />
+            {contact.postcode} {contact.plaats}<br />
+            KvK {contact.kvk}
+          </address>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <BusFit />
+  <BusFaq items={faqItems} />
+</BusBase>
+
+<style>
+  .contact-hero_actions { justify-content: flex-start; }
+  .ways_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .ways_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .ways_list {
+    grid-column: 1 / span 8;
+    width: 100%;
+  }
+  .ways_item {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    padding-block: var(--_spacing---space--4);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .ways_link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: var(--target--min);
+    color: var(--_theme---text-link--text);
+    overflow-wrap: anywhere;
+  }
+  .ways_text { max-width: 48ch; }
+  .ways_aside {
+    grid-column: 10 / span 3;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    width: 100%;
+  }
+  .ways_visual {
+    width: 100%;
+    max-width: var(--size--crop-large);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+    border: var(--focus--width) solid var(--color--bus-yellow);
+    overflow: clip;
+  }
+  .ways_img {
+    height: 100%;
+    object-position: 45% 20%;
+  }
+  .ways_hand {
+    font-family: var(--_typography---font--accent);
+    font-size: var(--_typography---size--hand);
+    line-height: var(--_typography---line-height--heading);
+    color: var(--_theme---text-accent);
+  }
+  .ways_address { font-style: normal; }
+</style>

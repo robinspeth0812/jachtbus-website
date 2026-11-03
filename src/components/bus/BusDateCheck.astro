@@ -1,0 +1,101 @@
+---
+// Shortest way into the form: occasion and date, then the modal opens on the
+// next question. Without JS this is a plain GET to the form page, which reads
+// the same parameters.
+import { url } from '../../data/nieuw';
+import { IDS_PREFIX } from './ids';
+
+interface Props {
+  /** Occasion already known on this page; hides the select. */
+  occasion?: string;
+  /** Text on the button. */
+  label?: string;
+}
+const { occasion = '', label = 'Check je datum' } = Astro.props;
+const id = IDS_PREFIX();
+const options = [
+  { value: 'bruiloft', label: 'Een bruiloft' },
+  { value: 'bedrijfsfeest', label: 'Een bedrijfsfeest' },
+  { value: 'evenement', label: 'Een evenement' },
+  { value: 'verjaardag', label: 'Een verjaardag' },
+  { value: 'jubileum', label: 'Een jubileum' },
+  { value: 'bbq', label: 'Een BBQ' },
+  { value: 'overige', label: 'Iets anders' },
+];
+---
+
+<form class="bus-check_wrap" action={url('aanvraag')} method="get">
+  {occasion ? (
+    <input type="hidden" name="gelegenheid" value={occasion} />
+  ) : (
+    <div class="bus-check_field">
+      <label class="bus-check_label u-text-style-small" for={`${id}-wat`}>Wat vier je?</label>
+      <select class="bus-check_input" id={`${id}-wat`} name="gelegenheid">
+        {options.map((option) => <option value={option.value}>{option.label}</option>)}
+      </select>
+    </div>
+  )}
+  <div class="bus-check_field">
+    <label class="bus-check_label u-text-style-small" for={`${id}-wanneer`}>Wanneer?</label>
+    <input class="bus-check_input" id={`${id}-wanneer`} type="date" name="datum" />
+  </div>
+  <button class="bus-check_button" type="submit" data-trigger="hover focus">{label}</button>
+</form>
+
+<style>
+  .bus-check_wrap {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-check_field {
+    display: flex;
+    flex: 1 1 var(--size--check-field);
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    min-width: 0;
+  }
+  .bus-check_label { font-weight: var(--_typography---font--primary-bold); }
+  .bus-check_input {
+    width: 100%;
+    min-height: var(--size--mobile-bar);
+    padding-inline: var(--_spacing---space--3);
+    background-color: var(--color--white);
+    color: var(--color--bus-black);
+    border: var(--focus--width) solid var(--color--bus-black);
+    border-radius: 0;
+    accent-color: var(--color--bus-green);
+  }
+  .bus-check_button {
+    flex: 1 1 auto;
+    min-height: var(--size--mobile-bar);
+    padding-inline: var(--_spacing---space--5);
+    background-color: color-mix(in hsl, var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off)));
+    border: var(--focus--width) solid color-mix(in hsl, var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off)));
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    word-spacing: var(--_typography---word-spacing--poster);
+    cursor: pointer;
+    transition: background-color 200ms, border-color 200ms, color 200ms;
+  }
+</style>
+
+<script>
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll<HTMLFormElement>('.bus-check_wrap').forEach((form) => {
+    form.querySelector<HTMLInputElement>('input[type="date"]')?.setAttribute('min', today);
+    form.addEventListener('submit', (event) => {
+      // Only when this page has the modal; otherwise the GET to the form page runs.
+      if (!document.querySelector('.bus-modal_wrap')) return;
+      event.preventDefault();
+      const data = new FormData(form);
+      document.dispatchEvent(new CustomEvent('aanvraag:start', {
+        detail: { occasion: data.get('gelegenheid'), date: data.get('datum') || null },
+      }));
+    });
+  });
+</script>

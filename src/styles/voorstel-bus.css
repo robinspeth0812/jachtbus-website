@@ -1,6 +1,6 @@
 /*
- * Proposal layer for /branding-2 only: tokens, themes and text styles
- * taken from the bus itself. Imported by that page alone, so the live
+ * Proposal layer for /branding-2 and /nieuw: tokens, themes and text styles
+ * taken from the bus itself. Imported by those pages alone, so the live
  * site is untouched and the whole direction can be removed in one go.
  *
  * Colors are matched by eye from the bus photos, so they are provisional
@@ -35,7 +35,45 @@
   --size--modal: 44rem; /* request modal from tablet up, full screen on phones */
   --size--modal-max-height: 90dvh;
   --size--modal-icon: 1.5rem;
+
+  /* The new site under /nieuw */
+  --size--stripe-thin: 0.5rem;
+  --size--nav-bar: 4.25rem;
+  --size--nav-logo: 6.5rem;
+  --size--nav-logo-small: 5rem;
+  --size--nav-logo-tucked: 0.56; /* scale of the badge once it fits the bar */
+  --size--nav-tuck: 16rem;
+  --size--nav-panel: 18rem;
+  --size--mobile-bar: 3.5rem;
+  --size--strip-min: 3rem;
+  --size--logo-footer: 22rem;
+  --size--check: 2rem;
+  --size--bus-marker: 4.5rem;
+  --size--shape-max: 34rem;
+  --size--fit-lot: 14rem;
+  --size--check-field: 11rem;
+  --size--crop-large: 14rem;
+  --size--fit-spot: 2rem;
+  --target--small: 2rem; /* footer lists, the documented exception */
 }
+
+/* Browser surfaces carry the palette too. */
+::selection {
+  background-color: var(--color--bus-yellow);
+  color: var(--color--bus-black);
+}
+html {
+  scrollbar-color: var(--color--bus-green) var(--color--marigold-2);
+  scroll-padding-block: calc(var(--size--nav-bar) + var(--_spacing---space--5)) calc(var(--size--mobile-bar) + var(--_spacing---space--3));
+}
+input, textarea { caret-color: var(--color--bus-green); }
+
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+::view-transition-old(root) { animation-duration: 150ms; }
+::view-transition-new(root) { animation-duration: 220ms; }
 
 /* The page behind an open modal stays put, without a layout jump. */
 :root:has(.bus-modal_wrap:modal) {
@@ -92,7 +130,7 @@
   --_theme---button-secondary--border: var(--color--white);
   --_theme---button-secondary--text: var(--color--white);
   --_theme---button-secondary--border-hover: var(--color--bus-yellow);
-  --_theme---button-secondary--text-hover: var(--color--bus-yellow);
+  --_theme---button-secondary--text-hover: var(--color--white); /* yellow text fails AA on this green */
 }
 
 .u-theme-bus-black {

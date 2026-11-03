@@ -1,0 +1,76 @@
+---
+// Closing call to action. The answer to "what are we celebrating?" already
+// fills in the first question of the form.
+import BusButton from '../BusButton.astro';
+import { aanvraagUrl, contact } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Text under the title. */
+  text?: string;
+  /** When known, a single button for this occasion instead of the choices. */
+  occasion?: string;
+  /** Text on that single button. */
+  label?: string;
+}
+const {
+  title = 'Wat vieren we?',
+  text = 'Een richtdatum en een schatting van het aantal gasten is genoeg om te beginnen. We komen vanaf 40 personen.',
+  occasion = '',
+  label = 'Start je aanvraag',
+} = Astro.props;
+---
+
+<section class="bus-closing_wrap u-section u-theme-bus-green">
+  <div class="bus-closing_contain u-container">
+    <div class="bus-closing_layout">
+      <h2 class="bus-closing_title u-text-style-poster">{title}</h2>
+      <div class="bus-closing_content">
+        <p class="bus-closing_text u-text-style-large">{text}</p>
+        <div class="bus-closing_actions u-button-wrapper">
+          {occasion ? (
+            <BusButton label={label} href={aanvraagUrl(occasion)} />
+          ) : (
+            <>
+              <BusButton label="Een bruiloft" href={aanvraagUrl('bruiloft')} />
+              <BusButton label="Een bedrijfsfeest" href={aanvraagUrl('bedrijfsfeest')} />
+              <BusButton label="Een evenement" href={aanvraagUrl('evenement')} />
+              <BusButton label="Iets anders" href={aanvraagUrl('overige')} variant="secondary" />
+            </>
+          )}
+        </div>
+        <p class="bus-closing_call u-text-style-main">
+          Liever even praten? Bel <a class="bus-closing_link" href={contact.telefoonHref}>{contact.telefoon}</a> of <a class="bus-closing_link" href={contact.whatsappHref} rel="external">app ons</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-closing_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe) solid var(--color--bus-yellow);
+  }
+  .bus-closing_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: var(--start-medium, end);
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .bus-closing_title { grid-column: 1 / span 5; }
+  .bus-closing_content {
+    grid-column: 6 / span 7;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+  }
+  .bus-closing_text,
+  .bus-closing_call { max-width: 58ch; }
+  .bus-closing_actions { justify-content: flex-start; }
+  .bus-closing_link { color: var(--_theme---text-link--text); }
+</style>

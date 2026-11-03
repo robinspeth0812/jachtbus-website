@@ -1,0 +1,104 @@
+---
+// AVG privacy statement. Draft written in-house: have it checked by a
+// legal professional before go-live.
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import { url } from '../../data/nieuw';
+
+const crumbs = [{ label: 'Privacybeleid', href: url('privacy') }];
+---
+
+<BusBase title="Privacybeleid" description="Hoe Jachtbus Foodtruck & Catering B.V. omgaat met je gegevens." crumbs={crumbs}>
+  <BusPageHero title="Privacybeleid" text="Kort en eerlijk: welke gegevens we hebben, waarom, en wat jouw rechten zijn. Laatst bijgewerkt: augustus 2026." crumbs={crumbs} />
+  <section class="legal_wrap u-section u-theme-bus-beige">
+    <div class="legal_contain u-container">
+      <div class="legal_layout u-margin-trim">
+        <h2 class="legal_title u-text-style-poster-label">Wie wij zijn</h2>
+        <p class="legal_text u-text-style-main">
+          Jachtbus Foodtruck &amp; Catering B.V., Julianalaan 54, 9462 PH
+          Gasselte, KvK 96772174. Wij zijn verantwoordelijk voor de
+          verwerking van persoonsgegevens zoals beschreven op deze pagina.
+          Vragen? Bel +31 592 656363 of mail naar
+          info@brasseriejachtlust.nl.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Welke gegevens we verwerken</h2>
+        <p class="legal_text u-text-style-main">
+          Alleen wat je ons zelf geeft: via het aanvraagformulier (naam,
+          e-mailadres, telefoonnummer en de gegevens over je feest, zoals
+          datum, plaats en aantal gasten) en via telefoon, e-mail of
+          WhatsApp als je contact met ons opneemt. We verzamelen niets
+          stiekem en we kopen geen gegevens bij.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Waarvoor en op welke grondslag</h2>
+        <p class="legal_text u-text-style-main">
+          We gebruiken je gegevens om je aanvraag te beantwoorden, een
+          voorstel te maken en de catering uit te voeren (uitvoering van de
+          overeenkomst, artikel 6 lid 1 sub b AVG) en om vragen af te
+          handelen (gerechtvaardigd belang, sub f). Voor iets anders
+          gebruiken we ze niet, en we verkopen ze nooit.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Hoe lang we ze bewaren</h2>
+        <p class="legal_text u-text-style-main">
+          Een aanvraag die geen boeking wordt, verwijderen we uiterlijk een
+          jaar na het laatste contact. Gegevens die bij een boeking horen
+          (offertes, facturen) bewaren we zeven jaar vanwege de fiscale
+          bewaarplicht.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Wie er verder bij kan</h2>
+        <p class="legal_text u-text-style-main">
+          Onze website draait bij een Europese hostingpartij. Voor het
+          versturen van e-mail (zoals de bevestiging van je aanvraag)
+          gebruiken we een e-maildienst die als verwerker voor ons werkt.
+          Met partijen die gegevens voor ons verwerken sluiten we
+          verwerkersovereenkomsten. Buiten deze partijen delen we je
+          gegevens niet, tenzij de wet dat vraagt.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Jouw rechten</h2>
+        <p class="legal_text u-text-style-main">
+          Je mag je gegevens inzien, laten corrigeren of laten verwijderen,
+          de verwerking laten beperken, bezwaar maken en je gegevens
+          meenemen (dataportabiliteit). Stuur ons daarvoor een berichtje;
+          we reageren binnen een maand. Niet tevreden over hoe we met je
+          gegevens omgaan? Je kunt een klacht indienen bij de Autoriteit
+          Persoonsgegevens.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Beveiliging en cookies</h2>
+        <p class="legal_text u-text-style-main">
+          We nemen passende technische en organisatorische maatregelen om
+          je gegevens te beschermen. Over cookies zijn we kort: die
+          gebruiken we op dit moment niet. Lees er meer over in ons
+          <a class="legal_link" href={url("cookies")}>cookiebeleid</a>.
+        </p>
+
+        <h2 class="legal_title u-text-style-poster-label">Wijzigingen</h2>
+        <p class="legal_text u-text-style-main">
+          Verandert er iets aan hoe we met gegevens omgaan, dan passen we
+          deze pagina aan. De datum bovenaan laat zien wanneer dat voor het
+          laatst gebeurde.
+        </p>
+      </div>
+    </div>
+  </section>
+</BusBase>
+
+<style>
+  .legal_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .legal_layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--3);
+    max-width: var(--max-width--small);
+  }
+  .legal_title { margin-top: var(--_spacing---space--5); }
+  .legal_text { max-width: 70ch; }
+  .legal_link { color: var(--_theme---text-link--text); }
+</style>

@@ -1,0 +1,64 @@
+---
+// Peer in his own words, in the hand lettering that is kept for him and the
+// name of the bus. Wording to be confirmed by Peer.
+import BusPhoto from './BusPhoto.astro';
+import { photos } from '../../data/nieuw';
+
+interface Props {
+  /** Question in the heading. */
+  title?: string;
+  /** What Peer says. */
+  quote?: string;
+}
+const { title = 'En als het regent?', quote = 'Dan draaien we gewoon door. Hooguit met een tent erbij.' } = Astro.props;
+---
+
+<section class="bus-quote_wrap u-section u-theme-bus-green">
+  <div class="bus-quote_contain u-container">
+    <div class="bus-quote_layout">
+      <div class="bus-quote_visual"><BusPhoto photo={photos.wijn} shape="arch" focus="50% 28%" /></div>
+      <div class="bus-quote_content">
+        <h2 class="bus-quote_title u-text-style-poster-small">{title}</h2>
+        <figure class="bus-quote_figure">
+          <blockquote class="bus-quote_block"><p class="bus-quote_text">{quote}</p></blockquote>
+          <figcaption class="bus-quote_credit u-text-style-main">Peer Wagenaar</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bus-quote_wrap {
+    padding-bottom: 0;
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-quote_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: var(--column-medium, row);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: end;
+  }
+  .bus-quote_visual {
+    grid-column: 1 / span 5;
+    order: var(--_responsive---medium);
+    width: 100%;
+  }
+  .bus-quote_content {
+    grid-column: 7 / span 6;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--5);
+    align-self: center;
+    width: 100%;
+    padding-bottom: calc(var(--_spacing---space--7) * var(--_responsive---large));
+  }
+  .bus-quote_text {
+    font-family: var(--_typography---font--accent);
+    font-size: var(--_typography---size--hand);
+    line-height: var(--_typography---line-height--heading);
+  }
+  .bus-quote_credit { margin-top: var(--_spacing---space--3); }
+</style>

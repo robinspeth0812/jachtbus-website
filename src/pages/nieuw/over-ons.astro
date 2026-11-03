@@ -1,0 +1,144 @@
+---
+import { Image } from 'astro:assets';
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusStory from '../../components/bus/BusStory.astro';
+import BusStrip from '../../components/bus/BusStrip.astro';
+import BusMoments from '../../components/bus/BusMoments.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { photos, url, values } from '../../data/nieuw';
+import peerImg from '../../assets/peer-wagenaar.png';
+
+const crumbs = [{ label: 'Over ons', href: url('over-ons') }];
+const specs = [
+  { term: 'Eerste rit', value: 'Augustus 2025' },
+  { term: 'Feesten in 2026', value: 'Zo’n 40' },
+  { term: 'Lengte en breedte', value: '6,5 bij 2,5 meter' },
+  { term: 'Gewicht', value: '3,5 ton' },
+  { term: 'Stroom', value: '230V of 16A' },
+  { term: 'Vanaf', value: '40 personen' },
+];
+---
+
+<BusBase
+  title="Over ons: Peer en de Jachtbus"
+  description="Het verhaal achter de Jachtbus: Peer Wagenaar, een eigen keukenploeg en bediening. Sinds augustus 2025 op pad, in 2026 al zo'n 40 feesten verder."
+  crumbs={crumbs}
+>
+  <BusPageHero
+    title="Wie zit er achter de Jachtbus?"
+    text="Peer Wagenaar, met een eigen keukenploeg en bediening. In augustus 2025 reed de bus voor het eerst uit, en sindsdien ging het hard."
+    photo={photos.luik}
+    shape="corner"
+    focus="52% 50%"
+    crumbs={crumbs}
+  />
+
+  <section class="peer_wrap u-section u-theme-bus-beige">
+    <div class="peer_contain u-container">
+      <div class="peer_layout">
+        <div class="peer_visual">
+          <Image class="peer_img" src={peerImg} alt="Portret van Peer Wagenaar, lachend, voor een tent in het groen" widths={[320, 640]} sizes="(max-width: 50em) 60vw, 25vw" />
+        </div>
+        <div class="peer_content">
+          <h2 class="peer_title u-text-style-poster-small">Van eerste rit tot zo’n 40 feesten</h2>
+          <p class="peer_text u-text-style-large">
+            Bruiloften, tuinfeesten, bedrijfsevenementen en festivals door heel
+            Drenthe, Groningen en Friesland. Veel daarvan waren walking dinners en
+            streetfood, met eigen bediening en alles ter plekke bereid.
+          </p>
+          <p class="peer_text u-text-style-large">
+            Van Stiens tot Stadskanaal en van Leeuwarden tot Gasselte: de bus komt
+            overal waar wat te vieren valt.
+          </p>
+          <p class="peer_hand">Groot feest of klein bedrijfsevent, ik denk graag met je mee!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <BusStrip rows={1} />
+
+  <BusMoments title="Wat op de bus staat, doen we ook" items={values} theme="black" />
+
+  <section class="specs_wrap u-section u-theme-bus-beige">
+    <div class="specs_contain u-container">
+      <h2 class="specs_title u-text-style-poster-small">De bus in het kort</h2>
+      <dl class="specs_list">
+        {specs.map((spec) => (
+          <div class="specs_item">
+            <dt class="specs_term u-text-style-small">{spec.term}</dt>
+            <dd class="specs_value u-text-style-poster-label">{spec.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <BusStory
+    title="Op de dag zelf"
+    paragraphs={['We komen met eigen keuken en eigen bediening. Niemand van je gasten hoeft achter de bar, jij ook niet.', 'Als de laatste gast is bediend, ruimen we op en rijden we weg. Er blijft niets achter, behalve een goed verhaal.']}
+    photo={photos.bediening}
+    shape="arch"
+    focus="50% 25%"
+    theme="green"
+  />
+  <BusClosing title="Zullen we kennismaken?" />
+</BusBase>
+
+<style>
+  .peer_wrap,
+  .specs_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .peer_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: center;
+  }
+  .peer_visual {
+    grid-column: 1 / span 4;
+    width: 100%;
+    max-width: var(--unset-medium, none);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+    overflow: clip;
+    border: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .peer_img {
+    height: 100%;
+    object-position: 45% 20%;
+  }
+  .peer_content {
+    grid-column: 6 / span 7;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+  }
+  .peer_text { max-width: 54ch; }
+  .peer_hand {
+    font-family: var(--_typography---font--accent);
+    font-size: var(--_typography---size--hand);
+    line-height: var(--_typography---line-height--heading);
+    color: var(--_theme---text-accent);
+  }
+  .specs_title { margin-bottom: var(--_spacing---space--6); }
+  .specs_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large)) * 2), minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .specs_item {
+    display: flex;
+    flex-flow: column-reverse;
+    justify-content: flex-end;
+    gap: var(--_spacing---space--1);
+    padding-top: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .specs_value { margin: 0; }
+</style>

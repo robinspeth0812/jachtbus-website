@@ -1,0 +1,176 @@
+---
+// Home of the new site. One authored moment on load: the side panel of the bus
+// swings open like the hatch and shows Peer inside. Everything after that only
+// moves with the visitor's scroll.
+import { Image } from 'astro:assets';
+import BusBase from '../../layouts/BusBase.astro';
+import BusButton from '../../components/BusButton.astro';
+import BusPattern from '../../components/BusPattern.astro';
+import BusDateCheck from '../../components/bus/BusDateCheck.astro';
+import BusPlaces from '../../components/bus/BusPlaces.astro';
+import BusRows from '../../components/bus/BusRows.astro';
+import BusStory from '../../components/bus/BusStory.astro';
+import BusRoute from '../../components/bus/BusRoute.astro';
+import BusMenu from '../../components/bus/BusMenu.astro';
+import BusQuote from '../../components/bus/BusQuote.astro';
+import BusFit from '../../components/bus/BusFit.astro';
+import BusReviews from '../../components/bus/BusReviews.astro';
+import BusFaq from '../../components/bus/BusFaq.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { contact, photos, url, values } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+import sideImg from '../../assets/ambachtelijk-eten.jpg';
+import { faqSchema } from '../../lib/schema';
+
+const { faq } = await getInhoud();
+const faqItems = faq.slice(0, 6);
+---
+
+<BusBase
+  title="Foodtruck huren in Noord-Nederland"
+  description="De Jachtbus komt naar je feest en kookt ter plekke. Voor bruiloften, tuinfeesten, bedrijfsfeesten en evenementen in Noord-Nederland, vanaf 40 personen."
+  schema={[faqSchema(faqItems)]}
+>
+  <section class="home-hero_wrap u-theme-bus-green">
+    <div class="home-hero_contain u-container">
+      <div class="home-hero_layout">
+        <h1 class="home-hero_title u-text-style-poster">Zet ons neer, wij koken.</h1>
+        <div class="home-hero_content">
+          <p class="home-hero_text u-text-style-large">
+            We rijden naar je tuin, je bedrijf of je weiland, zetten de luiken open
+            en koken ter plekke. In Drenthe, Groningen en Friesland.
+          </p>
+          <BusDateCheck />
+          <p class="home-hero_call u-text-style-small">
+            Of bel Peer op <a class="home-hero_link" href={contact.telefoonHref}>{contact.telefoon}</a>. Vanaf 40 personen.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="home-hero_visual">
+      <Image class="home-hero_img" src={photos.luik.src} alt={photos.luik.alt} widths={[800, 1200, 1503]} sizes="100vw" loading="eager" fetchpriority="high" />
+      <div class="home-hero_hatch"><BusPattern columns={12} rows={6} /></div>
+    </div>
+  </section>
+
+  <section class="home-proof_wrap u-section u-theme-bus-black" aria-labelledby="home-proof-title">
+    <div class="home-proof_contain u-container">
+      <h2 class="home-proof_title u-text-style-poster-small" id="home-proof-title">
+        In augustus 2025 reden we voor het eerst uit. In 2026 stonden we al op zo’n 40 feesten.
+      </h2>
+    </div>
+  </section>
+  <BusPlaces />
+
+  <BusRows />
+
+  <BusStory
+    title="Wat op de bus staat, doen we ook"
+    photo={{ src: sideImg, alt: 'De zijkant van de bus, met de woorden lokaal verkregen, eerlijke producten en ambachtelijk bereid' }}
+    shape="corner"
+    theme="green"
+    focus="60% 50%"
+  >
+    <ul class="home-values_list">
+      {values.map((value) => (
+        <li class="home-values_item">
+          <h3 class="home-values_name u-text-style-poster-label">{value.title}</h3>
+          <p class="home-values_text u-text-style-main">{value.text}</p>
+        </li>
+      ))}
+    </ul>
+  </BusStory>
+
+  <BusMenu />
+  <BusRoute />
+  <BusQuote />
+  <BusFit />
+  <BusReviews />
+  <BusFaq items={faqItems} />
+  <section class="home-more_wrap u-theme-bus-beige">
+    <div class="home-more_contain u-container">
+      <BusButton label="Alle vragen" href={url('veelgestelde-vragen')} variant="secondary" />
+    </div>
+  </section>
+  <BusClosing />
+</BusBase>
+
+<style>
+  .home-hero_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .home-hero_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: var(--start-medium, end);
+    gap: var(--_spacing---space--5) var(--site--gutter);
+    padding-block: var(--_spacing---space--6);
+  }
+  .home-hero_title {
+    grid-column: 1 / span 6;
+    max-width: 11ch;
+  }
+  .home-hero_content {
+    grid-column: 7 / span 6;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+  }
+  .home-hero_text { max-width: 52ch; }
+  .home-hero_link { color: var(--_theme---text-link--text); }
+
+  .home-hero_visual {
+    position: relative;
+    background-color: var(--_theme---background-skeleton);
+    perspective: 120rem;
+    perspective-origin: 50% 0;
+    overflow: clip;
+  }
+  .home-hero_img {
+    aspect-ratio: calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large)) * 1.25);
+    height: auto;
+    object-position: 50% 62%;
+  }
+  /* The hatch. Only exists when it can animate away, so without motion the
+     photo is simply there. */
+  .home-hero_hatch { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .home-hero_hatch {
+      display: block;
+      position: absolute;
+      inset: 0;
+      background-color: var(--color--bus-black);
+      color: var(--color--bus-yellow);
+      transform-origin: 50% 0;
+      backface-visibility: hidden;
+      animation: home-hatch-open 1150ms cubic-bezier(0.65, 0, 0.15, 1) 250ms both;
+    }
+  }
+  @keyframes home-hatch-open {
+    0% { transform: rotateX(0); opacity: 1; visibility: visible; }
+    70% { opacity: 1; }
+    100% { transform: rotateX(88deg); opacity: 0; visibility: hidden; }
+  }
+
+  .home-proof_wrap {
+    padding-bottom: var(--_spacing---space--5);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .home-proof_title { max-width: 28ch; }
+
+  .home-values_item {
+    padding-block: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .home-values_name { margin-bottom: var(--_spacing---space--1); }
+
+  .home-more_wrap {
+    padding-bottom: var(--_spacing---space--7);
+    background-color: var(--_theme---background);
+  }
+  .home-more_contain { align-items: flex-start; }
+</style>

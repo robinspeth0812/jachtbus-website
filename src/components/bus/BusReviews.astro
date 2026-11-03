@@ -1,0 +1,52 @@
+---
+// Real reviews from the portal. Renders nothing as long as there are none:
+// no sample quotes, no stars, no invented numbers.
+import { getInhoud } from '../../lib/cms';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+}
+const { title = 'Wat gasten zeggen' } = Astro.props;
+const { reviews } = await getInhoud();
+---
+
+{reviews.length > 0 && (
+  <section class="bus-reviews_wrap u-section u-theme-bus-beige">
+    <div class="bus-reviews_contain u-container">
+      <h2 class="bus-reviews_title u-text-style-poster-small">{title}</h2>
+      <ul class="bus-reviews_list">
+        {reviews.map((review) => (
+          <li class="bus-reviews_item">
+            <figure class="bus-reviews_figure">
+              <blockquote class="bus-reviews_block"><p class="bus-reviews_text u-text-style-large">{review.tekst}</p></blockquote>
+              <figcaption class="bus-reviews_credit u-text-style-small">
+                {review.naam}{review.gelegenheid && `, ${review.gelegenheid}`}{review.plaats && ` in ${review.plaats}`}.
+                {review.bronUrl ? <a class="bus-reviews_link" href={review.bronUrl} rel="external">Bekijk op {review.bron}</a> : <span>Via {review.bron}</span>}
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .bus-reviews_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-reviews_title { margin-bottom: var(--_spacing---space--6); }
+  .bus-reviews_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .bus-reviews_item {
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .bus-reviews_credit { margin-top: var(--_spacing---space--3); }
+  .bus-reviews_link { color: var(--_theme---text-link--text); }
+</style>

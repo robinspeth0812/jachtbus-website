@@ -1,0 +1,78 @@
+---
+// The form as its own page: the target for links opened in a new tab, for
+// visitors without JS, and for links shared elsewhere. All other pages open
+// the same form in the modal.
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import RequestForm from '../../components/RequestForm.astro';
+import { contact, steps, url } from '../../data/nieuw';
+
+const crumbs = [{ label: 'Aanvraag', href: url('aanvraag') }];
+---
+
+<BusBase
+  title="Vraag de Jachtbus aan"
+  description="Check of de Jachtbus op jouw datum vrij is. Vier korte vragen, een richtdatum is genoeg. Je krijgt een voorstel met menu en prijs."
+  crumbs={crumbs}
+  modal={false}
+>
+  <BusPageHero
+    title="Vier korte vragen"
+    text="Een richtdatum en een schatting van het aantal gasten is genoeg. Je zit nergens aan vast."
+    crumbs={crumbs}
+  />
+  <section class="form_wrap u-section u-theme-bus-beige">
+    <div class="form_contain u-container">
+      <div class="form_layout">
+        <div class="form_panel">
+          <RequestForm variant="modal" />
+        </div>
+        <aside class="form_aside">
+          <h2 class="form_title u-text-style-poster-label">Wat er daarna gebeurt</h2>
+          <ol class="form_steps">
+            {steps.slice(1).map((step) => (
+              <li class="form_step">
+                <h3 class="form_step_title u-text-style-bus-title">{step.title}</h3>
+                <p class="form_step_text u-text-style-main">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p class="form_call u-text-style-main">
+            Liever even bellen? <a class="form_link" href={contact.telefoonHref}>{contact.telefoon}</a>
+          </p>
+        </aside>
+      </div>
+    </div>
+  </section>
+</BusBase>
+
+<style>
+  .form_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .form_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+    align-items: start;
+  }
+  .form_panel {
+    grid-column: 1 / span 7;
+    width: 100%;
+  }
+  .form_aside {
+    grid-column: 9 / span 4;
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+  }
+  .form_step {
+    padding-block: var(--_spacing---space--3);
+    border-top: var(--focus--width) solid var(--_theme---border);
+  }
+  .form_step_title { margin-bottom: var(--_spacing---space--1); }
+  .form_link { color: var(--_theme---text-link--text); }
+</style>

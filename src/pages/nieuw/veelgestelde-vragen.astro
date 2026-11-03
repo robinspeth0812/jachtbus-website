@@ -1,0 +1,35 @@
+---
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusFaq from '../../components/bus/BusFaq.astro';
+import BusFit from '../../components/bus/BusFit.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { services, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+import { faqSchema } from '../../lib/schema';
+
+const { faq } = await getInhoud();
+const crumbs = [{ label: 'Veelgestelde vragen', href: url('veelgestelde-vragen') }];
+const groups = [
+  { title: 'Bruiloften', items: services[0].faq },
+  { title: 'Bedrijven', items: services[1].faq },
+  { title: 'In de tuin', items: services[2].faq },
+];
+---
+
+<BusBase
+  title="Veelgestelde vragen over de foodtruck"
+  description="Wat kost de Jachtbus, vanaf hoeveel personen komen jullie, wat als het regent en wat heeft de bus nodig? De antwoorden op een rij."
+  crumbs={crumbs}
+  schema={[faqSchema([...faq, ...groups.flatMap((group) => group.items)])]}
+>
+  <BusPageHero
+    title="Wat je vast wilt weten"
+    text="De vragen die we het vaakst krijgen. Staat die van jou er niet bij? Bel gerust even."
+    crumbs={crumbs}
+  />
+  <BusFaq title="Eerst dit" items={faq} />
+  {groups.map((group) => <BusFaq title={group.title} items={group.items} />)}
+  <BusFit />
+  <BusClosing />
+</BusBase>

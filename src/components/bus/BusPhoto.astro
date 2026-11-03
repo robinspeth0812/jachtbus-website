@@ -1,0 +1,63 @@
+---
+// Photo in one of the shapes from the side panel. The shape opens upward as it
+// scrolls into view, the way the hatch of the bus does.
+import { Image } from 'astro:assets';
+import type { Photo, Shape } from '../../data/nieuw';
+
+interface Props {
+  /** The photo and its alt text. */
+  photo: Photo;
+  /** Shape of the crop. */
+  shape?: Shape;
+  /** Sizes attribute for the responsive image. */
+  sizes?: string;
+  /** Focal point, as a CSS object-position. */
+  focus?: string;
+  /** Load right away, for photos in the first screen. */
+  eager?: boolean;
+}
+const { photo, shape = 'arch', sizes = '(max-width: 50em) 100vw, 45vw', focus = '50% 50%', eager = false } = Astro.props;
+const widths = [480, 800, 1200].filter((width) => width <= photo.src.width);
+---
+
+<div class:list={['bus-photo_wrap', `is-${shape}`]}>
+  <Image class="bus-photo_img" src={photo.src} alt={photo.alt} widths={widths} sizes={sizes} loading={eager ? 'eager' : 'lazy'} style={`object-position: ${focus};`} />
+</div>
+
+<style>
+  .bus-photo_wrap {
+    width: 100%;
+    overflow: clip;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .bus-photo_wrap.is-arch {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius--round) var(--radius--round) 0 0;
+  }
+  .bus-photo_wrap.is-circle {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+  }
+  .bus-photo_wrap.is-corner {
+    aspect-ratio: 5 / 4;
+    border-top-right-radius: var(--radius--shape);
+  }
+  .bus-photo_wrap.is-bowl {
+    aspect-ratio: 5 / 4;
+    border-radius: 0 0 var(--radius--round) var(--radius--round);
+  }
+  .bus-photo_img { height: 100%; }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .bus-photo_wrap {
+        animation: bus-photo-open cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 30%;
+      }
+    }
+  }
+  @keyframes bus-photo-open {
+    from { clip-path: inset(38% 0 0 0); }
+    to { clip-path: inset(0); }
+  }
+</style>

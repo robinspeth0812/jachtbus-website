@@ -7,7 +7,7 @@ export default defineConfig({
   integrations: [
     sitemap({
       // Internal work pages stay out of the sitemap (they are noindex too).
-      filter: (page) => !page.endsWith('/branding/') && !page.endsWith('/branding-2/') && !page.endsWith('/secties/'),
+      filter: (page) => !page.endsWith('/branding/') && !page.endsWith('/branding-2/') && !page.endsWith('/secties/') && !page.includes('/nieuw/'),
     }),
   ],
 });

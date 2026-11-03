@@ -640,6 +640,9 @@ const places = [
       );
       if (radio) radio.checked = true;
     }
+    const dateField = form.querySelector<HTMLInputElement>('input[name="datum"]');
+    const prefillDate = new URLSearchParams(window.location.search).get('datum');
+    if (prefillDate && dateField) dateField.value = prefillDate;
     syncOptionStates();
     if (progress) progress.hidden = false;
     const checkedOccasion = form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked');
@@ -649,9 +652,10 @@ const places = [
     // Sent by a surrounding modal each time it opens. A sent request starts
     // fresh; after a failed send the answers stay, so nothing has to be retyped.
     form.addEventListener('aanvraag:open', (event) => {
-      const { occasion } = (event as CustomEvent<{ occasion: string | null }>).detail;
+      const { occasion, date } = (event as CustomEvent<{ occasion: string | null; date?: string | null }>).detail;
       const wasDone = !!done && !done.hidden;
       if (wasDone) form.reset();
+      if (date && dateField) dateField.value = date;
       if (done) done.hidden = true;
       if (fallback) fallback.hidden = true;
       nav.hidden = false;

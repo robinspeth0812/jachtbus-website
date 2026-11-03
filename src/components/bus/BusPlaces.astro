@@ -1,0 +1,61 @@
+---
+// The towns where the bus actually stood. They roll along with the page scroll,
+// like the destination roll of a bus; nothing moves unless you scroll, so no
+// pause control is needed. Without scroll timelines the names simply wrap.
+import { allPlaces } from '../../data/nieuw';
+
+interface Props {
+  /** Towns to show. */
+  places?: string[];
+}
+const { places = allPlaces } = Astro.props;
+---
+
+<div class="bus-places_wrap u-theme-bus-black">
+  <ul class="bus-places_list u-text-style-poster-small">
+    {places.map((place) => <li class="bus-places_item">{place}</li>)}
+  </ul>
+</div>
+
+<style>
+  .bus-places_wrap {
+    padding-block: var(--_spacing---space--4);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    overflow: clip;
+  }
+  .bus-places_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2) var(--_spacing---space--5);
+    padding-inline: var(--site--margin);
+  }
+  .bus-places_item {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--5);
+    white-space: nowrap;
+    color: var(--_theme---heading);
+  }
+  .bus-places_item + .bus-places_item::before {
+    content: '';
+    width: var(--_spacing---space--3);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius--round);
+    background-color: var(--color--bus-yellow);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .bus-places_list {
+        flex-wrap: nowrap;
+        width: max-content;
+        animation: bus-places-roll linear both;
+        animation-timeline: view();
+      }
+    }
+  }
+  @keyframes bus-places-roll {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% + 100vw)); }
+  }
+</style>

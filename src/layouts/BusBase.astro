@@ -1,0 +1,162 @@
+---
+// Layout of the new bus-styled site under /nieuw: full SEO head, sticky nav,
+// footer, phone action bar and the request modal. Everything stays noindex
+// until the owner picks this direction; flip SITE_NOINDEX at go-live and
+// remove /nieuw from the sitemap filter.
+import { getImage } from 'astro:assets';
+import '@fontsource-variable/asap/wdth.css';
+import '@fontsource-variable/open-sans';
+import '@fontsource/nothing-you-could-do';
+import '../styles/tokens.css';
+import '../styles/lumos.css';
+import '../styles/global.css';
+import '../styles/voorstel-bus.css';
+import BusNav from '../components/bus/BusNav.astro';
+import BusFooter from '../components/bus/BusFooter.astro';
+import BusMobileBar from '../components/bus/BusMobileBar.astro';
+import BusRequestModal from '../components/BusRequestModal.astro';
+import favicon from '../assets/favicon-bus.svg';
+import shareImg from '../assets/jachtbus-regio.jpg';
+import { allPlaces, contact, url } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
+
+interface Crumb {
+  /** Text of the breadcrumb. */
+  label: string;
+  /** Path of the breadcrumb. */
+  href: string;
+}
+interface Props {
+  /** Page title in the browser tab and search results, without the site name. */
+  title: string;
+  /** Meta description for search engines. */
+  description: string;
+  /** Breadcrumb trail below home, for search engines. */
+  crumbs?: Crumb[];
+  /** Leave out the request modal, on the page that already holds the form. */
+  modal?: boolean;
+  /** Extra structured data for this page. */
+  schema?: Record<string, unknown>[];
+}
+const { title, description, crumbs = [], modal = true, schema = [] } = Astro.props;
+
+const SITE_NOINDEX = true;
+const site = Astro.site ?? new URL('https://jachtbusfoodtruck.nl');
+const canonical = new URL(Astro.url.pathname, site).href;
+const share = await getImage({ src: shareImg, width: 1200, height: 630, format: 'jpeg' });
+const shareUrl = new URL(share.src, site).href;
+const { mededelingen } = await getInhoud();
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'FoodEstablishment',
+  '@id': `${site.origin}/#business`,
+  name: 'Jachtbus Foodtruck',
+  legalName: contact.bedrijf,
+  identifier: { '@type': 'PropertyValue', propertyID: 'KVK', value: contact.kvk },
+  url: new URL(url(), site).href,
+  telephone: '+31592656363',
+  image: shareUrl,
+  servesCuisine: 'Streetfood',
+  address: { '@type': 'PostalAddress', streetAddress: contact.adres, postalCode: contact.postcode, addressLocality: contact.plaats, addressRegion: 'Drenthe', addressCountry: 'NL' },
+  areaServed: [
+    ...['Drenthe', 'Groningen', 'Friesland'].map((name) => ({ '@type': 'State', name })),
+    ...allPlaces.map((name) => ({ '@type': 'Place', name })),
+  ],
+  founder: { '@type': 'Person', name: 'Peer Wagenaar' },
+  foundingDate: '2025-08',
+  sameAs: [contact.instagram],
+};
+const breadcrumbs = crumbs.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [{ label: 'Home', href: url() }, ...crumbs].map((crumb, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: crumb.label,
+        item: new URL(crumb.href, site).href,
+      })),
+    }
+  : null;
+const graphs = [business, ...(breadcrumbs ? [breadcrumbs] : []), ...schema];
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>{`${title} | Jachtbus Foodtruck`}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {SITE_NOINDEX && <meta name="robots" content="noindex" />}
+    <link rel="icon" href={favicon.src} type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="nl_NL" />
+    <meta property="og:site_name" content="Jachtbus Foodtruck" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    {graphs.map((graph) => <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />)}
+  </head>
+  <body class="bus-site_body u-theme-bus-beige">
+    <a class="bus-site_skip" href="#inhoud">Direct naar de inhoud</a>
+    {mededelingen.map((item) => (
+      <div class="bus-site_notice u-theme-bus-black" data-vanaf={item.vanaf} data-tot={item.tot}>
+        <p class="bus-site_notice_text u-text-style-small">
+          {item.tekst} {item.linkUrl && <a class="bus-site_notice_link" href={item.linkUrl}>{item.linkTekst ?? 'Lees meer'}</a>}
+        </p>
+      </div>
+    ))}
+    <BusNav />
+    <main class="bus-site_main" id="inhoud" tabindex="-1">
+      <slot />
+    </main>
+    <BusFooter />
+    <BusMobileBar />
+    {modal && <BusRequestModal />}
+  </body>
+</html>
+
+<style>
+  .bus-site_body { text-wrap: pretty; }
+  .bus-site_skip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding: var(--_spacing---space--3) var(--_spacing---space--5);
+    background-color: var(--color--bus-black);
+    color: var(--color--white);
+    transform: translateY(-150%);
+  }
+  .bus-site_skip:focus-visible { transform: none; }
+  .bus-site_main {
+    display: flex;
+    flex-flow: column;
+    overflow: clip;
+    outline: none;
+  }
+  .bus-site_notice {
+    padding: var(--_spacing---space--2) var(--site--margin);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    text-align: center;
+  }
+  .bus-site_notice_link { color: var(--_theme---text-link--text); }
+</style>
+
+<script>
+  // The site is static, so the browser checks the period of a notice.
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll<HTMLElement>('.bus-site_notice').forEach((notice) => {
+    const { vanaf, tot } = notice.dataset;
+    if ((vanaf && today < vanaf.slice(0, 10)) || (tot && today > tot.slice(0, 10))) notice.hidden = true;
+  });
+</script>
