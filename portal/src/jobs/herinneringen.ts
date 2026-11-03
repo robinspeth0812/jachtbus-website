@@ -31,10 +31,10 @@ export function herinneringsMail(taken: Taak[]) {
   const lijst = taken
     .map(
       (t) =>
-        `<li style="margin:0 0 12px"><a href="${html(linkVan(t))}" style="color:#1b1817;font-weight:600">${html(t.titel)}</a><br><span style="color:#5a534e">Sinds ${html(momentTekst(t.vervalt))}</span></li>`,
+        `<li style="margin:0 0 12px"><a href="${html(linkVan(t))}" style="color:#000000;font-weight:600">${html(t.titel)}</a><br><span style="color:#5a534e">Sinds ${html(momentTekst(t.vervalt))}</span></li>`,
     )
     .join("");
-  const body = `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#1b1817;max-width:560px"><p>Moi,</p><p>${kop}</p><ul style="padding-left:20px">${lijst}</ul><p><a href="${html(`${PORTAL}/taken`)}" style="color:#1b1817">Alle taken bekijken</a></p></div>`;
+  const body = `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#000000;max-width:560px"><p>Moi,</p><p>${kop}</p><ul style="padding-left:20px">${lijst}</ul><p><a href="${html(`${PORTAL}/taken`)}" style="color:#000000">Alle taken bekijken</a></p></div>`;
   return { subject, text, html: body };
 }
 

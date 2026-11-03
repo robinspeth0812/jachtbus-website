@@ -25,17 +25,17 @@ import scriptLogo from '../assets/jachtbus-script-wit.svg';
 import ringLogo from '../assets/jachtbus-logo-wit-goud.svg';
 
 const origins = [
-  { key: 'green', title: 'Felgroen', text: 'De cabine. Die zie je al van ver staan, dus dat wordt de hoofdkleur.' },
-  { key: 'yellow', title: 'Signaalgeel', text: 'De streep op het dak. Op de site voor details, lijnen en knoppen.' },
+  { key: 'green', title: 'Donker groen', text: 'De merkkleur uit de presentatie. Op de site de hoofdkleur, voor de grote vlakken.' },
+  { key: 'yellow', title: 'Goud', text: 'Het goud uit de presentatie. Op de site voor details, lijnen en knoppen.' },
   { key: 'pattern', title: 'Zwart met lijnen', text: 'Het zijpaneel. Geen kleur erbij, maar een patroon dat niemand anders heeft.' },
   { key: 'script', title: 'Witte handletters', text: 'De naam op het dak. Groot en los, zoals op de bus, niet in een klein rondje.' },
 ] as const;
 
 // WCAG contrast computed from the documented values, the same way as on
 // /branding, so the claims cannot drift from the numbers.
-const GREEN = '#0b7d37';
-const YELLOW = '#f6b60f';
-const BLACK = '#1b1817';
+const GREEN = '#00521d';
+const YELLOW = '#bd8f2e';
+const BLACK = '#000000';
 const WHITE = '#ffffff';
 const BEIGE = '#f8f3ea';
 function luminance(hex: string): number {
@@ -49,10 +49,10 @@ function ratio(a: string, b: string): string {
 }
 
 const palette = [
-  { theme: 'u-theme-bus-green', key: 'is-green', name: 'Felgroen', use: 'De grote vlakken.', check: `Witte tekst: ${ratio(WHITE, GREEN)}` },
+  { theme: 'u-theme-bus-green', key: 'is-green', name: 'Donker groen', use: 'De grote vlakken.', check: `Witte tekst: ${ratio(WHITE, GREEN)}` },
   { theme: 'u-theme-bus-beige', key: 'is-beige', name: 'Beige', use: 'Rust om te lezen.', check: `Donkere tekst: ${ratio(BLACK, BEIGE)}` },
-  { theme: 'u-theme-bus-black', key: 'is-black', name: 'Donker', use: 'Tekst, patroon en de afsluiter.', check: `Beige tekst: ${ratio(BEIGE, BLACK)}` },
-  { theme: '', key: 'is-accent', name: 'Geel', use: 'Details, lijnen en knoppen.', check: `Donkere tekst: ${ratio(BLACK, YELLOW)}` },
+  { theme: 'u-theme-bus-black', key: 'is-black', name: 'Zwart', use: 'Tekst, patroon en de afsluiter.', check: `Beige tekst: ${ratio(BEIGE, BLACK)}` },
+  { theme: '', key: 'is-accent', name: 'Goud', use: 'Details, lijnen en knoppen.', check: `Donkere tekst: ${ratio(BLACK, YELLOW)}` },
 ];
 
 const services = [
@@ -76,7 +76,6 @@ const copyPairs = [
 ];
 
 const needs = [
-  { title: 'De exacte kleuren van Peer', text: 'Is het donker van de bus zwart of bruin? En welke codes hebben het groen en geel? Die heb ik nu op het oog gekozen uit de foto’s.' },
   { title: 'Het patroon als vectorbestand', text: 'Wat hier staat is mijn schets. Met het echte bestand klopt het precies met de bus.' },
   { title: 'Foto’s van het eten, van dichtbij', text: 'Nu is er vooral bus en mensen. Eén middag fotograferen in de bus scheelt enorm.' },
   { title: 'Foto’s zonder Jachtlust', text: 'Op de polo’s in de foto’s staat nog het logo van Brasserie Jachtlust. Dat botst met de splitsing.' },
@@ -109,7 +108,7 @@ const needs = [
           <div class="intro_layout">
             <div class="intro_content u-margin-trim">
               <p class="intro_text u-text-style-large">
-                De Jachtbus rijdt rond in felgroen en signaalgeel, met een zwart
+                De Jachtbus rijdt rond in felgroen en geel, met een zwart
                 zijpaneel vol lijnen en witte handletters op het dak. Daar kijk je
                 naar om. Op de site is er bijna niets van over.
               </p>
@@ -142,7 +141,7 @@ const needs = [
             <h2 class="palette_title u-text-style-poster-small">Groen, beige en donker</h2>
             <p class="palette_text u-text-style-large">
               De verhoudingen laten zien hoeveel ruimte elke kleur krijgt. Deze drie
-              dragen de site. Geel komt van de bus en is er voor details, lijnen en
+              dragen de site. Goud is er voor details, lijnen en
               knoppen, nooit als achtergrond.
             </p>
           </div>
@@ -207,7 +206,7 @@ const needs = [
               Vijf stukken site in deze stijl, van de bovenkant van de homepage tot de
               afsluiter. Geen gelijke kaarten meer: elke sectie krijgt een eigen vorm.
               Het formulier staat niet meer op de pagina, maar opent in een venster.
-              Op je telefoon vult dat het hele scherm. Probeer het met de gele knoppen.
+              Op je telefoon vult dat het hele scherm. Probeer het met de gouden knoppen.
             </p>
           </div>
         </div>

@@ -2,18 +2,19 @@
 
 Geldt voor `/branding-2` en de nieuwe site onder `/nieuw`. Tokens en thema's staan
 in `src/styles/voorstel-bus.css`, de onderdelen in `src/components/bus/`. De kleuren
-zijn op het oog gekozen uit foto's en wachten op de exacte waarden van Peer.
+zijn de swatches uit de merkpresentatie (Concept Creatie, pagina 11). De codes die
+daar bij staan (Pantone, CMYK, HTML, RAL) zijn blauw en kloppen niet.
 
 ## Kleur
 
 | Rol | Token | Waarde |
 |---|---|---|
-| Grote vlakken | `--color--bus-green` | `#0b7d37` |
-| Details, lijnen, knoppen, nooit achtergrond | `--color--bus-yellow` | `#f6b60f` |
-| Tekst, zijpaneel, afsluiter | `--color--bus-black` | `#1b1817` |
+| Grote vlakken | `--color--bus-green` | `#00521d` |
+| Details, lijnen, knoppen, nooit achtergrond | `--color--bus-yellow` | `#bd8f2e` |
+| Tekst, zijpaneel, afsluiter | `--color--bus-black` | `#000000` |
 | Rust om te lezen | `--color--marigold-1` | `#f8f3ea` |
 
-Gele tekst op groen haalt AA niet: hover op groen blijft wit, geel alleen als lijn.
+Goud op groen haalt 3,2:1: genoeg voor lijnen en grote koppen, niet voor lopende tekst. Witte tekst op goud kan nooit (2,9:1), zwarte wel (7,1:1).
 
 ## Type
 

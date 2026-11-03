@@ -3,14 +3,14 @@
  * taken from the bus itself. Imported by those pages alone, so the live
  * site is untouched and the whole direction can be removed in one go.
  *
- * Colors are matched by eye from the bus photos, so they are provisional
- * until the wrap supplier gives the exact values.
+ * Colors are the swatch values of the brand PDF (Concept Creatie, page 11). The
+ * Pantone, CMYK, HTML and RAL codes printed on that page are blue and wrong.
  */
 :root {
-  --color--bus-green: #0b7d37; /* cab and roof, white text passes AA on it */
-  --color--bus-green-dark: #075e29;
-  --color--bus-yellow: #f6b60f; /* details, lines and buttons, never a section background */
-  --color--bus-black: var(--color--brown-dark); /* side panel, exact tint still to be confirmed */
+  --color--bus-green: #00521d; /* Donker groen in the brand PDF (swatch value), white text 9.4:1 */
+  --color--bus-green-dark: #003d15;
+  --color--bus-yellow: #bd8f2e; /* Goud in the brand PDF: details, lines and buttons, never a section background. Black text 7.1:1, white fails */
+  --color--bus-black: #000000; /* Zwart in the brand PDF: side panel, text, closing section */
 
   --_typography---font--primary-black: 800;
   --_typography---stretch--poster: 75%;

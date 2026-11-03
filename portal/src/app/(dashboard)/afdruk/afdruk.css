@@ -9,7 +9,7 @@
   min-height: 297mm;
   padding: 18mm 18mm 16mm;
   background: #ffffff;
-  color: #1b1817;
+  color: #000000;
   font-size: 10pt;
   line-height: 1.45;
 }
@@ -51,7 +51,7 @@
 
 .a4-streep {
   height: 1.5mm;
-  background: #f6b60f;
+  background: #bd8f2e;
   margin-bottom: 7mm;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -80,7 +80,7 @@
 .a4-tabel th {
   text-align: left;
   font-weight: 600;
-  border-bottom: 0.5mm solid #1b1817;
+  border-bottom: 0.5mm solid #000000;
   padding: 1.5mm 2mm 1.5mm 0;
 }
 .a4-tabel td {
@@ -107,7 +107,7 @@
   padding: 0.6mm 0;
 }
 .a4-totaal {
-  border-top: 0.5mm solid #1b1817;
+  border-top: 0.5mm solid #000000;
   font-weight: 700;
   font-size: 12pt;
   margin-top: 1mm;
@@ -121,7 +121,7 @@
 }
 .a4-voet {
   margin-top: 10mm;
-  border-top: 0.2mm solid #1b1817;
+  border-top: 0.2mm solid #000000;
   padding-top: 2mm;
   font-size: 8.5pt;
   color: #57504a;
@@ -135,6 +135,6 @@
   display: inline-block;
   width: 3.5mm;
   height: 3.5mm;
-  border: 0.3mm solid #1b1817;
+  border: 0.3mm solid #000000;
   vertical-align: -0.5mm;
 }

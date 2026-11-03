@@ -5,7 +5,7 @@ const PORTAL = process.env.NEXT_PUBLIC_SERVER_URL || "https://portal.jachtbusfoo
 const html = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const omhulsel = (inhoud: string) =>
-  `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#1b1817;max-width:560px">${inhoud}</div>`;
+  `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#000000;max-width:560px">${inhoud}</div>`;
 
 /**
  * Short notice from the portal: a few sentences and one link.
@@ -21,7 +21,7 @@ export async function stuurMelding(
   const link = `${PORTAL}${pad}`;
   const text = ["Moi,", "", ...alineas.flatMap((a) => [a, ""]), `${knop}: ${link}`].join("\n");
   const body = omhulsel(
-    `<p>Moi,</p>${alineas.map((a) => `<p style="white-space:pre-line">${html(a)}</p>`).join("")}<p><a href="${html(link)}" style="color:#1b1817;font-weight:600">${html(knop)}</a></p>`,
+    `<p>Moi,</p>${alineas.map((a) => `<p style="white-space:pre-line">${html(a)}</p>`).join("")}<p><a href="${html(link)}" style="color:#000000;font-weight:600">${html(knop)}</a></p>`,
   );
   try {
     await payload.sendEmail({ to: ontvangers, subject: onderwerp, text, html: body, ...(antwoordAan ? { replyTo: antwoordAan } : {}) });

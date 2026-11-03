@@ -25,8 +25,8 @@ Operate
 
 ## Brand Commitments
 
-- Tokens: groen `#0b7d37`, donkergroen `#075e29`, signaalgeel `#f6b60f`, donker `#1b1817` (exacte tint nog onbevestigd, staat in één token), beige `#f8f3ea`, beige voorgrond `#f1e8d5`, wit. Alle kleuren staan in `src/app/(dashboard)/globals.css`.
-- Geel alleen voor details: lijnen, knoppen, actieve markeringen. Nooit als groot vlak.
+- Tokens: groen `#00521d`, donkergroen `#003d15`, goud `#bd8f2e`, zwart `#000000` (swatches uit de merkpresentatie), beige `#f8f3ea`, beige voorgrond `#f1e8d5`, wit. Alle kleuren staan in `src/app/(dashboard)/globals.css`.
+- Goud alleen voor details: lijnen, knoppen, actieve markeringen. Nooit als groot vlak.
 - Rechte hoeken, witte panelen met een stevige donkere rand op beige.
 - Asap condensed (extra vet, zinsbouw) alleen voor de begroeting en paginatitels. Al het andere in Open Sans. Cijfers tabular.
 - Stem: Nederlands, je en jij, kort en nuchter Drents. "Moi, Peer". Nooit een em dash, geen "vrijblijvend", geen brochuretaal.

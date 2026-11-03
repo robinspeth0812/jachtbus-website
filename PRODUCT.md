@@ -26,10 +26,10 @@ Persuade. De bus is het merk; het ontwerp mag opvallen zoals de bus zelf opvalt.
 
 ## Brand Commitments
 
-- De bus is het merk: felgroen, signaalgeel, een donker zijpaneel met lijnen en
+- De bus is het merk. Sitekleuren uit de merkpresentatie: donker groen, goud, zwart. Van de bus komen het zijpaneel met lijnen en
   witte handletters. Niets verzinnen dat niet op de bus staat.
-- Eigenaar, 2026-11-02: geel nooit als achtergrond, alleen voor details, lijnen
-  en knoppen. Achtergronden groen, beige/wit en zwart/bruin. Logo gecentreerd.
+- Eigenaar, 2026-11-02: goud nooit als achtergrond, alleen voor details, lijnen
+  en knoppen. Achtergronden groen, beige/wit en zwart. Logo gecentreerd.
   Vormen (boog, cirkel) voor foto's. Smalle zware Asap, koppen niet te groot.
 - Tone of voice: nuchter Drents, je/jij, kort en actief, af en toe een grap.
 

@@ -13,14 +13,14 @@
   --radius-*: initial;
 
   /* Brand */
-  --color-groen: #0b7d37;
-  --color-groen-donker: #075e29; /* white on it: 7.9:1 */
-  --color-signaal: #f6b60f; /* dark on it: 9.6:1 */
-  --color-signaal-donker: #dfa206; /* hover of primary button, dark on it: 7.9:1 */
+  --color-groen: #00521d;
+  --color-groen-donker: #003d15; /* white on it: 12.5:1 */
+  --color-signaal: #bd8f2e; /* black on it: 7.1:1 */
+  --color-signaal-donker: #a67c25; /* hover of primary button, black on it: 5.5:1 */
   /* Exact tint unconfirmed by Peer: this one token decides it everywhere. */
-  --color-donker: #1b1817;
-  --color-donker-hoog: #2b2724;
-  --color-donker-hover: #38332f;
+  --color-donker: #000000;
+  --color-donker-hoog: #1c1c1c;
+  --color-donker-hover: #2b2b2b;
 
   /* Sidebar text */
   --color-nav-text: #f8f3ea; /* 15.9:1 on donker */
@@ -31,7 +31,7 @@
   --color-canvas: #f8f3ea;
   --color-laag: #f1e8d5;
   --color-surface: #ffffff;
-  --color-ink: #1b1817; /* 15.9:1 on canvas */
+  --color-ink: #000000; /* 19:1 on canvas */
   --color-ink-muted: #57504a; /* 7.6:1 on white, 7.0:1 on canvas, 6.3:1 on laag */
   --color-rule: #ddd3c2; /* dividers inside panels, decorative */
   --color-control: #6b635c; /* field borders: 5.7:1 on white */
@@ -43,7 +43,7 @@
   --color-st-bezig-bg: #e6edf3; /* 8.7:1 */
   --color-st-offerte: #5a2d6e;
   --color-st-offerte-bg: #f1e8f4; /* 8.4:1 */
-  --color-st-goed: #075e29;
+  --color-st-goed: #00521d;
   --color-st-goed-bg: #e2f1e7; /* 6.9:1 */
   --color-st-uit: #57504a;
   --color-st-uit-bg: #f1e8d5; /* 6.3:1 */
