@@ -1,0 +1,12 @@
+node_modules/
+.next/
+*.db
+*.db-*
+.env*
+!.env.example
+*.tsbuildinfo
+/media/
+/bijlagen/
+next-env.d.ts
+# Rewritten by next dev on every start
+AGENTS.md

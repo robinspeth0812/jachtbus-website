@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+/*
+ * Jachtbus portal tokens. Colours come from the bus (provisional, see PRODUCT.md).
+ * Every text pair is checked against WCAG 2.2 AA (ratio in the comment).
+ * Yellow is for details, lines, buttons and active markers: never a large background.
+ */
+@theme {
+  --font-sans: "Open Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Asap Variable", "Open Sans Variable", sans-serif;
+
+  /* Square corners everywhere, like the bus panels. */
+  --radius-*: initial;
+
+  /* Brand */
+  --color-groen: #0b7d37;
+  --color-groen-donker: #075e29; /* white on it: 7.9:1 */
+  --color-signaal: #f6b60f; /* dark on it: 9.6:1 */
+  --color-signaal-donker: #dfa206; /* hover of primary button, dark on it: 7.9:1 */
+  /* Exact tint unconfirmed by Peer: this one token decides it everywhere. */
+  --color-donker: #1b1817;
+  --color-donker-hoog: #2b2724;
+  --color-donker-hover: #38332f;
+
+  /* Sidebar text */
+  --color-nav-text: #f8f3ea; /* 15.9:1 on donker */
+  --color-nav-muted: #c9c1b4; /* 9.9:1 on donker */
+  --color-nav-rand: #746b63; /* 3.3:1 on donker, field borders */
+
+  /* Workspace */
+  --color-canvas: #f8f3ea;
+  --color-laag: #f1e8d5;
+  --color-surface: #ffffff;
+  --color-ink: #1b1817; /* 15.9:1 on canvas */
+  --color-ink-muted: #57504a; /* 7.6:1 on white, 7.0:1 on canvas, 6.3:1 on laag */
+  --color-rule: #ddd3c2; /* dividers inside panels, decorative */
+  --color-control: #6b635c; /* field borders: 5.7:1 on white */
+
+  /* Status: text on its own surface */
+  --color-st-nieuw: #5c4300;
+  --color-st-nieuw-bg: #fdf0c8; /* 7.8:1 */
+  --color-st-bezig: #27425e;
+  --color-st-bezig-bg: #e6edf3; /* 8.7:1 */
+  --color-st-offerte: #5a2d6e;
+  --color-st-offerte-bg: #f1e8f4; /* 8.4:1 */
+  --color-st-goed: #075e29;
+  --color-st-goed-bg: #e2f1e7; /* 6.9:1 */
+  --color-st-uit: #57504a;
+  --color-st-uit-bg: #f1e8d5; /* 6.3:1 */
+  --color-st-let: #7a4100;
+  --color-st-let-bg: #fdeed6; /* 6.7:1 */
+
+  --color-fout: #a1261b; /* 7.5:1 on white */
+  --color-fout-bg: #fbeceb; /* 6.5:1 */
+
+  --spacing-doel: 2.75rem; /* 44px target size */
+  --spacing-onderbalk: 4.25rem; /* phone bottom navigation */
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-groen-donker);
+    color: #ffffff;
+  }
+
+  /* Yellow on the dark sidebar, dark green in the workspace. */
+  :focus-visible {
+    outline: 3px solid var(--color-signaal);
+    outline-offset: 2px;
+  }
+
+  main :focus-visible,
+  [data-licht] :focus-visible {
+    outline-color: var(--color-groen-donker);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  input,
+  select,
+  textarea {
+    accent-color: var(--color-groen-donker);
+    caret-color: var(--color-groen-donker);
+  }
+
+  button,
+  summary,
+  label[for],
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Display voice: greeting and page titles only. */
+  .kop-display {
+    font-family: var(--font-display);
+    font-stretch: 75%;
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+
+  .knop {
+    @apply inline-flex min-h-doel items-center justify-center gap-2 border-[1.5px] px-4 py-2 font-semibold no-underline transition-colors duration-150;
+  }
+  .knop-primair {
+    @apply border-donker bg-signaal text-donker hover:bg-signaal-donker;
+  }
+  .knop-secundair {
+    @apply border-donker bg-surface text-ink hover:bg-laag;
+  }
+  .knop-gevaar {
+    @apply border-fout bg-fout text-surface hover:bg-[#861f16];
+  }
+  .knop-klein {
+    @apply inline-flex min-h-doel items-center justify-center gap-1.5 border border-control bg-surface px-3 text-sm font-medium whitespace-nowrap text-ink no-underline transition-colors duration-150 hover:bg-laag disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .knop:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  .veld {
+    @apply block min-h-doel w-full border border-control bg-surface px-3 py-2 text-ink placeholder:text-ink-muted;
+  }
+  .veld[aria-invalid="true"] {
+    @apply border-2 border-fout;
+  }
+  .label {
+    @apply mb-1 block font-semibold;
+  }
+  .hulptekst {
+    @apply mt-1 block text-sm text-ink-muted;
+  }
+
+  /* White panel with a heavy dark rule, the bus panel in small. */
+  .paneel {
+    @apply border-[1.5px] border-donker bg-surface;
+  }
+  .paneel-kop {
+    @apply flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b-[1.5px] border-donker px-4 py-2;
+  }
+  .paneel-titel {
+    @apply font-semibold;
+  }
+  .lijn-link {
+    @apply inline-flex min-h-doel items-center gap-1 underline decoration-1 hover:decoration-2;
+  }
+  .rij-link {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 no-underline transition-colors duration-150 hover:bg-canvas;
+  }
+}
+
+/* The board uses the full width; the rest stays readably narrow.
+   Outside the layers, otherwise the utility max-w-6xl wins. */
+.werkruimte:has([data-breed]) {
+  max-width: none;
+}
+
+/* Sidebar scrollbar in the sidebar's own colours. */
+.zijbalk-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-nav-rand) transparent;
+}
+.zijbalk-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.zijbalk-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-nav-rand);
+}
+
+/* Active nav item: a yellow marker line, like the roof stripe of the bus. */
+.nav-actief {
+  position: relative;
+  color: #ffffff;
+  background-color: var(--color-donker-hover);
+}
+.nav-actief::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 0.25rem;
+  background-color: var(--color-signaal);
+}
+.onder-actief {
+  position: relative;
+  color: #ffffff;
+}
+.onder-actief::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  height: 0.25rem;
+  background-color: var(--color-signaal);
+}
+
+@media print {
+  .niet-afdrukken {
+    display: none !important;
+  }
+}

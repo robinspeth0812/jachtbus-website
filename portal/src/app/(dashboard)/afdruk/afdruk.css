@@ -1,0 +1,140 @@
+/* A4 print sheets: sizes in mm and pt because this is paper, not a screen. */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.a4 {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 18mm 18mm 16mm;
+  background: #ffffff;
+  color: #1b1817;
+  font-size: 10pt;
+  line-height: 1.45;
+}
+
+/* On a phone the sheet fits the width instead of pushing the page sideways. */
+@media screen {
+  .a4-buiten {
+    background: #f1e8d5;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+  }
+  @media (max-width: 52rem) {
+    .a4 {
+      width: 100%;
+      min-height: 0;
+      padding: 1rem;
+    }
+    .a4-buiten {
+      padding: 0;
+    }
+  }
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+  .a4-buiten {
+    padding: 0;
+    background: none;
+  }
+  .a4 {
+    padding: 18mm 18mm 16mm;
+  }
+}
+
+.a4-streep {
+  height: 1.5mm;
+  background: #f6b60f;
+  margin-bottom: 7mm;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.a4-kop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8mm;
+  margin-bottom: 8mm;
+}
+.a4-titel {
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 24pt;
+  line-height: 1.05;
+}
+.a4-rechts {
+  text-align: right;
+}
+.a4-tabel {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 5mm 0;
+}
+.a4-tabel th {
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 0.5mm solid #1b1817;
+  padding: 1.5mm 2mm 1.5mm 0;
+}
+.a4-tabel td {
+  border-bottom: 0.2mm solid #ddd3c2;
+  padding: 1.5mm 2mm 1.5mm 0;
+  vertical-align: top;
+}
+.a4-tabel .getal {
+  text-align: right;
+  white-space: nowrap;
+  padding-right: 0;
+  padding-left: 3mm;
+}
+.a4-tabel tr {
+  break-inside: avoid;
+}
+.a4-totalen {
+  margin-left: auto;
+  width: 75mm;
+}
+.a4-totalen div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6mm 0;
+}
+.a4-totaal {
+  border-top: 0.5mm solid #1b1817;
+  font-weight: 700;
+  font-size: 12pt;
+  margin-top: 1mm;
+  padding-top: 1.5mm !important;
+}
+.a4-concept {
+  border: 0.4mm solid #7a4100;
+  padding: 2mm 3mm;
+  margin-top: 6mm;
+  break-inside: avoid;
+}
+.a4-voet {
+  margin-top: 10mm;
+  border-top: 0.2mm solid #1b1817;
+  padding-top: 2mm;
+  font-size: 8.5pt;
+  color: #57504a;
+  break-inside: avoid;
+}
+.a4-tekst {
+  white-space: pre-line;
+  margin: 3mm 0;
+}
+.a4-vakje {
+  display: inline-block;
+  width: 3.5mm;
+  height: 3.5mm;
+  border: 0.3mm solid #1b1817;
+  vertical-align: -0.5mm;
+}
