@@ -24,6 +24,8 @@ jobs:
         run: npm run build
         env:
           CMS_URL: ${{ vars.CMS_URL }}
+          # Labelled sample content on /nieuw while the portal is not online. Remove before launch.
+          VOORBEELD_INHOUD: '1'
           PUBLIC_AANVRAAG_ENDPOINT: ${{ vars.PUBLIC_AANVRAAG_ENDPOINT }}
           PUBLIC_GA_ID: ${{ vars.PUBLIC_GA_ID }}
           PUBLIC_GOOGLE_ADS_ID: ${{ vars.PUBLIC_GOOGLE_ADS_ID }}

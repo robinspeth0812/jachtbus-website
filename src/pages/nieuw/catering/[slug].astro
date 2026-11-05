@@ -1,7 +1,12 @@
 ---
-// One template for every service. The content lives in src/data/nieuw.ts.
+// One template for every service, set up like the local pages: the first step of
+// the form in view, then the jobs of this service, what is good to know, and the
+// options that fit. The content lives in src/data/nieuw.ts.
 import BusBase from '../../../layouts/BusBase.astro';
 import BusPageHero from '../../../components/bus/BusPageHero.astro';
+import BusFirstStep from '../../../components/bus/BusFirstStep.astro';
+import BusPlaces from '../../../components/bus/BusPlaces.astro';
+import BusCases from '../../../components/bus/BusCases.astro';
 import BusMoments from '../../../components/bus/BusMoments.astro';
 import BusStory from '../../../components/bus/BusStory.astro';
 import BusRoute from '../../../components/bus/BusRoute.astro';
@@ -12,6 +17,7 @@ import BusReviews from '../../../components/bus/BusReviews.astro';
 import BusClosing from '../../../components/bus/BusClosing.astro';
 import { services, url } from '../../../data/nieuw';
 import type { Service } from '../../../data/nieuw';
+import { getInhoud } from '../../../lib/cms';
 import { faqSchema, serviceSchema } from '../../../lib/schema';
 
 export function getStaticPaths() {
@@ -25,6 +31,10 @@ const crumbs = [
   { label: 'Catering', href: url('catering') },
   { label: service.nav, href: url(`catering/${service.slug}`) },
 ];
+const { referenties } = await getInhoud();
+const cases = referenties.filter((item) =>
+  service.soort === 'gelegenheid' ? item.gelegenheid === service.nav : item.mogelijkheden?.includes(service.nav),
+);
 ---
 
 <BusBase
@@ -33,22 +43,20 @@ const crumbs = [
   crumbs={crumbs}
   schema={[serviceSchema(service.schemaName, service.metaDescription), faqSchema(service.faq)]}
 >
-  <BusPageHero
-    title={service.title}
-    text={service.intro}
-    photo={service.photo}
-    shape={service.shape}
-    crumbs={crumbs}
-    occasion={service.gelegenheid}
-    checkLabel={service.cta}
-  />
+  <BusPageHero title={service.title} text={service.intro} photo={service.photo} shape={service.shape} crumbs={crumbs}>
+    <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+  </BusPageHero>
+  <BusPlaces />
+  <BusCases title="Hier deden we dit al" items={cases.slice(0, 6)} more />
   <BusMoments title={service.momentsTitle} items={service.moments} />
-  <BusStory title={service.storyTitle} paragraphs={service.story} photo={service.storyPhoto} shape="arch" theme="green" flip />
+  {service.opties && service.optiesTitle
+    ? <BusMoments title={service.optiesTitle} items={service.opties} theme="green" />
+    : service.soort === 'mogelijkheid' && <BusRows title="Waar past dit bij?" soort="gelegenheid" theme="green" />}
+  <BusStory title={service.storyTitle} paragraphs={service.story} photo={service.storyPhoto} shape="arch" flip />
   <BusRoute />
   <BusMoments title={service.worriesTitle} items={service.worries} theme="green" />
-  <BusReviews />
-  <BusFaq items={service.faq} />
   <BusFit occasion={service.gelegenheid} />
-  <BusRows title="Of toch iets anders?" except={service.slug} />
+  <BusReviews cases={cases.map((item) => item.slug)} />
+  <BusFaq items={service.faq} />
   <BusClosing title="Zullen we het regelen?" occasion={service.gelegenheid} label={service.cta} />
 </BusBase>

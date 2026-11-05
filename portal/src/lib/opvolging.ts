@@ -82,7 +82,7 @@ export const koppelKlant: CollectionBeforeChangeHook = async ({ data, operation,
     docs[0] ??
     (await payload.create({
       collection: "klanten",
-      data: { naam: data.naam, email, telefoon: data.telefoon || "", plaats: data.plaats || "" },
+      data: { naam: data.naam, bedrijf: data.bedrijf || "", email, telefoon: data.telefoon || "", plaats: data.plaats || "" },
       overrideAccess: true,
       req,
     }));

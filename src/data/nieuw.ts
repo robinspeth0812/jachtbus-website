@@ -53,6 +53,8 @@ export const photos = {
 export interface Item {
   title: string;
   text: string;
+  /** Link on the title, when this has its own page. */
+  href?: string;
 }
 export interface Faq {
   vraag: string;
@@ -106,6 +108,9 @@ export interface Service {
   shape: Shape;
   momentsTitle: string;
   moments: Item[];
+  /** What we can bring to this occasion. Left out when the moments already say so. */
+  optiesTitle?: string;
+  opties?: Item[];
   storyTitle: string;
   story: string[];
   storyPhoto: Photo;
@@ -134,6 +139,13 @@ export const services: Service[] = [
       { title: 'De borrel na de ceremonie', text: 'Hapjes uit het vuistje, terwijl de foto’s worden gemaakt.' },
       { title: 'Het diner', text: 'Walking dinner, buffet of aan tafel. Wat bij jullie dag past.' },
       { title: 'De avondsnack', text: 'Rond een uur of elf, als de dansvloer vol staat.' },
+    ],
+    optiesTitle: 'Wat kunnen we serveren?',
+    opties: [
+      { title: 'Walking dinner', text: 'Zeven seizoensgerechten die we rondbrengen, zonder tafelschikking.', href: url('catering/walking-dinner') },
+      { title: 'Aan tafel', text: 'Wij serveren uit, jullie gasten blijven zitten.' },
+      { title: 'Streetfood', text: 'Direct uit de bus, lekker informeel. Ook goed als avondsnack.' },
+      { title: 'BBQ-smoker', text: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.', href: url('catering/bbq-smoker') },
     ],
     storyTitle: 'Geen pakket, gewoon jullie dag',
     story: [
@@ -174,6 +186,13 @@ export const services: Service[] = [
       { title: 'Personeelsfeest', text: 'Iedereen eet wanneer die wil, en niemand hoeft achter de bar.' },
       { title: 'Jubileum of opening', text: 'Een bus op je terrein trekt vanzelf de aandacht van je gasten.' },
       { title: 'Borrel of relatie-event', text: 'Hapjes uit het vuistje en drankjes erbij, zo groot als je wilt.' },
+    ],
+    optiesTitle: 'Welke vorm past bij je team?',
+    opties: [
+      { title: 'Streetfood', text: 'Iedereen haalt het zelf aan het luik, wanneer die wil.' },
+      { title: 'BBQ-smoker', text: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.', href: url('catering/bbq-smoker') },
+      { title: 'Walking dinner', text: 'Zeven seizoensgerechten die we rondbrengen, en iedereen blijft in gesprek.', href: url('catering/walking-dinner') },
+      { title: 'Buffet', text: 'Je collega’s pakken zelf, wij vullen aan en houden alles vers.' },
     ],
     storyTitle: 'Eén aanspreekpunt, geen gedoe',
     story: [
@@ -252,6 +271,11 @@ export const services: Service[] = [
       { title: 'Vaste kaart voor de dag', text: 'Een korte kaart die snel gaat, afgestemd op je publiek.' },
       { title: 'Eigen verkoop of afkoop', text: 'Gasten betalen zelf, of jij koopt het eten vooraf af. We overleggen wat past.' },
       { title: 'Eigen ploeg', text: 'We komen met onze eigen keuken en bediening, jij hoeft niets te regelen.' },
+    ],
+    optiesTitle: 'Wat kunnen we serveren?',
+    opties: [
+      { title: 'Streetfood', text: 'Een korte kaart uit het luik, zodat de rij doorloopt.' },
+      { title: 'BBQ-smoker', text: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.', href: url('catering/bbq-smoker') },
     ],
     storyTitle: 'Een bus die je niet over het hoofd ziet',
     story: [

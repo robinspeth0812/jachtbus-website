@@ -61,7 +61,7 @@ const caseLink = (slug: string) => (casePaginas[slug] ? url(casePaginas[slug]) :
   /* As many columns as fit, so this needs no breakpoints. */
   .bus-reviews_list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--size--review-card)), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size--review-card)), 1fr));
     gap: var(--site--gutter);
   }
   .bus-reviews_item { display: flex; }

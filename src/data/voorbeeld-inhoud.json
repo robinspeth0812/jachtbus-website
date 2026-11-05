@@ -1,0 +1,205 @@
+{
+  "mededelingen": [
+    {
+      "tekst": "Voorbeeld: in de kerstweek van 24 tot en met 28 december staat de Jachtbus stil, daarna rijden we weer door heel Noord-Nederland.",
+      "linkTekst": "Plan je feest",
+      "linkUrl": "/nieuw/aanvraag/"
+    }
+  ],
+  "referenties": [
+    {
+      "slug": "testcase-evenement-emmen",
+      "titel": "Testcase: open dag",
+      "plaats": "Emmen",
+      "lat": 52.7528662,
+      "lng": 6.9525135,
+      "gelegenheid": "Evenement",
+      "gasten": 150,
+      "datum": "2026-10-03",
+      "verhaal": "Testtekst. Ook dit punt zocht het portaal zelf op."
+    },
+    {
+      "slug": "voorbeeld-boerderijfeest",
+      "titel": "Voorbeeld: boerderijfeest",
+      "plaats": "Voorbeelddorp",
+      "gelegenheid": "Tuinfeest",
+      "gasten": 70,
+      "datum": "2026-09-24",
+      "verhaal": "Dit is een voorbeeldverhaal, geen echte klus. Het laat zien hoe een referentie eruitziet.",
+      "fotoUrl": "http://localhost:3010/api/media/file/voorbeeld-de-bus-op-een-erf.jpg",
+      "fotoAlt": "Voorbeeld: de bus op een erf"
+    },
+    {
+      "slug": "testcase-bruiloft-zuidlaren",
+      "titel": "Testcase: bruiloft aan het meer",
+      "plaats": "Zuidlaren",
+      "lat": 53.0940913,
+      "lng": 6.687165,
+      "gelegenheid": "Bruiloft",
+      "mogelijkheden": [
+        "Aan tafel"
+      ],
+      "gasten": 80,
+      "datum": "2026-09-12",
+      "verhaal": "Testtekst. Deze plaats stond nog niet in de lijst van de site: het portaal zocht het punt zelf op."
+    },
+    {
+      "slug": "testcase-bedrijfsfeest-assen",
+      "titel": "Testcase: personeelsfeest",
+      "plaats": "Assen",
+      "lat": 52.997225,
+      "lng": 6.5506458,
+      "gelegenheid": "Bedrijfsfeest",
+      "mogelijkheden": [
+        "BBQ-smoker"
+      ],
+      "gasten": 120,
+      "datum": "2026-09-04",
+      "verhaal": "Testtekst. Twee klussen in dezelfde plaats komen naast elkaar op de kaart te staan."
+    },
+    {
+      "slug": "testcase-bruiloft-leeuwarden",
+      "titel": "Testcase: bruiloft in Friesland",
+      "plaats": "Leeuwarden",
+      "lat": 53.2005936,
+      "lng": 5.7918548,
+      "gelegenheid": "Bruiloft",
+      "gasten": 110,
+      "datum": "2026-08-08",
+      "verhaal": "Testtekst. Zo zie je de spreiding tot ver over de provinciegrens."
+    },
+    {
+      "slug": "testcase-tuinfeest-roden",
+      "titel": "Testcase: tuinfeest",
+      "plaats": "Roden",
+      "lat": 53.1405378,
+      "lng": 6.4275196,
+      "gelegenheid": "Tuinfeest",
+      "mogelijkheden": [
+        "Streetfood"
+      ],
+      "gasten": 60,
+      "datum": "2026-07-18",
+      "verhaal": "Testtekst. Zo ziet een klus eruit in de kaart."
+    },
+    {
+      "slug": "testcase-bbq-stiens",
+      "titel": "Testcase: BBQ-smoker op locatie",
+      "plaats": "Stiens",
+      "lat": 53.2607534,
+      "lng": 5.7642074,
+      "gelegenheid": "Bedrijfsfeest",
+      "mogelijkheden": [
+        "BBQ-smoker"
+      ],
+      "gasten": 50,
+      "datum": "2026-07-04",
+      "verhaal": "Testtekst. Het noordelijkste punt op de kaart."
+    },
+    {
+      "slug": "testcase-evenement-drachten",
+      "titel": "Testcase: dorpsfeest",
+      "plaats": "Drachten",
+      "lat": 53.1091111,
+      "lng": 6.0948102,
+      "gelegenheid": "Evenement",
+      "gasten": 200,
+      "datum": "2026-06-27",
+      "verhaal": "Testtekst. Een evenement met wat meer volk."
+    },
+    {
+      "slug": "testcase-bruiloft-assen",
+      "titel": "Testcase: bruiloft in de tuin",
+      "plaats": "Assen",
+      "lat": 52.997225,
+      "lng": 6.5506458,
+      "gelegenheid": "Bruiloft",
+      "mogelijkheden": [
+        "Walking dinner",
+        "Streetfood"
+      ],
+      "gasten": 90,
+      "datum": "2026-06-13",
+      "verhaal": "Testtekst. Hier vertelt Peer straks hoe de dag verliep, wat er op het menu stond en wat de gasten ervan vonden.",
+      "fotoUrl": "http://localhost:3010/api/media/file/bruiloft-veld.jpg",
+      "fotoAlt": "Testfoto: de Jachtbus op een veld bij een bruiloft"
+    },
+    {
+      "slug": "testcase-walking-dinner-gasselte",
+      "titel": "Testcase: walking dinner op het erf",
+      "plaats": "Gasselte",
+      "lat": 52.971916,
+      "lng": 6.7921853,
+      "gelegenheid": "Tuinfeest",
+      "mogelijkheden": [
+        "Walking dinner"
+      ],
+      "gasten": 45,
+      "datum": "2026-05-23",
+      "verhaal": "Testtekst. Een klus bij ons om de hoek."
+    },
+    {
+      "slug": "testcase-tuinfeest-wedde",
+      "titel": "Testcase: verjaardag in Westerwolde",
+      "plaats": "Wedde",
+      "lat": 53.0690643,
+      "lng": 7.0762777,
+      "gelegenheid": "Tuinfeest",
+      "gasten": 40,
+      "datum": "2026-05-09",
+      "verhaal": "Testtekst. Precies het minimum aantal gasten."
+    },
+    {
+      "slug": "testcase-bedrijfsfeest-stadskanaal",
+      "titel": "Testcase: jubileum van een bedrijf",
+      "plaats": "Stadskanaal",
+      "lat": 52.9962401,
+      "lng": 7.0014349,
+      "gelegenheid": "Bedrijfsfeest",
+      "mogelijkheden": [
+        "Buffet"
+      ],
+      "gasten": 75,
+      "datum": "2026-04-17",
+      "verhaal": "Testtekst. Een jubileum in Groningen."
+    }
+  ],
+  "reviews": [
+    {
+      "naam": "Voorbeeld Feestvierder",
+      "gelegenheid": "Tuinfeest",
+      "plaats": "Drachten",
+      "tekst": "Voorbeeld: hier komt straks een echte reactie van iemand die een tuinfeest gaf. Dit is geen echte review.",
+      "bron": "E-mail van de klant",
+      "caseSlug": "testcase-evenement-drachten",
+      "caseTitel": "Testcase: dorpsfeest"
+    },
+    {
+      "naam": "Voorbeeld Bedrijf",
+      "gelegenheid": "Bedrijfsfeest",
+      "plaats": "Groningen",
+      "tekst": "Voorbeeld: hier komt straks een echte reactie van een bedrijf. Dit is geen echte review.",
+      "bron": "E-mail van de klant",
+      "caseSlug": "testcase-bedrijfsfeest-stadskanaal",
+      "caseTitel": "Testcase: jubileum van een bedrijf"
+    },
+    {
+      "naam": "Voorbeeld Bruidspaar",
+      "gelegenheid": "Bruiloft",
+      "plaats": "Assen",
+      "tekst": "Voorbeeld: hier komt straks een echte reactie van een bruidspaar. Dit is geen echte review.",
+      "bron": "E-mail van de klant",
+      "caseSlug": "testcase-bruiloft-assen",
+      "caseTitel": "Testcase: bruiloft in de tuin",
+      "fotoUrl": "http://localhost:3010/api/media/file/bruiloft-veld.jpg",
+      "fotoAlt": "Testfoto: de Jachtbus op een veld bij een bruiloft"
+    },
+    {
+      "naam": "Voorbeeld Reviewer",
+      "gelegenheid": "Voorbeeld",
+      "plaats": "Voorbeelddorp",
+      "tekst": "Dit is geen echte review, alleen voorbeeldtekst om het scherm te kunnen beoordelen.",
+      "bron": "E-mail van de klant"
+    }
+  ]
+}

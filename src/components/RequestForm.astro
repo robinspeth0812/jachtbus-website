@@ -197,9 +197,15 @@ const places = [
 
       <fieldset class="aanvraag_step is-4">
         <legend class:list={['aanvraag_step_title', stepTitleStyle]}>Hoe kunnen we je bereiken?</legend>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label" for="aanvraag-naam">Je naam</label>
-          <input class="aanvraag_input" type="text" id="aanvraag-naam" name="naam" required autocomplete="name" />
+        <div class="aanvraag_field_row is-name">
+          <div class="aanvraag_field_wrap">
+            <label class="aanvraag_label" for="aanvraag-naam">Je naam</label>
+            <input class="aanvraag_input" type="text" id="aanvraag-naam" name="naam" required autocomplete="name" />
+          </div>
+          <div class="aanvraag_field_wrap is-bedrijf" hidden>
+            <label class="aanvraag_label" for="aanvraag-bedrijf">Bedrijfsnaam</label>
+            <input class="aanvraag_input" type="text" id="aanvraag-bedrijf" name="bedrijf" autocomplete="organization" maxlength="120" disabled />
+          </div>
         </div>
         <div class="aanvraag_field_row">
           <div class="aanvraag_field_wrap">
@@ -388,6 +394,8 @@ const places = [
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--_spacing---space--5);
   }
+  .aanvraag_field_row.is-name { grid-template-columns: minmax(0, 1fr); }
+  .aanvraag_field_row.is-name.is-double { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .aanvraag_input {
     width: 100%;
     min-height: var(--target--min);
@@ -574,6 +582,8 @@ const places = [
 
     const overigField = form.querySelector<HTMLElement>('.aanvraag_field_wrap.is-overig');
     const overigInput = form.querySelector<HTMLInputElement>('input[name="gelegenheid_overig"]');
+    const bedrijfField = form.querySelector<HTMLElement>('.aanvraag_field_wrap.is-bedrijf');
+    const bedrijfInput = form.querySelector<HTMLInputElement>('input[name="bedrijf"]');
 
     const syncOptionStates = () => {
       form.querySelectorAll<HTMLInputElement>('.aanvraag_option_input').forEach((input) => {
@@ -585,6 +595,16 @@ const places = [
       );
       if (overigField) overigField.hidden = !overigChecked;
       if (overigInput) overigInput.required = overigChecked;
+      // A company party also asks for the company. Disabled, it is not sent along.
+      const bedrijfChecked = !!form.querySelector<HTMLInputElement>(
+        'input[name="gelegenheid"][value="bedrijfsfeest"]:checked'
+      );
+      if (bedrijfField) bedrijfField.hidden = !bedrijfChecked;
+      if (bedrijfInput) {
+        bedrijfInput.disabled = !bedrijfChecked;
+        bedrijfInput.required = bedrijfChecked;
+      }
+      form.querySelector('.aanvraag_field_row.is-name')?.classList.toggle('is-double', bedrijfChecked);
     };
 
     const saveDraft = () => {

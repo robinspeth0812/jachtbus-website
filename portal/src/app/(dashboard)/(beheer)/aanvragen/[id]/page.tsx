@@ -85,6 +85,7 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
               ["Aantal gasten", a.gasten ? String(a.gasten) : null],
               ["Locatie", a.locatie],
               ["E-mail", a.email],
+              ["Bedrijf", a.bedrijf],
               ["Telefoon", a.telefoon],
               ["Opmerking", a.opmerking],
               ["Binnengekomen", `${momentTekst(a.createdAt)}, ${a.bron === "handmatig" ? "zelf toegevoegd" : "via de site"}`],

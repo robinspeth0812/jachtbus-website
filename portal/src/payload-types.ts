@@ -183,6 +183,7 @@ export interface Aanvragen {
   gasten?: number | null;
   locatie?: string | null;
   naam: string;
+  bedrijf?: string | null;
   email: string;
   telefoon?: string | null;
   opmerking?: string | null;
@@ -872,6 +873,7 @@ export interface AanvragenSelect<T extends boolean = true> {
   gasten?: T;
   locatie?: T;
   naam?: T;
+  bedrijf?: T;
   email?: T;
   telefoon?: T;
   opmerking?: T;

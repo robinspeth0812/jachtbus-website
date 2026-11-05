@@ -1,7 +1,7 @@
 // Content from the portal, read once at build time. Without CMS_URL, or when
 // the portal cannot be reached, the site builds from src/data/nieuw.ts and the
 // lists that have no honest default (reviews, references) stay empty.
-import { arrangementen as defaultArrangementen, contact, faqAlgemeen } from '../data/nieuw';
+import { arrangementen as defaultArrangementen, contact, faqAlgemeen, photos } from '../data/nieuw';
 
 export interface Review {
   naam: string;
@@ -50,9 +50,22 @@ interface Remote {
 
 let cached: Promise<Remote> | undefined;
 
+// Labelled sample content to show the /nieuw pages while the portal is not online yet.
+// Only with VOORBEELD_INHOUD set, and only without a portal. Remove before launch.
+async function loadVoorbeeld(): Promise<Remote> {
+  const { default: voorbeeld } = await import('../data/voorbeeld-inhoud.json');
+  const fotos = [photos.veld, photos.bediening, photos.plank, photos.grill, photos.festival, photos.bus];
+  const foto = (index: number) => fotos[index % fotos.length].src.src;
+  return {
+    mededelingen: voorbeeld.mededelingen as Mededeling[],
+    referenties: (voorbeeld.referenties as Referentie[]).map((item, index) => ({ ...item, fotoUrl: foto(index), fotoAlt: '' })),
+    reviews: (voorbeeld.reviews as Review[]).map((item, index) => (item.fotoUrl ? { ...item, fotoUrl: foto(index), fotoAlt: '' } : item)),
+  };
+}
+
 function load(): Promise<Remote> {
   const base = import.meta.env.CMS_URL as string | undefined;
-  if (!base) return Promise.resolve({});
+  if (!base) return import.meta.env.VOORBEELD_INHOUD ? loadVoorbeeld() : Promise.resolve({});
   return fetch(new URL('/api/site-inhoud', base))
     .then((response) => (response.ok ? (response.json() as Promise<Remote>) : {}))
     .catch((error) => {

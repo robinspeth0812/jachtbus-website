@@ -54,19 +54,18 @@ const { mededelingen } = await getInhoud();
         <ul class="bus-topbar_list">
           <li class="bus-topbar_item">
             <a class="bus-topbar_icon_link" href={contact.instagram} rel="external" aria-label="Instagram">
-              <Image class="bus-topbar_icon" src={instagramIcon} alt="" width={20} densities={[1, 2]} />
+              <Image class="bus-topbar_icon" src={instagramIcon} alt="" width={16} densities={[1, 2]} />
             </a>
           </li>
-          {contact.facebook && (
-            <li class="bus-topbar_item">
-              <a class="bus-topbar_icon_link" href={contact.facebook} rel="external" aria-label="Facebook">
-                <Image class="bus-topbar_icon" src={facebookIcon} alt="" width={20} height={20} />
-              </a>
-            </li>
-          )}
+          <li class="bus-topbar_item">
+            {/* No page of our own yet: until then this goes to Facebook itself. */}
+            <a class="bus-topbar_icon_link" href={contact.facebook || 'https://www.facebook.com/'} rel="external" aria-label="Facebook">
+              <Image class="bus-topbar_icon" src={facebookIcon} alt="" width={16} height={16} />
+            </a>
+          </li>
           <li class="bus-topbar_item">
             <a class="bus-topbar_icon_link" href={contact.whatsappHref} rel="external" aria-label="WhatsApp">
-              <Image class="bus-topbar_icon" src={whatsappIcon} alt="" width={20} height={20} />
+              <Image class="bus-topbar_icon" src={whatsappIcon} alt="" width={16} height={16} />
             </a>
           </li>
         </ul>
@@ -180,8 +179,8 @@ const { mededelingen } = await getInhoud();
     height: var(--target--min);
   }
   .bus-topbar_icon {
-    width: var(--_spacing---space--5);
-    height: var(--_spacing---space--5);
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
   }
   @media (prefers-reduced-motion: no-preference) {
     .bus-topbar_notice:not(.is-still) .bus-topbar_track {

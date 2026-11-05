@@ -224,6 +224,7 @@ export const aanvraagHandmatigVelden: VeldDef[] = [
   { naam: "gasten", label: "Aantal gasten", soort: "getal", min: 1, max: 5000, breedte: "tijd" },
   { naam: "locatie", label: "Locatie", soort: "tekst", max: 300, breedte: "lang" },
   { naam: "naam", label: "Naam", soort: "tekst", verplicht: true, max: 100, breedte: "middel" },
+  { naam: "bedrijf", label: "Bedrijf", soort: "tekst", max: 120, breedte: "middel" },
   { naam: "email", label: "E-mail", soort: "email", verplicht: true, breedte: "middel" },
   { naam: "telefoon", label: "Telefoon", soort: "telefoon", breedte: "kort" },
   { naam: "opmerking", label: "Opmerking", soort: "lang", max: 3000, rijen: 4, breedte: "lang" },

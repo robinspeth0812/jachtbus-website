@@ -1,34 +1,21 @@
 ---
-// References: only what really happened. The jobs come from the portal and can be
-// filtered by occasion and by option; the filters only offer what really exists,
-// and without the script all jobs simply stay in view.
+// References: only what really happened. The jobs come from the portal.
 import BusBase from '../../layouts/BusBase.astro';
 import BusPageHero from '../../components/bus/BusPageHero.astro';
 import BusPhoto from '../../components/bus/BusPhoto.astro';
 import BusPlaces from '../../components/bus/BusPlaces.astro';
+import BusCases from '../../components/bus/BusCases.astro';
 import BusMap from '../../components/bus/BusMap.astro';
 import BusReviews from '../../components/bus/BusReviews.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusFaq from '../../components/bus/BusFaq.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { aanvraagUrl, casePaginas, faqReferenties, photos, url } from '../../data/nieuw';
+import { faqReferenties, photos, url } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 import { faqSchema } from '../../lib/schema';
 
 const { referenties } = await getInhoud();
 const crumbs = [{ label: 'Referenties', href: url('referenties') }];
-const dateLabel = (date: string) => new Intl.DateTimeFormat('nl-NL', { month: 'long', year: 'numeric' }).format(new Date(`${date}T12:00:00Z`));
-const unique = (list: string[]) => [...new Set(list)].sort((a, b) => a.localeCompare(b, 'nl'));
-const filters = [
-  { key: 'gelegenheid', label: 'Gelegenheden', values: unique(referenties.map((item) => item.gelegenheid)) },
-  { key: 'mogelijkheid', label: 'Mogelijkheden', values: unique(referenties.flatMap((item) => item.mogelijkheden ?? [])) },
-].filter((filter) => filter.values.length > 0);
-// A long story opens under the card, so the cards stay comparable.
-const splitStory = (text: string) => {
-  if (text.length <= 240) return [text, ''];
-  const cut = text.lastIndexOf(' ', 200);
-  return [text.slice(0, cut), text.slice(cut + 1)];
-};
 ---
 
 <BusBase
@@ -46,67 +33,7 @@ const splitStory = (text: string) => {
   />
   <BusPlaces />
 
-  {referenties.length > 0 && (
-    <section class="cases_wrap u-section u-theme-bus-beige">
-      <div class="cases_contain u-container">
-        <h2 class="cases_title u-text-style-poster-small">Een paar feesten</h2>
-        <div class="cases_filters" hidden>
-          {filters.map((filter) => (
-            <div class="cases_group" role="group" aria-label={filter.label}>
-              <p class="cases_group_label u-text-style-bus-title">{filter.label}</p>
-              <div class="cases_chips">
-                <button class="cases_chip" type="button" aria-pressed="true" data-filter={filter.key} data-value="" data-trigger="hover focus">
-                  <svg class="cases_chip_check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8.500 6.500 12.500 13.500 4" stroke="currentColor" stroke-width="2.500" /></svg>
-                  Alles
-                </button>
-                {filter.values.map((value) => (
-                  <button class="cases_chip" type="button" aria-pressed="false" data-filter={filter.key} data-value={value} data-trigger="hover focus">
-                    <svg class="cases_chip_check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8.500 6.500 12.500 13.500 4" stroke="currentColor" stroke-width="2.500" /></svg>
-                    {value}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-          <p class="cases_count u-text-style-main" role="status"></p>
-        </div>
-        <ul class="cases_list">
-          {referenties.map((item) => {
-            const [start, rest] = splitStory(item.verhaal);
-            return (
-              <li class="cases_item" id={item.slug} data-gelegenheid={item.gelegenheid} data-mogelijkheid={(item.mogelijkheden ?? []).join('|')}>
-                <article class="cases_card">
-                  {item.fotoUrl && <img class="cases_img" src={item.fotoUrl} alt={item.fotoAlt ?? ''} loading="lazy" />}
-                  <div class="cases_body">
-                    <h3 class="cases_name u-text-style-poster-label">{item.titel}</h3>
-                    <p class="cases_meta u-text-style-small">
-                      {item.gelegenheid} in {item.plaats}{item.gasten && `, ${item.gasten} gasten`}{item.datum && `, ${dateLabel(item.datum)}`}
-                    </p>
-                    <p class="cases_text u-text-style-main">{start}{rest && '...'}</p>
-                    {rest && (
-                      <details class="cases_more">
-                        <summary class="cases_more_title u-text-style-main">Lees verder</summary>
-                        <p class="cases_text u-text-style-main">{rest}</p>
-                      </details>
-                    )}
-                    {item.mogelijkheden && item.mogelijkheden.length > 0 && (
-                      <ul class="cases_tags">
-                        {item.mogelijkheden.map((tag) => <li class="cases_tag u-text-style-small">{tag}</li>)}
-                      </ul>
-                    )}
-                    {casePaginas[item.slug] && <a class="cases_link u-text-style-main" href={url(casePaginas[item.slug])}>Lees het hele verhaal</a>}
-                  </div>
-                </article>
-              </li>
-            );
-          })}
-        </ul>
-        <p class="cases_empty u-text-style-large" hidden>
-          Hier staat nog geen feest van tussen. Wil jij de eerste zijn? <a class="cases_empty_link" href={aanvraagUrl()}>Doe je aanvraag</a>
-        </p>
-      </div>
-    </section>
-  )}
+  <BusCases items={referenties} filters />
 
   <BusMap title="Waar we stonden, op de kaart" text="Tik op een punt en je ziet wat we daar deden. Staat jouw plek er nog niet bij? In Drenthe, Groningen en Friesland komen we overal." />
   <BusReviews />
@@ -129,91 +56,10 @@ const splitStory = (text: string) => {
 </BusBase>
 
 <style>
-  .cases_wrap,
   .wall_wrap {
     background-color: var(--_theme---background);
     color: var(--_theme---text);
   }
-  .cases_contain { gap: var(--_spacing---space--5); }
-  .cases_filters {
-    display: flex;
-    flex-flow: column;
-    gap: var(--_spacing---space--4);
-  }
-  .cases_group {
-    display: flex;
-    flex-flow: column;
-    gap: var(--_spacing---space--2);
-  }
-  .cases_chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--_spacing---space--2);
-  }
-  /* Pressed shows a check too, so color is not the only signal. */
-  .cases_chip {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(var(--_spacing---space--2) * var(--_state---false));
-    min-height: var(--target--min);
-    padding-inline: var(--_spacing---space--3);
-    background-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_state---false)), var(--_theme---background-2) calc(100% * var(--_state---true)));
-    color: color-mix(in hsl, var(--color--white) calc(100% * var(--_state---false)), var(--_theme---text) calc(100% * var(--_state---true)));
-    border: var(--border-width--main) solid color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---off) + 100% * var(--_state---false)), transparent);
-    font-family: var(--_typography---font--heading);
-    font-stretch: var(--_typography---stretch--poster);
-    font-weight: var(--_typography---font--primary-bold);
-    cursor: pointer;
-  }
-  .cases_chip_check {
-    width: calc(var(--_spacing---space--4) * var(--_state---false));
-    height: var(--_spacing---space--4);
-  }
-  .cases_list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size--review-card)), 1fr));
-    gap: var(--site--gutter);
-  }
-  .cases_item { display: flex; }
-  .cases_card {
-    display: flex;
-    flex-flow: column;
-    width: 100%;
-    background-color: var(--_theme---background-2);
-  }
-  .cases_img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-  }
-  .cases_body {
-    display: flex;
-    flex: 1 1 auto;
-    flex-flow: column;
-    gap: var(--_spacing---space--2);
-    padding: var(--_spacing---space--4);
-  }
-  .cases_more_title {
-    display: list-item;
-    min-height: var(--target--min);
-    padding-block: var(--_spacing---space--2);
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .cases_tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--_spacing---space--2);
-    margin-top: auto;
-    padding-top: var(--_spacing---space--2);
-  }
-  .cases_tag {
-    padding: var(--_spacing---space--1) var(--_spacing---space--2);
-    background-color: var(--_theme---background);
-  }
-  .cases_link,
-  .cases_empty_link { color: var(--_theme---text-link--text); }
-
   .wall_layout {
     display: var(--flex-medium, grid);
     flex-direction: column;
@@ -227,36 +73,3 @@ const splitStory = (text: string) => {
   .wall_item.is-3 { grid-column: 2 / span 4; }
   .wall_item.is-4 { grid-column: 7 / span 6; }
 </style>
-
-<script>
-  document.querySelectorAll<HTMLElement>('.cases_wrap').forEach((root) => {
-    const filters = root.querySelector<HTMLElement>('.cases_filters');
-    const count = root.querySelector<HTMLElement>('.cases_count');
-    const empty = root.querySelector<HTMLElement>('.cases_empty');
-    if (!filters || !count || !empty) return;
-    const chips = [...root.querySelectorAll<HTMLButtonElement>('.cases_chip')];
-    const items = [...root.querySelectorAll<HTMLElement>('.cases_item')];
-    const chosen: Record<string, string> = { gelegenheid: '', mogelijkheid: '' };
-
-    const apply = () => {
-      let shown = 0;
-      items.forEach((item) => {
-        const fits = (!chosen.gelegenheid || item.dataset.gelegenheid === chosen.gelegenheid)
-          && (!chosen.mogelijkheid || (item.dataset.mogelijkheid ?? '').split('|').includes(chosen.mogelijkheid));
-        item.hidden = !fits;
-        if (fits) shown += 1;
-      });
-      count.textContent = shown === 1 ? '1 feest' : `${shown} feesten`;
-      empty.hidden = shown > 0;
-    };
-
-    chips.forEach((chip) => chip.addEventListener('click', () => {
-      const key = chip.dataset.filter ?? '';
-      chosen[key] = chip.dataset.value ?? '';
-      chips.filter((other) => other.dataset.filter === key).forEach((other) => other.setAttribute('aria-pressed', String(other === chip)));
-      apply();
-    }));
-    filters.hidden = false;
-    apply();
-  });
-</script>

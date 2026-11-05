@@ -24,6 +24,7 @@ export const Aanvragen: CollectionConfig = {
     { name: "gasten", type: "number", min: 1, max: 5000 },
     { name: "locatie", type: "text", maxLength: 300 },
     { name: "naam", type: "text", required: true, maxLength: 100 },
+    { name: "bedrijf", type: "text", maxLength: 120 },
     { name: "email", type: "email", required: true },
     { name: "telefoon", type: "text", maxLength: 20 },
     { name: "opmerking", type: "textarea", maxLength: 3000 },

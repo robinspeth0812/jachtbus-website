@@ -3,6 +3,7 @@ import * as migration_20261105_111926_referentie_kaartpunt from './20261105_1119
 import * as migration_20261105_125927_mededeling_planning from './20261105_125927_mededeling_planning';
 import * as migration_20261105_133128_review_foto_referentie from './20261105_133128_review_foto_referentie';
 import * as migration_20261105_134730_referentie_mogelijkheden from './20261105_134730_referentie_mogelijkheden';
+import * as migration_20261105_151408_aanvraag_bedrijf from './20261105_151408_aanvraag_bedrijf';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261105_134730_referentie_mogelijkheden.up,
     down: migration_20261105_134730_referentie_mogelijkheden.down,
-    name: '20261105_134730_referentie_mogelijkheden'
+    name: '20261105_134730_referentie_mogelijkheden',
+  },
+  {
+    up: migration_20261105_151408_aanvraag_bedrijf.up,
+    down: migration_20261105_151408_aanvraag_bedrijf.down,
+    name: '20261105_151408_aanvraag_bedrijf'
   },
 ];

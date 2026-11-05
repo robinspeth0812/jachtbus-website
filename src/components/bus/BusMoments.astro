@@ -19,7 +19,7 @@ const { title, items, theme = 'beige' } = Astro.props;
     <ul class="bus-moments_list" style={`--_count: ${items.length};`}>
       {items.map((item) => (
         <li class="bus-moments_item">
-          <h3 class="bus-moments_name u-text-style-poster-label">{item.title}</h3>
+          <h3 class="bus-moments_name u-text-style-poster-label">{item.href ? <a class="bus-moments_link" href={item.href}>{item.title}</a> : item.title}</h3>
           <p class="bus-moments_text u-text-style-main">{item.text}</p>
         </li>
       ))}
@@ -28,6 +28,12 @@ const { title, items, theme = 'beige' } = Astro.props;
 </section>
 
 <style>
+  .bus-moments_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: inherit;
+  }
   .bus-moments_wrap {
     background-color: var(--_theme---background);
     color: var(--_theme---text);

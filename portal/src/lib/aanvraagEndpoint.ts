@@ -23,6 +23,7 @@ export type AanvraagVelden = {
   gasten: string;
   locatie: string;
   naam: string;
+  bedrijf: string;
   email: string;
   telefoon: string;
   opmerking: string;
@@ -38,6 +39,7 @@ export function controleer(ruw: AanvraagVelden, vandaag = nederlandseDatum()) {
   if (!Number.isInteger(gasten) || gasten < 1 || gasten > 5000) fouten.gasten = "Vul het aantal gasten in.";
   if (!ruw.plaats) fouten.plaats = "Vul de plaats in.";
   if (!ruw.naam) fouten.naam = "Vul je naam in.";
+  if (ruw.gelegenheid === "bedrijfsfeest" && !ruw.bedrijf) fouten.bedrijf = "Vul de naam van je bedrijf in.";
   if (!emailPatroon.test(ruw.email)) fouten.email = "Vul een e-mailadres in, zoals naam@voorbeeld.nl.";
   if (ruw.telefoon && !/^[+\d][\d\s\-()]{7,}$/.test(ruw.telefoon)) fouten.telefoon = "Vul een telefoonnummer in, zoals 06 12345678.";
   return fouten;
@@ -78,6 +80,7 @@ export const aanvraagEndpoint: Endpoint = {
       gasten: tekst("gasten", 6),
       locatie: tekst("locatie", 300),
       naam: tekst("naam", 100).replace(/\s+/g, " "),
+      bedrijf: tekst("bedrijf", 120),
       email: tekst("email", 200),
       telefoon: tekst("telefoon", 20),
       opmerking: tekst("opmerking", 3000),
@@ -99,6 +102,7 @@ export const aanvraagEndpoint: Endpoint = {
           gasten: Number(velden.gasten),
           locatie: velden.locatie,
           naam: velden.naam,
+          bedrijf: velden.bedrijf,
           email: velden.email,
           telefoon: velden.telefoon,
           opmerking: velden.opmerking,
@@ -128,7 +132,7 @@ async function stuurMails(req: PayloadRequest, v: AanvraagVelden, id: number) {
     aan,
     onderwerp: `Nieuwe aanvraag: ${wat.toLowerCase()} van ${v.naam}`,
     alineas: [
-      `${v.naam} heeft een aanvraag gedaan via de site.`,
+      `${v.naam}${v.bedrijf ? ` van ${v.bedrijf}` : ""} heeft een aanvraag gedaan via de site.`,
       `${wat}, ${v.gasten} gasten, ${wanneer}, ${v.plaats}.`,
       [v.telefoon, v.email].filter(Boolean).join(" of "),
       ...(Number(v.gasten) < BEDRIJF.minimumGasten ? [`Let op: minder dan ${BEDRIJF.minimumGasten} gasten.`] : []),
