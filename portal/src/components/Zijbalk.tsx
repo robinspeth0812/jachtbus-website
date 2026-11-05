@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  CalendarCheck,
   CalendarDays,
   ClipboardCheck,
   Contact,
+  ExternalLink,
   FileText,
   Globe,
   House,
@@ -48,7 +50,8 @@ type Props = {
   instagram: string | null;
 };
 
-type Item = { href: string; label: string; icoon: typeof House; badge?: number; badgeLabel?: string; alleenBeheerder?: boolean };
+type Item = { href: string; label: string; icoon: typeof House; badge?: number; badgeLabel?: string; alleenBeheerder?: boolean; extern?: boolean };
+type Sectie = { id: "dagelijks" | "website" | "beheer"; label: string; icoon: typeof House; groepen: { titel?: string; items: Item[] }[] };
 
 export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringenTeLaat, ticketsAanZet, beheerder, googleProfiel, instagram }: Props) {
   const pad = usePathname();
@@ -74,55 +77,91 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
     return () => window.removeEventListener("keydown", opToets);
   }, []);
 
-  const groepen: { titel?: string; items: Item[] }[] = [
-    { items: [{ href: "/", label: "Home", icoon: House }] },
+  const alleSecties: Sectie[] = [
     {
-      titel: "Dagelijks",
-      items: [
-        { href: "/aanvragen", label: "Aanvragen", icoon: Inbox, badge: nieuweAanvragen, badgeLabel: "nieuw" },
-        { href: "/offertes", label: "Offertes", icoon: FileText, alleenBeheerder: true },
-        { href: "/agenda", label: "Agenda", icoon: CalendarDays },
-        { href: "/klussen", label: "Klussen", icoon: Truck },
-        { href: "/taken", label: "Taken", icoon: ListChecks, badge: takenTeDoen, badgeLabel: "nu te doen" },
-        { href: "/klanten", label: "Klanten", icoon: Contact },
+      id: "dagelijks",
+      label: "Dagelijks",
+      icoon: CalendarCheck,
+      groepen: [
+        {
+          items: [
+            { href: "/", label: "Home", icoon: House },
+            { href: "/aanvragen", label: "Aanvragen", icoon: Inbox, badge: nieuweAanvragen, badgeLabel: "nieuw" },
+            { href: "/offertes", label: "Offertes", icoon: FileText, alleenBeheerder: true },
+            { href: "/agenda", label: "Agenda", icoon: CalendarDays },
+            { href: "/klussen", label: "Klussen", icoon: Truck },
+            { href: "/taken", label: "Taken", icoon: ListChecks, badge: takenTeDoen, badgeLabel: "nu te doen" },
+            { href: "/klanten", label: "Klanten", icoon: Contact },
+          ],
+        },
       ],
     },
     {
-      titel: "De bus",
-      items: [
-        { href: "/bus/keuringen", label: "Keuringen en onderhoud", icoon: Wrench, badge: keuringenTeLaat, badgeLabel: "te laat" },
-        { href: "/bus/voedselveiligheid", label: "Voedselveiligheid", icoon: Thermometer },
-        { href: "/bus/team", label: "Team", icoon: Users },
+      id: "website",
+      label: "Website & marketing",
+      icoon: Globe,
+      groepen: [
+        {
+          titel: "De website",
+          items: [
+            { href: "/website/arrangementen", label: "Arrangementen", icoon: UtensilsCrossed, alleenBeheerder: true },
+            { href: "/website/galerij", label: "Galerij", icoon: Images, alleenBeheerder: true },
+            { href: "/website/werkgebied", label: "Werkgebied", icoon: MapPinned, alleenBeheerder: true },
+            { href: "/website/faq", label: "Veelgestelde vragen", icoon: MessageCircleQuestion, alleenBeheerder: true },
+            { href: BEDRIJF.site, label: "Bekijk de site", icoon: Globe, extern: true, alleenBeheerder: true },
+          ],
+        },
+        {
+          titel: "Marketing",
+          items: [
+            { href: "/website/referenties", label: "Referenties", icoon: Medal, alleenBeheerder: true },
+            { href: "/website/reviews", label: "Reviews", icoon: Star, alleenBeheerder: true },
+            { href: "/website/mededelingen", label: "Mededelingen", icoon: Megaphone, alleenBeheerder: true },
+            { href: googleProfiel || GOOGLE_PROFIEL_URL, label: "Google-bedrijfsprofiel", icoon: MapPin, extern: true, alleenBeheerder: true },
+            { href: instagram || INSTAGRAM_URL, label: "Instagram", icoon: Camera, extern: true, alleenBeheerder: true },
+          ],
+        },
       ],
     },
     {
-      titel: "Website",
-      items: [
-        { href: "/website/arrangementen", label: "Arrangementen", icoon: UtensilsCrossed, alleenBeheerder: true },
-        { href: "/website/referenties", label: "Referenties", icoon: Medal, alleenBeheerder: true },
-        { href: "/website/reviews", label: "Reviews", icoon: Star, alleenBeheerder: true },
-        { href: "/website/faq", label: "Veelgestelde vragen", icoon: MessageCircleQuestion, alleenBeheerder: true },
-        { href: "/website/werkgebied", label: "Werkgebied", icoon: MapPinned, alleenBeheerder: true },
-        { href: "/website/galerij", label: "Galerij", icoon: Images, alleenBeheerder: true },
-        { href: "/website/mededelingen", label: "Mededelingen", icoon: Megaphone, alleenBeheerder: true },
+      id: "beheer",
+      label: "Bus & beheer",
+      icoon: Wrench,
+      groepen: [
+        {
+          titel: "De bus",
+          items: [
+            { href: "/bus/keuringen", label: "Keuringen en onderhoud", icoon: Wrench, badge: keuringenTeLaat, badgeLabel: "te laat" },
+            { href: "/bus/voedselveiligheid", label: "Voedselveiligheid", icoon: Thermometer },
+          ],
+        },
+        {
+          titel: "Beheer",
+          items: [
+            { href: "/bus/team", label: "Team", icoon: Users },
+            { href: "/tickets", label: "Tickets", icoon: Ticket, badge: ticketsAanZet, badgeLabel: "wachten op je reactie" },
+            { href: "/instellingen", label: "Instellingen", icoon: Settings, alleenBeheerder: true },
+          ],
+        },
       ],
-    },
-    {
-      titel: "Hulp en wensen",
-      items: [{ href: "/tickets", label: "Tickets", icoon: Ticket, badge: ticketsAanZet, badgeLabel: "wachten op je reactie" }],
     },
   ];
-  const zichtbaar = groepen
-    .map((g) => ({ ...g, items: g.items.filter((i) => beheerder || !i.alleenBeheerder) }))
-    .filter((g) => g.items.length > 0);
-
-  const extern = [
-    { href: BEDRIJF.site, label: "Site", uitleg: "Bekijk de website", icoon: Globe },
-    { href: googleProfiel || GOOGLE_PROFIEL_URL, label: "Google", uitleg: "Google-bedrijfsprofiel: foto's en reviews", icoon: MapPin },
-    { href: instagram || INSTAGRAM_URL, label: "Instagram", uitleg: "Instagram openen", icoon: Camera },
-  ];
+  const secties = alleSecties
+    .map((s) => ({
+      ...s,
+      groepen: s.groepen.map((g) => ({ ...g, items: g.items.filter((i) => beheerder || !i.alleenBeheerder) })).filter((g) => g.items.length > 0),
+    }))
+    .filter((s) => s.groepen.length > 0);
 
   const isActief = (href: string) => (href === "/" ? pad === "/" : pad === href || pad.startsWith(`${href}/`));
+
+  // The page decides the section; screens outside the menu (such as search) keep the last choice.
+  const sectieVanPagina = secties.find((s) => s.groepen.some((g) => g.items.some((i) => !i.extern && isActief(i.href))))?.id;
+  const [gekozen, setGekozen] = useState<Sectie["id"]>(sectieVanPagina ?? "dagelijks");
+  useEffect(() => {
+    if (sectieVanPagina) setGekozen(sectieVanPagina);
+  }, [sectieVanPagina, pad]);
+  const huidige = secties.find((s) => s.id === gekozen) ?? secties[0];
 
   // The four things you do next to the bus, always under your thumb on the phone.
   const onder = [
@@ -179,70 +218,92 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
             </div>
           </form>
 
-          <nav aria-label="Hoofdmenu" className="zijbalk-scroll min-h-0 flex-1 px-2 lg:overflow-y-auto">
-            {zichtbaar.map((groep, gi) => (
-              <div key={gi} className={gi > 0 ? "mt-4" : ""}>
-                {/* Not a heading: it would come before the page's h1. The list takes the group's name. */}
-                {groep.titel && (
-                  <p id={`${navId}-groep-${gi}`} className="px-3 pb-1 text-sm text-nav-muted">
-                    {groep.titel}
-                  </p>
-                )}
-                <ul className="space-y-0.5" aria-labelledby={groep.titel ? `${navId}-groep-${gi}` : undefined}>
-                  {groep.items.map(({ href, label, icoon: Icoon, badge, badgeLabel }) => {
-                    const actief = isActief(href);
-                    return (
-                      <li key={href}>
-                        <Link
-                          href={href}
-                          aria-current={pad === href ? "page" : undefined}
-                          className={`flex min-h-doel items-center gap-3 px-3 no-underline transition-colors duration-150 hover:bg-donker-hover ${actief ? "nav-actief font-semibold" : ""}`}
-                        >
-                          <Icoon aria-hidden size={20} className={`shrink-0 ${actief ? "text-white" : "text-nav-muted"}`} />
-                          <span className="min-w-0 flex-1">{label}</span>
-                          {badge ? (
-                            <span className="shrink-0 bg-signaal px-1.5 text-sm font-semibold text-donker">
-                              {badge}
-                              <span className="sr-only"> {badgeLabel}</span>
-                            </span>
-                          ) : null}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+          <nav aria-label="Hoofdmenu" className="flex min-h-0 flex-1 flex-col">
+            {/* Switches the list below without leaving the page. */}
+            <ul aria-label="Onderdeel kiezen" className={`grid shrink-0 gap-1 px-2 pb-3 ${secties.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+              {secties.map((sectie) => {
+                const Icoon = sectie.icoon;
+                const aan = sectie.id === huidige.id;
+                const wachtend = sectie.groepen.flatMap((g) => g.items).reduce((som, i) => som + (i.badge ?? 0), 0);
+                return (
+                  <li key={sectie.id} className="flex">
+                    <button
+                      type="button"
+                      aria-pressed={aan}
+                      onClick={() => setGekozen(sectie.id)}
+                      className={`relative flex min-h-doel w-full flex-col items-center gap-1 border px-1 py-2 text-center text-sm leading-tight transition-colors duration-150 ${aan ? "border-nav-text bg-donker-hoog font-semibold text-white" : "border-nav-rand hover:bg-donker-hover"}`}
+                    >
+                      <Icoon aria-hidden size={20} className={`shrink-0 ${aan ? "text-white" : "text-nav-muted"}`} />
+                      {sectie.label}
+                      {wachtend > 0 && (
+                        <span className="absolute -top-1.5 -right-1 bg-signaal px-1 text-xs font-semibold text-donker">
+                          {wachtend}
+                          <span className="sr-only"> wachtend</span>
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="zijbalk-scroll min-h-0 flex-1 px-2 lg:overflow-y-auto">
+              {huidige.groepen.map((groep, gi) => (
+                <div key={groep.titel ?? gi} className={gi > 0 ? "mt-4" : ""}>
+                  {/* Not a heading: it would come before the page's h1. The list takes the group's name. */}
+                  {groep.titel && (
+                    <p id={`${navId}-groep-${gi}`} className="px-3 pb-1 text-sm text-nav-muted">
+                      {groep.titel}
+                    </p>
+                  )}
+                  <ul className="space-y-0.5" aria-labelledby={groep.titel ? `${navId}-groep-${gi}` : undefined}>
+                    {groep.items.map(({ href, label, icoon: Icoon, badge, badgeLabel, extern }) => {
+                      if (extern) {
+                        return (
+                          <li key={href}>
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex min-h-doel items-center gap-3 px-3 no-underline transition-colors duration-150 hover:bg-donker-hover"
+                            >
+                              <Icoon aria-hidden size={20} className="shrink-0 text-nav-muted" />
+                              <span className="min-w-0 flex-1">
+                                {label}
+                                <span className="sr-only"> (opent in een nieuw tabblad)</span>
+                              </span>
+                              <ExternalLink aria-hidden size={16} className="shrink-0 text-nav-muted" />
+                            </a>
+                          </li>
+                        );
+                      }
+                      const actief = isActief(href);
+                      return (
+                        <li key={href}>
+                          <Link
+                            href={href}
+                            aria-current={pad === href ? "page" : undefined}
+                            className={`flex min-h-doel items-center gap-3 px-3 no-underline transition-colors duration-150 hover:bg-donker-hover ${actief ? "nav-actief font-semibold" : ""}`}
+                          >
+                            <Icoon aria-hidden size={20} className={`shrink-0 ${actief ? "text-white" : "text-nav-muted"}`} />
+                            <span className="min-w-0 flex-1">{label}</span>
+                            {badge ? (
+                              <span className="shrink-0 bg-signaal px-1.5 text-sm font-semibold text-donker">
+                                {badge}
+                                <span className="sr-only"> {badgeLabel}</span>
+                              </span>
+                            ) : null}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </nav>
 
-          <div className="mt-4 shrink-0 space-y-1 border-t border-nav-rand px-2 py-3 lg:mt-0">
-            <ul aria-label="Snel naar, opent in een nieuw tabblad" className="grid grid-cols-3 gap-1 pb-1">
-              {extern.map(({ href, label, uitleg, icoon: Icoon }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={uitleg}
-                    className="flex min-h-doel flex-col items-center justify-center gap-0.5 px-1 py-1.5 text-sm text-nav-text no-underline transition-colors duration-150 hover:bg-donker-hover"
-                  >
-                    <Icoon aria-hidden size={18} className="shrink-0 text-nav-muted" />
-                    <span>{label}</span>
-                    <span className="sr-only">: {uitleg}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-            {beheerder && (
-              <Link
-                href="/instellingen"
-                aria-current={pad === "/instellingen" ? "page" : undefined}
-                className={`flex min-h-doel items-center gap-3 px-3 no-underline transition-colors duration-150 hover:bg-donker-hover ${isActief("/instellingen") ? "nav-actief font-semibold" : ""}`}
-              >
-                <Settings aria-hidden size={20} className="shrink-0 text-nav-muted" />
-                Instellingen
-              </Link>
-            )}
+          <div className="mt-4 shrink-0 border-t border-nav-rand px-2 py-3 lg:mt-0">
             <form action={uitloggen}>
               <button type="submit" className="flex min-h-doel w-full items-center gap-3 px-3 text-left transition-colors duration-150 hover:bg-donker-hover">
                 <LogOut aria-hidden size={20} className="shrink-0 text-nav-muted" />
