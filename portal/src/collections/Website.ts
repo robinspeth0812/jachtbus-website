@@ -1,6 +1,7 @@
 import type { CollectionConfig, Field } from "payload";
 import { beheerder } from "../access";
-import { faqPaginas, provincies, publicatieStatussen, reviewBronnen } from "../lib/opties";
+import { faqPaginas, provincies, publicatieStatussen, referentieMogelijkheden, reviewBronnen, weekdagen } from "../lib/opties";
+import { zoekKaartpunt } from "../lib/kaartpunt";
 import { herbouwSite, herbouwSiteNaVerwijderen } from "../lib/siteBuild";
 
 /**
@@ -51,12 +52,15 @@ export const Referenties: CollectionConfig = {
   admin: { useAsTitle: "titel" },
   defaultSort: "-datum",
   access: toegang,
-  hooks: haken,
+  hooks: { ...haken, beforeChange: [zoekKaartpunt] },
   fields: [
     { name: "slug", type: "text", required: true, unique: true, maxLength: 80 },
     { name: "titel", type: "text", required: true, maxLength: 140 },
     { name: "plaats", type: "text", required: true, maxLength: 80 },
+    { name: "lat", type: "number" },
+    { name: "lng", type: "number" },
     { name: "gelegenheid", type: "text", required: true, maxLength: 80 },
+    { name: "mogelijkheden", type: "select", hasMany: true, options: [...referentieMogelijkheden] },
     { name: "gasten", type: "number", min: 1 },
     { name: "datum", type: "date" },
     { name: "verhaal", type: "textarea", required: true, maxLength: 8000 },
@@ -79,6 +83,8 @@ export const Reviews: CollectionConfig = {
     { name: "gelegenheid", type: "text", maxLength: 80 },
     { name: "plaats", type: "text", maxLength: 80 },
     { name: "tekst", type: "textarea", required: true, maxLength: 2000 },
+    { name: "foto", type: "upload", relationTo: "media" },
+    { name: "referentie", type: "relationship", relationTo: "referenties", index: true },
     { name: "bron", type: "select", required: true, options: [...reviewBronnen] },
     { name: "bronUrl", type: "text", maxLength: 500 },
     { name: "bewijs", type: "text", maxLength: 240 },
@@ -120,15 +126,19 @@ export const Mededelingen: CollectionConfig = {
   slug: "mededelingen",
   labels: { singular: "Mededeling", plural: "Mededelingen" },
   admin: { useAsTitle: "tekst" },
-  defaultSort: "-vanaf",
+  defaultSort: "volgorde",
   access: toegang,
   hooks: haken,
   fields: [
-    { name: "tekst", type: "text", required: true, maxLength: 200 },
-    { name: "linkTekst", type: "text", maxLength: 60 },
-    { name: "linkUrl", type: "text", maxLength: 500 },
+    { name: "tekst", type: "text", required: true, maxLength: 140 },
+    { name: "dagen", type: "select", hasMany: true, options: [...weekdagen] },
+    { name: "vanTijd", type: "text", maxLength: 5 },
+    { name: "totTijd", type: "text", maxLength: 5 },
     { name: "vanaf", type: "date" },
     { name: "tot", type: "date" },
+    { name: "linkTekst", type: "text", maxLength: 60 },
+    { name: "linkUrl", type: "text", maxLength: 500 },
+    { name: "volgorde", type: "number", defaultValue: 100 },
     status,
   ],
 };

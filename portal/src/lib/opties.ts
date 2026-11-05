@@ -19,6 +19,21 @@ export const gelegenheden = [
 ] as const;
 export type Gelegenheid = (typeof gelegenheden)[number]["value"];
 
+/** How a job is sorted on the references page. Same words as on the site. */
+export const referentieGelegenheden = [
+  { value: "Bruiloft", label: "Bruiloft" },
+  { value: "Bedrijfsfeest", label: "Bedrijfsfeest" },
+  { value: "Tuinfeest", label: "Tuinfeest" },
+  { value: "Evenement", label: "Evenement" },
+] as const;
+export const referentieMogelijkheden = [
+  { value: "Walking dinner", label: "Walking dinner" },
+  { value: "BBQ-smoker", label: "BBQ-smoker" },
+  { value: "Streetfood", label: "Streetfood" },
+  { value: "Buffet", label: "Buffet" },
+  { value: "Aan tafel", label: "Aan tafel" },
+] as const;
+
 export const momentenOpties = [
   { value: "borrel", label: "Borrel" },
   { value: "diner", label: "Diner" },

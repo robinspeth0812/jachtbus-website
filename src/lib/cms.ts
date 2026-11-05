@@ -10,17 +10,24 @@ export interface Review {
   tekst: string;
   bron: string;
   bronUrl?: string;
+  fotoUrl?: string;
+  fotoAlt?: string;
+  caseSlug?: string;
+  caseTitel?: string;
 }
 export interface Referentie {
   slug: string;
   titel: string;
   plaats: string;
   gelegenheid: string;
+  mogelijkheden?: string[];
   gasten?: number;
   datum?: string;
   verhaal: string;
   fotoUrl?: string;
   fotoAlt?: string;
+  lat?: number;
+  lng?: number;
 }
 export interface Mededeling {
   tekst: string;
@@ -28,6 +35,9 @@ export interface Mededeling {
   linkUrl?: string;
   vanaf?: string;
   tot?: string;
+  dagen?: string[];
+  vanTijd?: string;
+  totTijd?: string;
 }
 interface Remote {
   contact?: { telefoon?: string; whatsapp?: string; email?: string };

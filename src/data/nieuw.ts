@@ -20,10 +20,13 @@ export const contact = {
   telefoon: '0592 656363',
   telefoonHref: 'tel:+31592656363',
   whatsappHref: 'https://wa.me/31592656363',
-  email: 'info@brasseriejachtlust.nl',
+  email: 'info@jachtbusfoodtruck.nl',
   instagram: 'https://www.instagram.com/jachtbusfoodtruck/',
+  // Fill in the page of the Jachtbus itself: the icon in the topbar shows once this is set.
+  facebook: '',
   bedrijf: 'Jachtbus Foodtruck & Catering B.V.',
   kvk: '96772174',
+  btw: 'NL867758624B01',
   adres: 'Julianalaan 54',
   postcode: '9462 PH',
   plaats: 'Gasselte',
@@ -69,6 +72,15 @@ export const faqAlgemeen: Faq[] = [
   { vraag: 'Wat als er geen stroom is?', antwoord: 'Meestal is daar een oplossing voor, bijvoorbeeld een aggregaat. Zet het in je aanvraag, dan denken we mee.' },
 ];
 
+export const faqReferenties: Faq[] = [
+  { vraag: 'Zijn dit echte feesten?', antwoord: 'Ja. Hier staan alleen feesten waar we echt stonden, en alleen als de klant het goedvindt.' },
+  { vraag: 'Zijn de reacties echt?', antwoord: 'Ja. We nemen ze letterlijk over en zetten de bron erbij. Verzinnen doen we niet.' },
+  { vraag: 'Mijn plaats staat er niet tussen. Komen jullie wel?', antwoord: 'Vast wel. Heel Drenthe, Groningen en Friesland horen bij ons werkgebied, en in overleg kan er vaak meer.' },
+  { vraag: 'Kan ik zien wat er op het menu stond?', antwoord: 'We werken niet met een vaste kaart, dus elk feest is anders. Vertel wat je zoekt, dan laten we zien wat er kan.' },
+  { vraag: 'Kan mijn feest hier ook komen te staan?', antwoord: 'Graag, maar alleen als jij het goedvindt. Dat vragen we je na afloop.' },
+  { vraag: 'Vanaf hoeveel personen komen jullie?', antwoord: 'We komen vanaf 40 personen. Is je groep net wat kleiner? Vraag het gerust, dan kijken we wat er kan.' },
+];
+
 export const arrangementen: Item[] = [
   { title: 'Walking dinner', text: 'Zeven seizoensgerechten die we rondbrengen door je feest. Niemand zit vast aan een tafel.' },
   { title: 'Streetfood', text: 'Direct uit de bus, lekker informeel. Gasten halen het zelf aan het luik.' },
@@ -79,6 +91,8 @@ export const arrangementen: Item[] = [
 
 export interface Service {
   slug: string;
+  /** An occasion is what you celebrate (a wedding), an option is what we bring (a BBQ smoker). */
+  soort: 'gelegenheid' | 'mogelijkheid';
   gelegenheid: string;
   nav: string;
   rowText: string;
@@ -103,6 +117,7 @@ export interface Service {
 export const services: Service[] = [
   {
     slug: 'bruiloft',
+    soort: 'gelegenheid',
     gelegenheid: 'bruiloft',
     nav: 'Bruiloft',
     rowText: 'Van de borrel na de ceremonie tot de snack op de dansvloer.',
@@ -142,6 +157,7 @@ export const services: Service[] = [
   },
   {
     slug: 'bedrijfsfeest',
+    soort: 'gelegenheid',
     gelegenheid: 'bedrijfsfeest',
     nav: 'Bedrijfsfeest',
     rowText: 'Personeelsfeest, jubileum of borrel. Wij regelen het eten.',
@@ -180,6 +196,7 @@ export const services: Service[] = [
   },
   {
     slug: 'tuinfeest',
+    soort: 'gelegenheid',
     gelegenheid: 'overige',
     nav: 'Tuinfeest',
     rowText: 'Verjaardag, jubileum of gewoon omdat het kan. Jij blijft bij je gasten.',
@@ -218,6 +235,7 @@ export const services: Service[] = [
   },
   {
     slug: 'evenement',
+    soort: 'gelegenheid',
     gelegenheid: 'evenement',
     nav: 'Evenement',
     rowText: 'Festival, markt of open dag. De bus draait door.',
@@ -255,6 +273,7 @@ export const services: Service[] = [
   },
   {
     slug: 'walking-dinner',
+    soort: 'mogelijkheid',
     gelegenheid: 'overige',
     nav: 'Walking dinner',
     rowText: 'Zeven seizoensgerechten, rondgebracht door je feest.',
@@ -292,6 +311,7 @@ export const services: Service[] = [
   },
   {
     slug: 'bbq-smoker',
+    soort: 'mogelijkheid',
     gelegenheid: 'bbq',
     nav: 'BBQ-smoker',
     rowText: 'Langzaam gegaard vlees, salades en huisgemaakte sauzen.',
@@ -336,9 +356,14 @@ export interface Region {
   metaTitle: string;
   metaDescription: string;
   intro: string;
+  /** Title above the local story, next to the map. */
+  lokaalTitel: string;
   verhaal: string[];
   plaatsen: string[];
   photo: Photo;
+  /** Local things worth knowing. */
+  extraTitel: string;
+  extra: Item[];
   faq: Faq[];
 }
 
@@ -350,15 +375,25 @@ export const regions: Region[] = [
     metaTitle: 'Foodtruck huren in Drenthe',
     metaDescription: 'Foodtruck huren in Drenthe? De Jachtbus komt uit Gasselte en kookt ter plekke op bruiloften, tuinfeesten en bedrijfsfeesten, vanaf 40 personen.',
     intro: 'Hier komen we vandaan. De Jachtbus staat in Gasselte, dus van Assen tot de Hondsrug zijn we zo bij je.',
+    lokaalTitel: 'De bus komt hier vandaan',
     verhaal: [
-      'Drenthe is ons thuis, en dat merk je aan de agenda: we stonden al in Assen, Gasselte, Rolde, Gieten en een hoop dorpen eromheen. In een tuin, op een erf of midden in het veld.',
-      'Juist op de Drentse plekken zonder zaal of keuken komt de bus goed uit. Wij nemen de keuken mee, jij zorgt voor een plek en 230V.',
+      'De Jachtbus staat in Gasselte, op de Hondsrug. Drenthe is dus thuis, en dat zie je aan de lijst hieronder: we stonden al in Assen, Rolde, Gieten, Roden en een hoop dorpen eromheen.',
+      'Op een Drents erf, in een tuin of midden in het veld is vaak geen zaal of keuken. Daar komt de bus juist goed uit: wij nemen de keuken mee, jij zorgt voor een plek en 230V.',
     ],
-    plaatsen: ['Assen', 'Gasselte', 'Rolde', 'Gieten', 'Roden', 'Gasselternijveen', 'Drouwen', 'Eeserveen', 'Een', 'Oudemolen', 'Nooitgedacht', 'De Wilp'],
+    plaatsen: ['Assen', 'Gasselte', 'Rolde', 'Gieten', 'Roden', 'Gasselternijveen', 'Drouwen', 'Eeserveen', 'Een', 'Oudemolen', 'Nooitgedacht'],
     photo: photos.bus,
+    extraTitel: 'Goed om te weten in Drenthe',
+    extra: [
+      { title: 'Heel Drenthe binnen bereik', text: 'We rijden vanuit Gasselte, dus de hele provincie ligt binnen bereik. Ook voor een feest doordeweeks.' },
+      { title: 'Feest in het veld', text: 'Weiland, heide of erf? Gras kan, zolang de grond stevig genoeg is voor 3,5 ton. Na een natte week kijken we samen waar de bus het beste staat.' },
+      { title: 'Natuur en vergunning', text: 'Vier je het bij een natuurgebied of op een openbare plek? Vraag bij je gemeente of je een vergunning nodig hebt. Wij denken mee over de opzet.' },
+    ],
     faq: [
       { vraag: 'Waar in Drenthe komen jullie?', antwoord: 'Overal in de provincie. We rijden vanuit Gasselte, dus ook de hoeken van Drenthe zijn goed te doen.' },
       { vraag: 'Kan de bus op een plek zonder zaal of keuken?', antwoord: 'Dat is juist waar we voor gemaakt zijn. We hebben een plek van 6,5 bij 2,5 meter nodig, een stevige ondergrond en 230V of 16A binnen 25 meter.' },
+      { vraag: 'Kunnen jullie op een erf of in een weiland staan in Drenthe?', antwoord: 'Ja, gras en grind zijn prima, als de grond 3,5 ton kan dragen. Twijfel je? Zet het in je aanvraag, dan kijken we mee.' },
+      { vraag: 'Vanaf hoeveel personen komen jullie in Drenthe?', antwoord: 'Vanaf 40 personen, net als overal. Is je groep net wat kleiner? Vraag het gerust.' },
+      { vraag: 'Hoe ver van tevoren moet ik boeken voor een feest in Drenthe?', antwoord: 'Hoe eerder, hoe beter. Zomerse zaterdagen zijn het eerst weg. Check je datum, dan hoor je of de bus nog vrij is.' },
     ],
   },
   {
@@ -368,15 +403,25 @@ export const regions: Region[] = [
     metaTitle: 'Foodtruck huren in Groningen',
     metaDescription: 'Foodtruck huren in Groningen? De Jachtbus kookt ter plekke op je bruiloft, bedrijfsfeest of evenement in Stad en Ommeland, vanaf 40 personen.',
     intro: 'Van Stad tot Westerwolde. We zetten de bus neer waar het feest is en koken ter plekke.',
+    lokaalTitel: 'Van Stad tot Westerwolde',
     verhaal: [
-      'We stonden al in Stadskanaal, Wedde en Leek, en vanuit Gasselte zijn we zo in de provincie. Bedrijfsterrein in de stad of boerenerf in het Ommeland: als de bus er kan komen, kunnen wij koken.',
-      'Zit je in de stad met een smalle toegang? Vertel het ons vooraf, dan kijken we samen waar de bus het beste past.',
+      'We stonden al in Stadskanaal, Wedde, Leek en De Wilp, en vanuit Gasselte zijn we zo de provinciegrens over.',
+      'Bedrijfsterrein in de stad of boerenerf in het Ommeland: als de bus er kan komen, kunnen wij koken. Zit je in de stad met een smalle toegang? Vertel het ons vooraf, dan kijken we samen waar de bus het beste past.',
     ],
-    plaatsen: ['Stadskanaal', 'Wedde', 'Leek'],
+    plaatsen: ['Stadskanaal', 'Wedde', 'Leek', 'De Wilp'],
     photo: photos.grill,
+    extraTitel: 'Goed om te weten in Groningen',
+    extra: [
+      { title: 'In de stad', text: 'De binnenstad heeft eigen regels voor wie er met een voertuig in mag, en niet elke poort is breed genoeg. Plan je daar iets? Vertel het vroeg, dan zoeken we het samen uit.' },
+      { title: 'In het Ommeland', text: 'Op een boerenerf heb je vaak alles wat we nodig hebben: ruimte, een stevige ondergrond en stroom in de buurt.' },
+      { title: 'Op je bedrijfsterrein', text: 'Personeelsfeest of jubileum op je eigen terrein? Geef door waar de bus kan staan en hoe laat je wilt eten, de rest regelen wij.' },
+    ],
     faq: [
       { vraag: 'Komen jullie ook in de stad Groningen?', antwoord: 'Ja, als de bus er kan staan. Hij is 6,5 meter lang en 3,5 ton, dus kijk even naar de toegang en vraag het gerust.' },
       { vraag: 'Hoe ver reizen jullie in de provincie?', antwoord: 'De hele provincie valt in ons werkgebied. Ligt je locatie ver weg? Dat bespreken we in het voorstel.' },
+      { vraag: 'Kunnen jullie op ons bedrijfsterrein in Groningen staan?', antwoord: 'Ja, als er 6,5 bij 2,5 meter vrij is met een stevige ondergrond en 230V of 16A binnen 25 meter. Wij nemen de rest mee.' },
+      { vraag: 'Vanaf hoeveel personen komen jullie in Groningen?', antwoord: 'Vanaf 40 personen, net als overal. Is je groep net wat kleiner? Vraag het gerust.' },
+      { vraag: 'Hoe ver van tevoren moet ik boeken voor een feest in Groningen?', antwoord: 'Hoe eerder, hoe beter. Zomerse zaterdagen zijn het eerst weg. Check je datum, dan hoor je of de bus nog vrij is.' },
     ],
   },
   {
@@ -386,33 +431,85 @@ export const regions: Region[] = [
     metaTitle: 'Foodtruck huren in Friesland',
     metaDescription: 'Foodtruck huren in Friesland? De Jachtbus kookte al in Leeuwarden, Stiens en Drachten. Voor je bruiloft, bedrijfsfeest of tuinfeest, vanaf 40 personen.',
     intro: 'Ook over de provinciegrens staan we graag. Van Drachten tot Stiens, met de keuken achterin.',
+    lokaalTitel: 'Een Drentse bus op een Fries feest',
     verhaal: [
       'We kookten al in Leeuwarden, Stiens en Drachten. Een Drentse bus op een Fries feest: dat gaat prima samen, zolang het eten goed is.',
       'Omdat de bus uit Drenthe komt, plannen we in Friesland de reis en de opbouw iets ruimer in. Dat regelen wij, daar merk jij niets van.',
     ],
     plaatsen: ['Leeuwarden', 'Stiens', 'Drachten'],
     photo: photos.plank,
+    extraTitel: 'Goed om te weten in Friesland',
+    extra: [
+      { title: 'Reis en opbouw', text: 'De bus komt uit Drenthe, dus we vertrekken wat eerder. Geef door hoe laat je wilt eten, dan rekenen wij terug.' },
+      { title: 'Feest aan het water', text: 'Een plek aan een meer of vaart is mooi, een zachte oever minder. Geef door hoe de grond erbij ligt, dan kijken we waar de bus stevig staat.' },
+      { title: 'Op een eiland', text: 'Een feest op een Waddeneiland vraagt om een andere planning. Vraag het gerust, dan kijken we wat er kan.' },
+    ],
     faq: [
       { vraag: 'Komen jullie door heel Friesland?', antwoord: 'Friesland hoort bij ons werkgebied. Ligt je locatie ver weg of op een lastige plek? Vraag het gerust, dan kijken we wat er kan.' },
       { vraag: 'Is er een minimum aantal gasten voor Friesland?', antwoord: 'We komen overal vanaf 40 personen. Is je groep net wat kleiner? Vraag het gerust.' },
+      { vraag: 'Kan de bus aan het water staan in Friesland?', antwoord: 'Als de grond 3,5 ton kan dragen wel. Een zachte oever is lastig, dus zet het in je aanvraag, dan kijken we mee.' },
+      { vraag: 'Komen jullie ook op de Friese Waddeneilanden?', antwoord: 'Dat vraagt om een andere planning, dus dat bekijken we per feest. Vraag het gerust.' },
+      { vraag: 'Hoe ver van tevoren moet ik boeken voor een feest in Friesland?', antwoord: 'Hoe eerder, hoe beter. Zomerse zaterdagen zijn het eerst weg. Check je datum, dan hoor je of de bus nog vrij is.' },
     ],
   },
 ];
 
 // Every town from the owner's list of jobs that were actually done.
+// Local page of a town, by name. A town without one shows as a plain tag.
+export const plaatsPaginas: Record<string, string> = {};
+// Own page of a job from the portal, by slug. A job without one gets no link on the map.
+export const casePaginas: Record<string, string> = {};
+
 export const allPlaces = ['Stiens', 'Leeuwarden', 'Drachten', 'Leek', 'Roden', 'Assen', 'Rolde', 'Gieten', 'Gasselte', 'Gasselternijveen', 'Eeserveen', 'Drouwen', 'Een', 'De Wilp', 'Nooitgedacht', 'Oudemolen', 'Stadskanaal', 'Wedde'];
 
 export const steps: Item[] = [
-  { title: 'Jij belt, appt of vult iets in', text: 'Wat je handig vindt. Een richtdatum en een schatting van het aantal gasten is genoeg.' },
-  { title: 'We gaan om tafel', text: 'Live of online. Wat vieren we, en wat past daarbij?' },
-  { title: 'Je krijgt een voorstel', text: 'Met menu en prijs. Klopt het nog niet helemaal? Dan schuiven we door tot het wel klopt.' },
-  { title: 'De luiken gaan open', text: 'We zetten de bus neer, koken ter plekke en laten alles netjes achter.' },
+  { title: 'Je doet een aanvraag', text: 'Via het formulier, de telefoon of een appje. Een richtdatum en een schatting van het aantal gasten is genoeg.' },
+  { title: 'Samen maken we het plan', text: 'Wij komen met een eerste idee. Daarna schaven we er in overleg aan, tot het bij jouw feest past.' },
+  { title: 'Je krijgt een definitief voorstel', text: 'Met menu, opzet en prijs, alles op een rij. Zeg jij ja, dan gaan wij aan de slag.' },
+  { title: 'De luiken gaan open', text: 'We zetten de bus neer, koken ter plekke en laten alles netjes achter. Jij bent gewoon gast op je eigen feest.' },
 ];
 
-export const values: Item[] = [
-  { title: 'Lokaal verkregen', text: 'We kopen zo dichtbij als het kan. Wat hier groeit en graast, dat koken we.' },
-  { title: 'Eerlijke producten', text: 'Geen poespas en niets om te verbergen. Je proeft waar het vandaan komt.' },
-  { title: 'Ambachtelijk bereid', text: 'Alles gaat ter plekke over het vuur, niet uit een zak van de groothandel.' },
+// Latitude and longitude of the towns where the bus stood, looked up in OpenStreetMap.
+export const plaatsKaart: Record<string, [number, number]> = {
+  Stiens: [53.2608, 5.7642],
+  Leeuwarden: [53.2006, 5.7919],
+  Drachten: [53.1091, 6.0948],
+  Leek: [53.1632, 6.3771],
+  Roden: [53.1405, 6.4275],
+  Assen: [52.9972, 6.5506],
+  Rolde: [52.9844, 6.6487],
+  Gieten: [53.0033, 6.7638],
+  Gasselte: [52.9719, 6.7922],
+  Gasselternijveen: [52.9862, 6.8472],
+  Eeserveen: [52.8767, 6.7843],
+  Drouwen: [52.9525, 6.7965],
+  Een: [53.0747, 6.3931],
+  'De Wilp': [53.1183, 6.2544],
+  Nooitgedacht: [52.9703, 6.6617],
+  Oudemolen: [53.0489, 6.6386],
+  Stadskanaal: [52.9962, 7.0014],
+  Wedde: [53.0691, 7.0763],
+};
+
+export const twijfels: Item[] = [
+  { title: 'Geen idee waar je originele catering voor je event kunt vinden?', text: 'Vertel wat je viert en wanneer, dan denken wij de rest met je mee.' },
+  { title: 'Je huurde eerder catering, maar het eten viel tegen of kwam te laat?', text: 'Wij koken ter plekke, waar je gasten bij staan. Dus niks dat al uren in een bak ligt.' },
+  { title: 'Lastig om iets te vinden dat lekker én professioneel is voor elk type publiek?', text: 'Er is geen vaste kaart. We stemmen het menu en de vorm af op wie er komt.' },
+];
+
+export const waarom: Item[] = [
+  { title: 'Alles ter plekke bereid', text: 'We koken in de bus, op jouw locatie.' },
+  { title: 'Lokale producten', text: 'We kopen zo dichtbij als het kan.' },
+  { title: 'Eigen bediening', text: 'We komen met ons eigen team, jij blijft bij je gasten.' },
+  { title: 'Menu in overleg', text: 'We kijken samen naar het seizoen, je gasten en je feest.' },
+];
+
+export const valuesIntro = 'Bij ons draait alles om lokaal, eerlijk en voedzaam voedsel. We kiezen voor lokale producten om de economie te steunen en respect voor iedereen in de keten te waarborgen.';
+
+export const values: (Item & { icon: 'pin' | 'leaf' | 'tree' })[] = [
+  { icon: 'pin', title: 'Lokaal verkregen', text: 'Waar mogelijk maken wij gebruik van regionale producten van nauwkeurig uitgekozen partners.' },
+  { icon: 'leaf', title: 'Eerlijke producten', text: "Wij geloven in eerlijke, schone, goede producten. Geen 'gerommel' en onnodige toevoegingen. Eerlijk eten telt!" },
+  { icon: 'tree', title: 'Ambachtelijk bereid', text: '90% van ons voedsel bereiden we zelf. Anders vertrouwen we op ambachtelijke partners binnen onze waarden.' },
 ];
 
 export const nav = [

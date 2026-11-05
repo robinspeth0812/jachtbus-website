@@ -5,10 +5,16 @@
 import { Image } from 'astro:assets';
 import ringLogo from '../../assets/jachtbus-logo-wit-goud.svg';
 import BusButton from '../BusButton.astro';
-import { aanvraagUrl, contact, nav, regions, services, url } from '../../data/nieuw';
+import { aanvraagUrl, nav, regions, services, url } from '../../data/nieuw';
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || (href !== url() && path.startsWith(href));
+const groups = [
+  { soort: 'gelegenheid', label: 'Gelegenheden' },
+  { soort: 'mogelijkheid', label: 'Mogelijkheden' },
+].map((group) => ({ ...group, items: services.filter((service) => service.soort === group.soort) }));
+// On a service page the menu opens on the tab that holds that page.
+const openSoort = services.find((service) => isCurrent(url(`catering/${service.slug}`)))?.soort ?? 'gelegenheid';
 ---
 
 <header class="bus-nav_wrap u-theme-bus-green">
@@ -26,13 +32,46 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
               <span class="bus-nav_label u-hover-underline">Catering</span>
               <svg class="bus-nav_chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="2.500" /></svg>
             </summary>
-            <div class="bus-nav_panel u-theme-bus-black">
-              <ul class="bus-nav_panel_list">
-                <li><a class="bus-nav_panel_link is-all" href={url('catering')} data-trigger="hover focus">Alles over onze catering</a></li>
-                {services.map((service) => (
-                  <li><a class="bus-nav_panel_link" href={url(`catering/${service.slug}`)} data-trigger="hover focus" aria-current={isCurrent(url(`catering/${service.slug}`)) ? 'page' : undefined}>{service.nav}</a></li>
+            <div class="bus-nav_panel u-theme-bus-beige">
+              <div class="bus-nav_panel_contain u-container">
+                <div class="bus-nav_panel_head">
+                  <div class="bus-nav_tabs" role="tablist" aria-label="Soort catering">
+                    {groups.map((group) => (
+                      <button
+                        class:list={['bus-nav_tab', group.soort === openSoort && 'is-active']}
+                        id={`bus-nav-tab-${group.soort}`}
+                        type="button"
+                        role="tab"
+                        aria-selected={group.soort === openSoort ? 'true' : 'false'}
+                        aria-controls={`bus-nav-tabpanel-${group.soort}`}
+                        tabindex={group.soort === openSoort ? 0 : -1}
+                        data-trigger="hover focus"
+                      >
+                        {group.label}
+                      </button>
+                    ))}
+                  </div>
+                  <a class="bus-nav_panel_all" href={url('catering')} data-trigger="hover focus">
+                    Alles over onze catering
+                    <svg class="bus-nav_panel_arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.500" /></svg>
+                  </a>
+                </div>
+                {groups.map((group) => (
+                  <ul class="bus-nav_cards" id={`bus-nav-tabpanel-${group.soort}`} role="tabpanel" aria-labelledby={`bus-nav-tab-${group.soort}`} data-soort={group.soort}>
+                    {group.items.map((service) => (
+                      <li class="bus-nav_card">
+                        <a class="bus-nav_card_link" href={url(`catering/${service.slug}`)} data-trigger="hover focus" aria-current={isCurrent(url(`catering/${service.slug}`)) ? 'page' : undefined}>
+                          <span class="bus-nav_card_visual">
+                            <Image class="bus-nav_card_img" src={service.photo.src} alt="" width={640} />
+                          </span>
+                          <span class="bus-nav_card_name">{service.nav}</span>
+                          <span class="bus-nav_card_text u-text-style-small">{service.rowText}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 ))}
-              </ul>
+              </div>
             </div>
           </details>
           {nav.slice(1).map((item) => (
@@ -46,10 +85,7 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
         <Image class="bus-nav_logo_img" src={ringLogo} alt="" width={160} />
       </a>
       <div class="bus-nav_side is-end">
-        <a class="bus-nav_phone" href={contact.telefoonHref} data-trigger="hover focus">
-          <span class="bus-nav_label u-hover-underline">{contact.telefoon}</span>
-        </a>
-        <BusButton label="Aanvraag" href={aanvraagUrl()} />
+        <div class="bus-nav_action"><BusButton label="Check je datum" href={aanvraagUrl()} arrow /></div>
       </div>
     </div>
   </div>
@@ -69,10 +105,17 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
       {nav.map((item) => <li><a class="bus-menu_link u-text-style-poster-small" href={item.href}>{item.label}</a></li>)}
       <li><a class="bus-menu_link u-text-style-poster-small" href={url('veelgestelde-vragen')}>Vragen</a></li>
     </ul>
-    <ul class="bus-menu_sub">
-      {services.map((service) => <li><a class="bus-menu_sub_link" href={url(`catering/${service.slug}`)}>{service.nav}</a></li>)}
-      {regions.map((region) => <li><a class="bus-menu_sub_link" href={url(region.slug)}>{region.naam}</a></li>)}
-    </ul>
+    {[
+      ...groups.map((group) => ({ label: group.label, links: group.items.map((service) => ({ href: url(`catering/${service.slug}`), label: service.nav })) })),
+      { label: 'Regio', links: regions.map((region) => ({ href: url(region.slug), label: region.naam })) },
+    ].map((group) => (
+      <div class="bus-menu_group">
+        <p class="bus-menu_group_title u-text-style-bus-title">{group.label}</p>
+        <ul class="bus-menu_sub">
+          {group.links.map((link) => <li><a class="bus-menu_sub_link" href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </div>
+    ))}
   </nav>
 </dialog>
 
@@ -87,6 +130,8 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
   }
   .bus-nav_stripe,
   .bus-menu_stripe {
+    position: relative;
+    z-index: 1;
     height: var(--size--stripe-thin);
     background-color: var(--color--bus-yellow);
   }
@@ -104,13 +149,15 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
     gap: var(--_spacing---space--5);
   }
   .bus-nav_side.is-end { justify-content: flex-end; }
+  /* Phones have this button in the bar at the bottom of the screen. */
+  .bus-nav_action { display: var(--none-medium, block); }
   .bus-nav_links {
     display: var(--none-medium, flex);
     align-items: center;
-    gap: var(--_spacing---space--5);
+    gap: var(--size--nav-gap);
+    white-space: nowrap;
   }
   .bus-nav_link,
-  .bus-nav_phone,
   .bus-nav_menu {
     display: inline-flex;
     align-items: center;
@@ -136,7 +183,6 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
     text-decoration-thickness: var(--focus--width);
     text-underline-offset: var(--_spacing---space--2);
   }
-  .bus-nav_phone { display: var(--none-medium, inline-flex); }
   .bus-nav_menu { display: var(--flex-medium, none); }
   .bus-nav_menu_icon {
     width: var(--size--modal-icon);
@@ -147,49 +193,146 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
     height: var(--_spacing---space--3);
     transition: transform 200ms;
   }
-  .bus-nav_more { position: relative; }
   .bus-nav_more[open] .bus-nav_chevron { transform: rotate(180deg); }
+  /* Positioned against the sticky header, so it spans the full width of the page. */
   .bus-nav_panel {
     position: absolute;
     top: 100%;
-    left: calc(var(--_spacing---space--4) * -1);
-    min-width: var(--size--nav-panel);
-    padding: var(--_spacing---space--3);
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - var(--_panel-top, var(--size--nav-bar)));
+    white-space: normal;
+    overflow-y: auto;
+    padding-block: var(--_spacing---space--4) var(--_spacing---space--5);
     background-color: var(--_theme---background);
     color: var(--_theme---text);
-    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+    border-bottom: var(--size--stripe-thin) solid var(--color--bus-yellow);
   }
-  .bus-nav_panel_link {
+  .bus-nav_panel_head {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--4);
+    border-bottom: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .bus-nav_panel_contain { gap: var(--_spacing---space--5); }
+  /* An open details element turns the state on for all it holds, so the tabs start over. */
+  .bus-nav_tabs {
+    --_state---true: 1;
+    --_state---false: 0;
+    display: flex;
+    gap: var(--_spacing---space--5);
+  }
+  .bus-nav_tab {
+    position: relative;
     min-height: var(--target--min);
-    padding-inline: var(--_spacing---space--3);
+    padding: var(--_spacing---space--2) 0;
+    background: none;
+    border: none;
     font-family: var(--_typography---font--heading);
     font-size: var(--_typography---size--h5);
     font-stretch: var(--_typography---stretch--poster);
     font-weight: var(--_typography---font--primary-bold);
     word-spacing: var(--_typography---word-spacing--poster);
-    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    color: var(--_theme---heading);
+    cursor: pointer;
+  }
+  /* The bar marks the open tab, so color is not the only signal. */
+  .bus-nav_tab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--border-width--main) * -1);
+    height: var(--focus--width);
+    background-color: var(--color--bus-green);
+    transform: scaleX(max(var(--_state---false), calc(var(--_trigger---off) * 0.35)));
+    transform-origin: left;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bus-nav_panel_all {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    color: var(--_theme---heading);
+    text-decoration: underline;
+    text-underline-offset: var(--_spacing---space--1);
+  }
+  .bus-nav_panel_arrow {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  /* Equal shares of the row: four occasions or two wider options, at the same height. */
+  .bus-nav_cards {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--site--gutter);
+  }
+  .bus-nav_card_link {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+    color: var(--_theme---text);
     text-decoration: none;
-    transition: color 150ms;
   }
-  .bus-nav_panel_link.is-all {
-    margin-bottom: var(--_spacing---space--2);
-    padding-bottom: var(--_spacing---space--2);
-    border-bottom: var(--border-width--main) solid var(--_theme---border);
-  }
-
-  /* The logo has its own gold ring. Its green disc hangs out of the bar, with
-     some padding, so it also reads over beige sections. */
-  .bus-nav_logo {
+  .bus-nav_card_visual {
     display: block;
+    height: var(--size--nav-card);
+    margin-bottom: var(--_spacing---space--1);
+    overflow: clip;
+    background-color: var(--_theme---background-skeleton);
+  }
+  .bus-nav_card_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(calc(1 + 0.05 * var(--_trigger---off)));
+    transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bus-nav_card_name {
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    word-spacing: var(--_typography---word-spacing--poster);
+    color: var(--_theme---heading);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---off)), transparent calc(100% * var(--_trigger---on)));
+    text-decoration-thickness: var(--focus--width);
+    text-underline-offset: var(--_spacing---space--1);
+    transition: text-decoration-color 150ms;
+  }
+  .bus-nav_card_link[aria-current='page'] .bus-nav_card_name { text-decoration-color: var(--color--bus-yellow); }
+
+  /* The logo has its own gold ring. The green disc sits on the same center with
+     an even band around that ring, and hangs out of the bar. */
+  .bus-nav_logo {
+    --_height: calc(var(--size--nav-logo-now) * var(--size--nav-logo-height));
+    display: block;
+    position: relative;
+    isolation: isolate;
     align-self: start;
     width: var(--size--nav-logo-now);
-    height: var(--size--nav-logo-now);
-    margin-bottom: calc((var(--size--nav-logo-now) - var(--size--nav-bar)) * -1);
-    padding: var(--_spacing---space--2);
+    height: var(--_height);
+    margin-top: var(--_spacing---space--1);
+    margin-bottom: calc((var(--_height) + var(--_spacing---space--1) - var(--size--nav-bar)) * -1);
+  }
+  .bus-nav_logo::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: calc(var(--size--nav-logo-now) * var(--size--nav-logo-ring) + var(--_spacing---space--3) * 2);
+    aspect-ratio: 1 / 1;
     background-color: var(--_theme---background);
     border-radius: var(--radius--round);
+    transform: translate(-50%, -50%);
   }
   .bus-nav_logo_img { height: auto; }
 
@@ -230,7 +373,7 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
   .bus-menu_nav {
     display: flex;
     flex-flow: column;
-    gap: var(--_spacing---space--6);
+    gap: var(--_spacing---space--5);
     padding: var(--_spacing---space--4) var(--site--margin) var(--_spacing---space--7);
   }
   .bus-menu_link {
@@ -239,12 +382,17 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
     min-height: calc(var(--target--min) * 1.25);
     text-decoration: none;
   }
+  .bus-menu_group {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
   .bus-menu_sub {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 var(--_spacing---space--4);
-    padding-top: var(--_spacing---space--4);
-    border-top: var(--focus--width) solid var(--color--bus-yellow);
   }
   .bus-menu_sub_link {
     display: flex;
@@ -273,6 +421,39 @@ const isCurrent = (href: string) => path === href || (href !== url() && path.sta
       if (event.key !== 'Escape' || !more.open) return;
       more.open = false;
       more.querySelector('summary')?.focus();
+    });
+    // Above the fold the top bar pushes the panel down, so it measures where it starts.
+    more.addEventListener('toggle', () => {
+      if (more.open) more.style.setProperty('--_panel-top', `${more.closest('.bus-nav_wrap')?.getBoundingClientRect().bottom ?? 0}px`);
+    });
+    // The panel covers the page, so it closes once focus has moved past it.
+    more.addEventListener('focusout', (event) => {
+      if (event.relatedTarget instanceof Node && !more.contains(event.relatedTarget)) more.open = false;
+    });
+
+    const tabs = [...more.querySelectorAll<HTMLButtonElement>('.bus-nav_tab')];
+    const panels = [...more.querySelectorAll<HTMLElement>('.bus-nav_cards')];
+    const select = (active: HTMLButtonElement) => {
+      tabs.forEach((tab, index) => {
+        const isOpen = tab === active;
+        tab.classList.toggle('is-active', isOpen);
+        tab.setAttribute('aria-selected', String(isOpen));
+        tab.tabIndex = isOpen ? 0 : -1;
+        panels[index].hidden = !isOpen;
+      });
+    };
+    select(tabs.find((tab) => tab.classList.contains('is-active')) ?? tabs[0]);
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (event) => {
+        const moves: Record<string, number> = { ArrowRight: index + 1, ArrowLeft: index - 1, Home: 0, End: tabs.length - 1 };
+        const next = moves[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        const target = tabs[(next + tabs.length) % tabs.length];
+        select(target);
+        target.focus();
+      });
     });
   });
 </script>

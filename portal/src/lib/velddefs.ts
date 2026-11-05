@@ -12,6 +12,8 @@ import {
   momentenOpties,
   provincies,
   publicatieStatussen,
+  referentieGelegenheden,
+  referentieMogelijkheden,
   reviewBronnen,
   teamRollen,
   weekdagen,
@@ -43,8 +45,11 @@ export const arrangementVelden: VeldDef[] = [
 
 export const referentieVelden: VeldDef[] = [
   { naam: "titel", label: "Titel", soort: "tekst", verplicht: true, max: 140, breedte: "lang" },
-  { naam: "plaats", label: "Plaats", soort: "tekst", verplicht: true, max: 80, breedte: "middel" },
-  { naam: "gelegenheid", label: "Gelegenheid", soort: "tekst", verplicht: true, max: 80, breedte: "middel", hulp: "Bijv. Tuinfeest of Bedrijfsfeest." },
+  { naam: "plaats", label: "Plaats", soort: "tekst", verplicht: true, max: 80, breedte: "middel", hulp: "Hiermee komt de referentie vanzelf op de kaart van de site." },
+  { naam: "lat", label: "Kaart: breedtegraad", soort: "getal", min: 50, max: 54, stap: 0.0001, breedte: "tijd", hulp: "Laat leeg, tenzij het punt op de kaart niet klopt." },
+  { naam: "lng", label: "Kaart: lengtegraad", soort: "getal", min: 3, max: 8, stap: 0.0001, breedte: "tijd" },
+  { naam: "gelegenheid", label: "Gelegenheid", soort: "keuze", verplicht: true, opties: referentieGelegenheden, breedte: "middel", hulp: "Hierop filteren bezoekers op de referentiepagina." },
+  { naam: "mogelijkheden", label: "Wat hebben we gedaan?", soort: "meerkeuze", opties: referentieMogelijkheden, hulp: "Hierop filteren bezoekers ook. Kies wat van toepassing is." },
   { naam: "gasten", label: "Aantal gasten", soort: "getal", min: 1, max: 5000, breedte: "tijd" },
   { naam: "datum", label: "Datum", soort: "datum", breedte: "datum" },
   { naam: "verhaal", label: "Het verhaal", soort: "lang", verplicht: true, max: 8000, rijen: 7, breedte: "lang" },
@@ -59,6 +64,8 @@ export const reviewVelden: VeldDef[] = [
   { naam: "gelegenheid", label: "Gelegenheid", soort: "tekst", max: 80, breedte: "middel" },
   { naam: "plaats", label: "Plaats", soort: "tekst", max: 80, breedte: "middel" },
   { naam: "tekst", label: "Wat schreef die persoon?", soort: "lang", verplicht: true, max: 2000, rijen: 5, breedte: "lang", hulp: "Letterlijk overnemen. Niet zelf bijschaven." },
+  { naam: "foto", label: "Foto", soort: "foto", bron: "media", leeg: "Geen foto", hulp: "Mag leeg. Is de review aan een referentie gekoppeld, dan komt daar de foto vandaan. Alleen foto's zonder herkenbare mensen, of met toestemming, komen op de site." },
+  { naam: "referentie", label: "Hoort bij deze referentie", soort: "relatie", bron: "referenties", leeg: "Niet gekoppeld", breedte: "lang", hulp: "De site linkt dan naar dat verhaal, zodra de referentie gepubliceerd is met toestemming van de klant." },
   { naam: "bron", label: "Waar komt de review vandaan?", soort: "keuze", verplicht: true, opties: reviewBronnen, breedte: "middel", hulp: "Alleen echte reviews: zo blijft het eerlijk en mag het van de wet." },
   { naam: "bronUrl", label: "Link naar de review", soort: "url", breedte: "lang", hulp: "Bij Google en Facebook verplicht om op de site te zetten." },
   { naam: "bewijs", label: "Bewijs (intern)", soort: "tekst", max: 240, breedte: "lang", hulp: "Bij mail of WhatsApp: van wanneer is het bericht, en mag het op de site? Bijv. Mail van 3 mei, gevraagd en akkoord." },
@@ -80,11 +87,15 @@ export const plaatsVelden: VeldDef[] = [
 ];
 
 export const mededelingVelden: VeldDef[] = [
-  { naam: "tekst", label: "Tekst op de balk", soort: "tekst", verplicht: true, max: 200, breedte: "lang", hulp: "Kort en duidelijk. Bijv. In december zijn we dicht van de 24e tot de 28e." },
-  { naam: "linkTekst", label: "Tekst van de link", soort: "tekst", max: 60, breedte: "middel" },
-  { naam: "linkUrl", label: "Link", soort: "url", breedte: "lang", hulp: "Begint met https:// of met / voor een pagina op de site." },
-  { naam: "vanaf", label: "Vanaf", soort: "datum", breedte: "datum" },
-  { naam: "tot", label: "Tot en met", soort: "datum", breedte: "datum" },
+  { naam: "tekst", label: "Tekst op de balk", soort: "tekst", verplicht: true, max: 140, breedte: "lang", hulp: "Kort en duidelijk: één zin. Bijv. In december zijn we dicht van de 24e tot de 28e." },
+  { naam: "dagen", label: "Dagen", soort: "meerkeuze", opties: weekdagen, hulp: "Niets aangevinkt = elke dag." },
+  { naam: "vanTijd", label: "Van (tijd)", soort: "tijd", breedte: "tijd", hulp: "Leeg = vanaf 00:00." },
+  { naam: "totTijd", label: "Tot (tijd)", soort: "tijd", breedte: "tijd", hulp: "Leeg = tot middernacht." },
+  { naam: "vanaf", label: "Periode: van", soort: "datum", breedte: "datum", hulp: "Leeg = vanaf nu." },
+  { naam: "tot", label: "Periode: tot en met", soort: "datum", breedte: "datum", hulp: "Leeg = geen einde. Deze dag telt mee." },
+  { naam: "linkTekst", label: "Tekst van de link", soort: "tekst", max: 60, breedte: "middel", hulp: "Leeg = Meer info." },
+  { naam: "linkUrl", label: "Link", soort: "url", breedte: "lang", hulp: "Optioneel. Begint met https:// of met / voor een pagina op de site." },
+  { naam: "volgorde", label: "Volgorde", soort: "getal", min: 0, max: 999, breedte: "tijd", hulp: "Laag komt eerst, als er meer mededelingen tegelijk lopen." },
   statusVeld,
 ];
 

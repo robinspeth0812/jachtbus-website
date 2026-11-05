@@ -1,10 +1,12 @@
 ---
-// "Does the bus fit?" The location requirements as a checklist you tick off
-// yourself. Each tick moves the bus closer, and with all four it parks on the
-// drawn spot. Answers the biggest doubt before the form. Without JS it is a
-// readable list.
-import BusIcon from './BusIcon.astro';
+// The location requirements: a numbered list on the left, on the right an aerial
+// photo of a spot for the bus with the same numbers on it. Inrit, cable and spot
+// are drawn on the photo, which is to scale (48 by 36 metres, cropped). To use
+// another photo, swap the image and move the points in `checks` and the lines in
+// the drawing; the viewBox runs in the pixels of a 1440 by 1080 frame.
+import { Image } from 'astro:assets';
 import BusButton from '../BusButton.astro';
+import fotoVanBoven from '../../assets/locatie-van-boven.jpg';
 import { aanvraagUrl } from '../../data/nieuw';
 
 interface Props {
@@ -13,43 +15,72 @@ interface Props {
   /** Occasion passed to the request form. */
   occasion?: string;
 }
-const { title = 'Past de bus bij jou?', occasion } = Astro.props;
+const { title = 'Waar moet de locatie aan voldoen?', occasion } = Astro.props;
 const checks = [
-  { title: 'Plek van 6,5 bij 2,5 meter', text: 'Plus wat ruimte rondom om te werken.' },
-  { title: 'Stevige, vlakke ondergrond', text: 'Gras of grind kan ook.' },
-  { title: 'Doorgang voor 3,5 ton', text: 'Geen smal poortje of lage tak op de route.' },
-  { title: 'Stroom binnen 25 meter', text: 'Standaard 230V of 16A. Geen stroom? Dan denken we mee.' },
+  { title: 'Plek van 6,5 bij 2,5 meter', text: 'Plus wat ruimte rondom om te werken.', short: 'Plek', note: '6,5 bij 2,5 meter, plus wat ruimte', left: '3%', top: '36%' },
+  { title: 'Stevige, vlakke ondergrond', text: 'Gras of grind kan ook.', short: 'Ondergrond', note: 'Stevig en vlak, gras of grind kan ook', left: '45%', top: '72%' },
+  { title: 'Inrit voor 3,5 ton', text: 'Geen smal poortje of lage tak op de route.', short: 'Inrit', note: 'Geen smal poortje of lage tak', left: '54%', top: '36%' },
+  { title: 'Stroom binnen 25 meter', text: 'Standaard 230V of 16A. Geen stroom? Dan denken we mee.', short: 'Stroom', note: '230V of 16A binnen 25 meter', left: '21%', top: '3%' },
 ];
 ---
 
 <section class="bus-fit_wrap u-section u-theme-bus-black">
   <div class="bus-fit_contain u-container">
-    <div class="bus-fit_layout" data-fit>
+    <div class="bus-fit_layout">
       <div class="bus-fit_content">
         <h2 class="bus-fit_title u-text-style-poster-small">{title}</h2>
-        <p class="bus-fit_intro u-text-style-large">Vink maar af wat klopt. Eén ding niet? Dat hoeft geen probleem te zijn, vraag het gewoon.</p>
-        <ul class="bus-fit_list">
-          {checks.map((check) => (
+        <p class="bus-fit_intro u-text-style-large">Klopt er één ding niet? Dat hoeft geen probleem te zijn, vraag het gewoon.</p>
+        <ol class="bus-fit_list">
+          {checks.map((check, index) => (
             <li class="bus-fit_item">
-              <label class="bus-fit_label">
-                <input class="bus-fit_input" type="checkbox" />
-                <span class="bus-fit_body">
-                  <span class="bus-fit_name u-text-style-bus-title">{check.title}</span>
-                  <span class="bus-fit_text u-text-style-small">{check.text}</span>
-                </span>
-              </label>
+              <span class="bus-fit_number" aria-hidden="true">{index + 1}</span>
+              <span class="bus-fit_body">
+                <span class="bus-fit_name u-text-style-bus-title">{check.title}</span>
+                <span class="bus-fit_text u-text-style-small">{check.text}</span>
+              </span>
             </li>
           ))}
-        </ul>
-      </div>
-      <div class="bus-fit_scene">
-        <div class="bus-fit_lot">
-          <div class="bus-fit_bus"><BusIcon facing="right" /></div>
-          <div class="bus-fit_spot u-text-style-small">6,5 × 2,5 m</div>
+        </ol>
+        <div class="bus-fit_actions u-button-wrapper">
+          <BusButton label="Aanvraag starten" href={aanvraagUrl(occasion)} />
         </div>
-        <p class="bus-fit_result u-text-style-poster-label" aria-live="polite">Hoe ver komen we?</p>
-        <BusButton label="Check of de bus vrij is" href={aanvraagUrl(occasion)} />
       </div>
+      <figure class="bus-fit_figure">
+        <div class="bus-fit_map">
+          <Image
+            class="bus-fit_img"
+            src={fotoVanBoven}
+            alt="Luchtfoto van een weiland langs een weg. De bus staat op het gras, er loopt een pijl vanaf de weg naar de bus en een stroomkabel vanaf de rand van het veld."
+            widths={[600, 900, 1200]}
+            sizes="(max-width: 50em) 100vw, 55vw"
+            loading="lazy"
+          />
+          <svg class="bus-fit_drawing" viewBox="0 0 1440 1080" fill="none" aria-hidden="true">
+            <g transform="translate(640 500) rotate(65.5)">
+              <rect class="bus-fit_spot" x="-125" y="-58" width="250" height="116" />
+            </g>
+            <path class="bus-fit_casing" d="M1290 590C1130 650 930 660 790 560" />
+            <path class="bus-fit_route" d="M1290 590C1130 650 930 660 790 560" />
+            <path class="bus-fit_head" d="M838 556 785 556 802 606" />
+            <path class="bus-fit_casing" d="M190 90C260 230 400 300 575 415" />
+            <path class="bus-fit_cable" d="M190 90C260 230 400 300 575 415" />
+            <circle class="bus-fit_socket" cx="190" cy="90" r="30" />
+            <path class="bus-fit_bolt" d="M196 66 174 95h14l-6 19 24-30h-15z" />
+          </svg>
+          {checks.map((check, index) => (
+            <div class="bus-fit_marker" style={`left: ${check.left}; top: ${check.top};`} aria-hidden="true">
+              <span class="bus-fit_number">{index + 1}</span>
+              <span class="bus-fit_note u-text-style-small">
+                <strong class="bus-fit_note_title">{check.short}</strong>
+                {check.note}
+              </span>
+            </div>
+          ))}
+        </div>
+        <figcaption class="bus-fit_credit u-text-style-small">
+          Voorbeeldplek, bus op schaal ingetekend. Luchtfoto: <a class="bus-fit_credit_link" href="https://www.beeldmateriaal.nl" rel="external">Beeldmateriaal.nl</a>, CC BY 4.0.
+        </figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -60,7 +91,6 @@ const checks = [
     color: var(--_theme---text);
   }
   .bus-fit_layout {
-    --_ticked: 0;
     display: var(--flex-medium, grid);
     flex-direction: column;
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -68,7 +98,7 @@ const checks = [
     align-items: center;
   }
   .bus-fit_content {
-    grid-column: 1 / span 6;
+    grid-column: 1 / span 5;
     width: 100%;
   }
   .bus-fit_title { margin-bottom: var(--_spacing---space--4); }
@@ -76,86 +106,101 @@ const checks = [
     max-width: 44ch;
     margin-bottom: var(--_spacing---space--5);
   }
-  .bus-fit_item { border-top: var(--border-width--main) solid var(--color--bus-yellow); }
-  .bus-fit_item:last-child { border-bottom: var(--border-width--main) solid var(--color--bus-yellow); }
-  .bus-fit_label {
+  .bus-fit_list { margin-bottom: var(--_spacing---space--5); }
+  .bus-fit_item {
     display: flex;
     align-items: center;
-    gap: var(--_spacing---space--4);
-    min-height: calc(var(--target--min) * 1.5);
+    gap: var(--_spacing---space--3);
     padding-block: var(--_spacing---space--3);
-    cursor: pointer;
+    border-top: var(--border-width--main) solid var(--_theme---divider);
   }
-  .bus-fit_input {
+  .bus-fit_item:last-child { border-bottom: var(--border-width--main) solid var(--_theme---divider); }
+  .bus-fit_number {
+    display: flex;
     flex-shrink: 0;
-    width: var(--size--check);
-    height: var(--size--check);
-    accent-color: var(--color--bus-yellow);
-    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--fit-number);
+    height: var(--size--fit-number);
+    background-color: var(--color--bus-yellow);
+    border: var(--border-width--main) solid var(--color--bus-black);
+    border-radius: var(--radius--round);
+    color: var(--color--bus-black);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
   }
   .bus-fit_body {
     display: flex;
     flex-flow: column;
   }
-  .bus-fit_scene {
-    grid-column: 8 / span 5;
+  .bus-fit_actions { justify-content: flex-start; }
+  .bus-fit_figure {
+    grid-column: 6 / span 7;
     display: flex;
     flex-flow: column;
-    align-items: flex-start;
-    gap: var(--_spacing---space--5);
+    gap: var(--_spacing---space--2);
     width: 100%;
   }
-  .bus-fit_lot {
+  .bus-fit_map {
     position: relative;
-    width: 100%;
-    min-height: var(--size--fit-lot);
-    border-bottom: var(--focus--width) solid var(--color--bus-yellow);
+    aspect-ratio: 4 / 3;
+    border-top-right-radius: var(--radius--shape);
     overflow: clip;
   }
+  .bus-fit_img { height: 100%; }
+  .bus-fit_drawing {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* The lines stay on the photo at every size, with a dark edge against the grass. */
+  .bus-fit_drawing path,
   .bus-fit_spot {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .bus-fit_spot {
+    stroke: var(--color--white);
+    stroke-width: 5;
+    stroke-dasharray: 16 12;
+  }
+  .bus-fit_casing {
+    stroke: var(--color--bus-black);
+    stroke-opacity: 0.45;
+    stroke-width: 15;
+  }
+  .bus-fit_route,
+  .bus-fit_head {
+    stroke: var(--color--white);
+    stroke-width: 8;
+  }
+  .bus-fit_route { stroke-dasharray: 24 18; }
+  .bus-fit_cable {
+    stroke: var(--color--marigold-3);
+    stroke-width: 7;
+  }
+  .bus-fit_socket {
+    fill: var(--color--bus-yellow);
+    stroke: var(--color--bus-black);
+    stroke-width: 4;
+  }
+  .bus-fit_bolt { fill: var(--color--bus-black); }
+  .bus-fit_marker {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 62%;
-    height: var(--size--fit-spot);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border: var(--focus--width) dashed var(--color--bus-yellow);
-    border-bottom: none;
-    text-align: center;
+    align-items: flex-start;
+    gap: var(--_spacing---space--1);
+    max-width: 34%;
   }
-  /* Starts off the left edge; every tick covers a quarter of the way. */
-  .bus-fit_bus {
-    position: absolute;
-    right: 0;
-    bottom: var(--size--fit-spot);
-    width: 62%;
-    transform: translateX(calc(-65% * (4 - var(--_ticked))));
-    transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  .bus-fit_note {
+    display: var(--none-medium, flex);
+    flex-flow: column;
+    padding: var(--_spacing---space--1) var(--_spacing---space--2);
+    background-color: var(--color--marigold-1);
+    color: var(--color--bus-black);
+    line-height: var(--_typography---line-height--heading);
   }
-  .bus-fit_layout[data-all] .bus-fit_bus { transform: translateX(0); }
-  .bus-fit_result {
-    min-height: 2lh;
-    max-width: 18ch;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .bus-fit_bus { transition: none; }
-  }
+  .bus-fit_credit { opacity: 0.8; }
+  .bus-fit_credit_link { color: inherit; }
 </style>
-
-<script>
-  const lines = ['Hoe ver komen we?', 'We zijn onderweg.', 'Halverwege.', 'Bijna. Nog één ding.', 'Dat past. We rijden zo voor.'];
-  document.querySelectorAll<HTMLElement>('[data-fit]').forEach((fit) => {
-    const inputs = Array.from(fit.querySelectorAll<HTMLInputElement>('.bus-fit_input'));
-    const result = fit.querySelector<HTMLElement>('.bus-fit_result');
-    const update = () => {
-      const ticked = inputs.filter((input) => input.checked).length;
-      fit.style.setProperty('--_ticked', String(ticked));
-      fit.toggleAttribute('data-all', ticked === inputs.length);
-      if (result) result.textContent = lines[ticked];
-    };
-    inputs.forEach((input) => input.addEventListener('change', update));
-    update();
-  });
-</script>

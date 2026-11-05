@@ -17,6 +17,7 @@
   --_typography---line-height--poster: 0.92;
   --_typography---word-spacing--poster: 0.1em; /* condensed Asap sets its words too close */
   --_typography---size--poster: clamp(2.75rem, 1.75rem + 4vw, 5.5rem);
+  --_typography---size--poster-hero: clamp(2.5rem, 1.5rem + 3.5vw, 4.75rem);
   --_typography---size--poster-small: clamp(2rem, 1.5rem + 2vw, 3.5rem);
   --_typography---size--poster-row: clamp(1.75rem, 1.5rem + 1.25vw, 2.75rem);
   --_typography---size--poster-label: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
@@ -27,10 +28,15 @@
   --size--step: 4rem; /* route stops */
   --size--stripe: 1rem; /* the yellow roof stripe */
   --radius--shape: clamp(5rem, 2rem + 10vw, 12rem); /* one big rounded corner on photos */
+  --size--button-arrow: 1.625rem;
   --size--logo-large: 30rem;
   --size--palette-min: 24rem;
   --size--pattern-strip: 14rem;
-  --size--row-img: 11rem;
+  --size--row-img: 12rem;
+  --size--row-img-small: 6.5rem;
+  --size--value-icon: 2.5rem;
+  --size--fit-number: 2rem;
+  --size--map-dot: 0.875rem;
   --bus-pattern--stroke: 3; /* user units of the pattern's viewBox */
   --size--modal: 44rem; /* request modal from tablet up, full screen on phones */
   --size--modal-max-height: 90dvh;
@@ -39,20 +45,40 @@
   /* The new site under /nieuw */
   --size--stripe-thin: 0.5rem;
   --size--nav-bar: 4.25rem;
-  --size--nav-logo: 8.5rem;
-  --size--nav-logo-small: 6rem;
+  --size--nav-logo: 7.5rem;
+  --size--nav-logo-small: 5.25rem;
+  --size--nav-logo-ring: 0.78; /* gold ring in the logo, as part of its width */
+  --size--nav-logo-height: 0.8135; /* height of the logo, as part of its width */
   --size--nav-logo-now: calc(var(--size--nav-logo) * var(--_responsive---large) + var(--size--nav-logo-small) * (1 - var(--_responsive---large)));
-  --size--nav-panel: 18rem;
+  --size--nav-card: 11rem;
+  --size--nav-gap: clamp(0.75rem, 2vw, 1.5rem);
+  --size--review-card: 20rem;
   --size--mobile-bar: 3.5rem;
   --size--strip-min: 3rem;
   --size--logo-footer: 22rem;
   --size--check: 2rem;
   --size--bus-marker: 4.5rem;
   --size--shape-max: 34rem;
-  --size--fit-lot: 14rem;
   --size--check-field: 11rem;
+  --size--first-tile: 3.5rem; /* first step of the form */
+  --size--first-tile-min: 8.5rem;
+  --size--map: clamp(24rem, 18rem + 18vw, 38rem);
+  --size--map-pin: 1.125rem;
+  --size--map-pin-large: 1.625rem;
+  --size--slider-button: 3rem;
+  --size--footer-mark: clamp(14rem, 40vw, 26rem);
+  --size--consent: 30rem;
+  --size--consent-button: 8rem;
+  --size--consent-gap: 2rem;
+  --size--switch: 3rem;
+  --size--switch-height: 1.625rem;
+  --size--float-avatar: 3rem;
+  --size--float-panel: 19rem;
+  --size--float-qr: 10rem;
+  --size--map-card: 18rem;
+  --size--map-card-img: 7rem;
+  --size--link-arrow: 1.125rem;
   --size--crop-large: 14rem;
-  --size--fit-spot: 2rem;
   --target--small: 2rem; /* footer lists, the documented exception */
 }
 
@@ -66,6 +92,8 @@ html {
   scroll-padding-block: calc(var(--size--nav-bar) + var(--_spacing---space--5)) calc(var(--size--mobile-bar) + var(--_spacing---space--3));
 }
 input, textarea { caret-color: var(--color--bus-green); }
+/* Phones need less air between a section title and what follows. */
+.u-container { gap: calc(var(--_responsive---large) * var(--_spacing---space--7) + (1 - var(--_responsive---large)) * var(--_spacing---space--5)); }
 
 @view-transition { navigation: auto; }
 @media (prefers-reduced-motion: reduce) {
@@ -97,6 +125,7 @@ input, textarea { caret-color: var(--color--bus-green); }
   --_theme---text-accent: var(--color--bus-green);
   --_theme---border: var(--color--bus-black);
   --_theme---focus-ring: var(--color--bus-green);
+  --_theme---divider: color-mix(in srgb, var(--color--bus-black) 18%, transparent);
   --_theme---text-link--text: var(--color--bus-green);
   --_theme---button-primary--background: var(--color--bus-yellow);
   --_theme---button-primary--border: var(--color--bus-black);
@@ -119,6 +148,7 @@ input, textarea { caret-color: var(--color--bus-green); }
   --_theme---text-accent: var(--color--bus-yellow);
   --_theme---border: var(--color--white);
   --_theme---focus-ring: var(--color--white);
+  --_theme---divider: color-mix(in srgb, var(--color--white) 30%, transparent);
   --_theme---text-link--text: var(--color--white);
   --_theme---button-primary--background: var(--color--bus-yellow);
   --_theme---button-primary--border: var(--color--bus-yellow);
@@ -141,6 +171,7 @@ input, textarea { caret-color: var(--color--bus-green); }
   --_theme---text-accent: var(--color--bus-yellow);
   --_theme---border: var(--color--bus-yellow);
   --_theme---focus-ring: var(--color--bus-yellow);
+  --_theme---divider: color-mix(in srgb, var(--color--bus-yellow) 40%, transparent);
   --_theme---text-link--text: var(--color--bus-yellow);
   --_theme---button-primary--background: var(--color--bus-yellow);
   --_theme---button-primary--border: var(--color--bus-yellow);

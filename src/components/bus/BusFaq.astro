@@ -12,7 +12,7 @@ interface Props {
   /** Section theme. */
   theme?: 'beige' | 'green';
 }
-const { title = 'Wat je vast wilt weten', items, theme = 'beige' } = Astro.props;
+const { title = 'Veelgestelde vragen', items, theme = 'beige' } = Astro.props;
 ---
 
 <section class:list={['bus-faq_wrap', 'u-section', `u-theme-bus-${theme}`]}>
@@ -50,8 +50,8 @@ const { title = 'Wat je vast wilt weten', items, theme = 'beige' } = Astro.props
     grid-column: 6 / span 7;
     width: 100%;
   }
-  .bus-faq_item { border-top: var(--focus--width) solid var(--_theme---border); }
-  .bus-faq_item:last-child { border-bottom: var(--focus--width) solid var(--_theme---border); }
+  .bus-faq_item { border-top: var(--border-width--main) solid var(--_theme---divider); }
+  .bus-faq_item:last-child { border-bottom: var(--border-width--main) solid var(--_theme---divider); }
   .bus-faq_question {
     display: flex;
     align-items: center;

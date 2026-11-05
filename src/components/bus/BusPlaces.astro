@@ -11,7 +11,7 @@ interface Props {
 const { places = allPlaces } = Astro.props;
 ---
 
-<div class="bus-places_wrap u-theme-bus-black">
+<div class="bus-places_wrap u-theme-bus-green">
   <ul class="bus-places_list u-text-style-poster-small">
     {places.map((place) => <li class="bus-places_item">{place}</li>)}
   </ul>

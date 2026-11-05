@@ -1,4 +1,5 @@
 import { headersWithCors, type Endpoint } from "payload";
+import type { Media } from "@/payload-types";
 import { BEDRIJF } from "./bedrijf";
 import { isoNaarDag } from "./datum";
 
@@ -7,6 +8,16 @@ const GEPUBLICEERD = { status: { equals: "gepubliceerd" } } as const;
 
 /** Only keeps keys with a real value, so optional fields really are absent. */
 const zonderLeeg = (o: Record<string, unknown>) => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== null && v !== undefined && v !== ""));
+
+/** A photo for the site: only without recognisable people, or with their consent. */
+const fotoVoorSite = (waarde: number | Media | null | undefined) => {
+  const foto = typeof waarde === "object" && waarde ? waarde : null;
+  if (!foto || (foto.personen !== "geen" && foto.personen !== "toestemming")) return null;
+  const pad = foto.sizes?.groot?.url || foto.url;
+  if (!pad) return null;
+  // Payload gives an absolute URL when serverURL is set, a path otherwise.
+  return { fotoUrl: pad.startsWith("http") ? pad : `${SERVER}${pad}`, fotoAlt: foto.alt };
+};
 
 /**
  * GET /api/site-inhoud: everything the site needs at build time. Each item is
@@ -22,10 +33,10 @@ export const siteInhoudEndpoint: Endpoint = {
 
     const [instellingen, mededelingen, arrangementen, referenties, reviews, faq, plaatsen] = await Promise.all([
       payload.findGlobal({ slug: "instellingen", depth: 0, overrideAccess: true }),
-      payload.find({ collection: "mededelingen", where: GEPUBLICEERD, sort: "vanaf", depth: 0, ...vraag }),
+      payload.find({ collection: "mededelingen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "arrangementen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "referenties", where: { and: [GEPUBLICEERD, { toestemming: { equals: true } }] }, sort: "-datum", depth: 1, ...vraag }),
-      payload.find({ collection: "reviews", where: GEPUBLICEERD, sort: "-createdAt", depth: 0, ...vraag }),
+      payload.find({ collection: "reviews", where: GEPUBLICEERD, sort: "-createdAt", depth: 2, ...vraag }),
       payload.find({ collection: "veelgesteld", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "plaatsen", where: GEPUBLICEERD, sort: "naam", depth: 0, ...vraag }),
     ]);
@@ -42,29 +53,40 @@ export const siteInhoudEndpoint: Endpoint = {
         google: instellingen.profielen?.google,
       }),
       mededelingen: mededelingen.docs.map((m) =>
-        zonderLeeg({ tekst: m.tekst, linkTekst: m.linkTekst, linkUrl: m.linkUrl, vanaf: isoNaarDag(m.vanaf), tot: isoNaarDag(m.tot) }),
+        zonderLeeg({ tekst: m.tekst, linkTekst: m.linkTekst, linkUrl: m.linkUrl, vanaf: isoNaarDag(m.vanaf), tot: isoNaarDag(m.tot), dagen: m.dagen?.length ? m.dagen : null, vanTijd: m.vanTijd, totTijd: m.totTijd }),
       ),
       arrangementen: arrangementen.docs.map((a) => ({ slug: a.slug, titel: a.titel, kort: a.kort, tekst: a.tekst, volgorde: a.volgorde ?? 0 })),
-      referenties: referenties.docs.map((r) => {
-        const foto = typeof r.foto === "object" && r.foto ? r.foto : null;
-        const fotoMag = foto && (foto.personen === "geen" || foto.personen === "toestemming");
-        const fotoPad = fotoMag ? foto.sizes?.groot?.url || foto.url : null;
-        return zonderLeeg({
+      referenties: referenties.docs.map((r) =>
+        zonderLeeg({
           slug: r.slug,
           titel: r.titel,
           plaats: r.plaats,
+          lat: r.lat,
+          lng: r.lng,
           gelegenheid: r.gelegenheid,
+          mogelijkheden: r.mogelijkheden?.length ? r.mogelijkheden : null,
           gasten: r.gasten,
           datum: isoNaarDag(r.datum),
           verhaal: r.verhaal,
-          // Payload gives an absolute URL when serverURL is set, a path otherwise.
-          fotoUrl: fotoPad ? (fotoPad.startsWith("http") ? fotoPad : `${SERVER}${fotoPad}`) : undefined,
-          fotoAlt: fotoMag ? foto.alt : undefined,
+          ...fotoVoorSite(r.foto),
+        }),
+      ),
+      reviews: reviews.docs.map((r) => {
+        // A linked reference only counts once it may be public itself.
+        const gekoppeld = typeof r.referentie === "object" && r.referentie ? r.referentie : null;
+        const verwijzing = gekoppeld?.status === "gepubliceerd" && gekoppeld.toestemming ? gekoppeld : null;
+        return zonderLeeg({
+          naam: r.naam,
+          gelegenheid: r.gelegenheid || verwijzing?.gelegenheid,
+          plaats: r.plaats || verwijzing?.plaats,
+          tekst: r.tekst,
+          bron: r.bron,
+          bronUrl: r.bronUrl,
+          caseSlug: verwijzing?.slug,
+          caseTitel: verwijzing?.titel,
+          ...(fotoVoorSite(r.foto) ?? fotoVoorSite(verwijzing?.foto)),
         });
       }),
-      reviews: reviews.docs.map((r) =>
-        zonderLeeg({ naam: r.naam, gelegenheid: r.gelegenheid, plaats: r.plaats, tekst: r.tekst, bron: r.bron, bronUrl: r.bronUrl }),
-      ),
       faq: faq.docs.map((f) => ({ vraag: f.vraag, antwoord: f.antwoord, pagina: f.pagina })),
       plaatsen: plaatsen.docs.map((p) => ({ naam: p.naam, provincie: p.provincie })),
     };

@@ -1,129 +1,103 @@
 ---
+// Contact: the direct lines as cards on the left, the first step of the form on
+// the right, and below that a good part of the questions.
 import { Image } from 'astro:assets';
 import BusBase from '../../layouts/BusBase.astro';
 import BusPageHero from '../../components/bus/BusPageHero.astro';
-import BusButton from '../../components/BusButton.astro';
-import BusFit from '../../components/bus/BusFit.astro';
+import BusFirstStep from '../../components/bus/BusFirstStep.astro';
 import BusFaq from '../../components/bus/BusFaq.astro';
-import { aanvraagUrl, contact, faqAlgemeen, url } from '../../data/nieuw';
+import { contact, url } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 import { faqSchema } from '../../lib/schema';
-import peerImg from '../../assets/peer-wagenaar.png';
+import whatsappIcon from '../../assets/whatsapp-icon.svg';
 
-const { email } = await getInhoud();
+const { email, faq } = await getInhoud();
 const crumbs = [{ label: 'Contact', href: url('contact') }];
-const faqItems = faqAlgemeen.slice(0, 3);
 const ways = [
-  { title: 'Bellen', value: contact.telefoon, href: contact.telefoonHref, text: 'Gewoon even overleggen. Staan we net in de bus, dan bellen we terug.', external: false },
-  { title: 'WhatsApp', value: 'Stuur een appje', href: contact.whatsappHref, text: 'Handig als je meteen een foto van de locatie wilt meesturen.', external: true },
-  { title: 'Mailen', value: email, href: `mailto:${email}`, text: 'Voor als je het liever even rustig opschrijft.', external: false },
+  { key: 'whatsapp', title: 'WhatsApp', value: 'Stuur een appje', href: contact.whatsappHref, text: 'Handig als je meteen een foto van de locatie wilt meesturen.', external: true },
+  { key: 'bellen', title: 'Bellen', value: contact.telefoon, href: contact.telefoonHref, text: 'Gewoon even overleggen. Staan we net in de bus, dan bellen we terug.', external: false },
+  { key: 'mailen', title: 'Mailen', value: email, href: `mailto:${email}`, text: 'Voor als je het liever even rustig opschrijft.', external: false },
 ];
 ---
 
 <BusBase
   title="Contact"
-  description="Bel, app of mail de Jachtbus, of start meteen je aanvraag. Jachtbus Foodtruck & Catering B.V., Julianalaan 54, Gasselte."
+  description="App, bel of mail de Jachtbus, of start meteen je aanvraag. Jachtbus Foodtruck & Catering B.V., Julianalaan 54, Gasselte."
   crumbs={crumbs}
-  schema={[faqSchema(faqItems)]}
+  schema={[faqSchema(faq)]}
 >
-  <BusPageHero
-    title="Bel, app of vul iets in"
-    text="Wat je handig vindt. Weet je nog niet alles? Geeft niks, een richtdatum en een schatting van het aantal gasten is genoeg."
-    crumbs={crumbs}
-  >
-    <div class="contact-hero_actions u-button-wrapper">
-      <BusButton label="Start je aanvraag" href={aanvraagUrl()} />
+  <BusPageHero title="Neem eenvoudig contact op" crumbs={crumbs}>
+    <ul class="ways_list">
+      {ways.map((way) => (
+        <li class="ways_item">
+          <a class="ways_card u-theme-bus-beige" href={way.href} rel={way.external ? 'external' : undefined} data-trigger="hover focus">
+            <span class="ways_icon_wrap" aria-hidden="true">
+              {way.key === 'whatsapp' && <Image class="ways_icon" src={whatsappIcon} alt="" width={32} height={32} />}
+              {way.key === 'bellen' && <svg class="ways_icon" viewBox="0 0 24 24"><path d="M6.600 10.800a15.100 15.100 0 0 0 6.600 6.600l2.200-2.200a1 1 0 0 1 1-.25 11.400 11.400 0 0 0 3.600.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.500a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.570a1 1 0 0 1-.25 1z" fill="currentColor" /></svg>}
+              {way.key === 'mailen' && <svg class="ways_icon" viewBox="0 0 24 24" fill="none"><path d="M3 5.500h18v13H3zM3.500 6l8.500 7 8.500-7" stroke="currentColor" stroke-width="2.500" /></svg>}
+            </span>
+            <span class="ways_body">
+              <span class="ways_title u-text-style-bus-title">{way.title}</span>
+              <span class="ways_value u-text-style-main">{way.value}</span>
+              <span class="ways_text u-text-style-small">{way.text}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <address class="ways_address u-text-style-small">
+      {contact.bedrijf}, {contact.adres}, {contact.postcode} {contact.plaats}. KvK {contact.kvk}.
+    </address>
+    <div slot="side">
+      <BusFirstStep title="Liever meteen aanvragen?" direct={false} />
     </div>
   </BusPageHero>
 
-  <section class="ways_wrap u-section u-theme-bus-beige">
-    <div class="ways_contain u-container">
-      <div class="ways_layout">
-        <ul class="ways_list">
-          {ways.map((way) => (
-            <li class="ways_item">
-              <h2 class="ways_title u-text-style-bus-title">{way.title}</h2>
-              <a class="ways_link u-text-style-poster-label" href={way.href} rel={way.external ? 'external' : undefined}>{way.value}</a>
-              <p class="ways_text u-text-style-main">{way.text}</p>
-            </li>
-          ))}
-        </ul>
-        <aside class="ways_aside">
-          <div class="ways_visual">
-            <Image class="ways_img" src={peerImg} alt="Portret van Peer Wagenaar" widths={[320, 640]} sizes="(max-width: 50em) 60vw, 25vw" />
-          </div>
-          <p class="ways_hand">Tot snel!</p>
-          <address class="ways_address u-text-style-small">
-            {contact.bedrijf}<br />
-            {contact.adres}<br />
-            {contact.postcode} {contact.plaats}<br />
-            KvK {contact.kvk}
-          </address>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <BusFit />
-  <BusFaq items={faqItems} />
+  <BusFaq items={faq} />
 </BusBase>
 
 <style>
-  .contact-hero_actions { justify-content: flex-start; }
-  .ways_wrap {
-    background-color: var(--_theme---background);
-    color: var(--_theme---text);
-  }
-  .ways_layout {
-    display: var(--flex-medium, grid);
-    flex-direction: column;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--_spacing---space--6) var(--site--gutter);
-  }
   .ways_list {
-    grid-column: 1 / span 8;
-    width: 100%;
-  }
-  .ways_item {
-    display: flex;
-    flex-flow: column;
-    gap: var(--_spacing---space--1);
-    padding-block: var(--_spacing---space--4);
-    border-top: var(--focus--width) solid var(--_theme---border);
-  }
-  .ways_link {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    min-height: var(--target--min);
-    color: var(--_theme---text-link--text);
-    overflow-wrap: anywhere;
-  }
-  .ways_text { max-width: 48ch; }
-  .ways_aside {
-    grid-column: 10 / span 3;
     display: flex;
     flex-flow: column;
     gap: var(--_spacing---space--3);
-    width: 100%;
   }
-  .ways_visual {
-    width: 100%;
-    max-width: var(--size--crop-large);
-    aspect-ratio: 1 / 1;
-    border-radius: var(--radius--round);
-    border: var(--focus--width) solid var(--color--bus-yellow);
-    overflow: clip;
+  .ways_card {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--4);
+    padding: var(--_spacing---space--4);
+    background-color: color-mix(in hsl, var(--_theme---background) calc(100% * var(--_trigger---on)), var(--color--white) calc(100% * var(--_trigger---off)));
+    color: var(--_theme---text);
+    text-decoration: none;
+    transition: background-color 150ms;
   }
-  .ways_img {
-    height: 100%;
-    object-position: 45% 20%;
+  .ways_icon_wrap {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--target--min);
+    height: var(--target--min);
+    color: var(--color--bus-green);
   }
-  .ways_hand {
-    font-family: var(--_typography---font--accent);
-    font-size: var(--_typography---size--hand);
-    line-height: var(--_typography---line-height--heading);
-    color: var(--_theme---text-accent);
+  .ways_icon {
+    width: var(--size--modal-icon);
+    height: var(--size--modal-icon);
+  }
+  .ways_body {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    min-width: 0;
+  }
+  .ways_value {
+    width: fit-content;
+    max-width: 100%;
+    color: var(--_theme---text-link--text);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: underline;
+    overflow-wrap: anywhere;
   }
   .ways_address { font-style: normal; }
 </style>

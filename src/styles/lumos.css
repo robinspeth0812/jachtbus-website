@@ -157,7 +157,7 @@ details[open],
   --flex-medium: initial; --none-medium: initial; --column-medium: initial;
   --row-medium: initial; --start-medium: initial; --center-medium: initial;
   --end-medium: initial; --first-medium: initial; --last-medium: initial;
-  --unset-medium: initial; --relative-medium: initial;
+  --unset-medium: initial; --relative-medium: initial; --contents-medium: initial;
 
   --flex-small: initial; --none-small: initial; --column-small: initial;
   --row-small: initial; --start-small: initial; --center-small: initial;
@@ -178,7 +178,7 @@ details[open],
     --flex-medium: flex; --none-medium: none; --column-medium: column;
     --row-medium: row; --start-medium: flex-start; --center-medium: center;
     --end-medium: flex-end; --first-medium: -1; --last-medium: 99;
-    --unset-medium: unset; --relative-medium: relative;
+    --unset-medium: unset; --relative-medium: relative; --contents-medium: contents;
   }
 }
 

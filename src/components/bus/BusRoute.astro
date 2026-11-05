@@ -1,33 +1,60 @@
 ---
-// The four steps as a route. The little bus drives along the line while you
-// scroll past, so reading the steps moves it to the last stop.
+// The steps as a route. The title takes all columns but the last, and above the
+// last stop stands the photo: that is where the road leads. The little bus drives
+// along the line while you scroll past and parks under it.
+import BusButton from '../BusButton.astro';
 import BusIcon from './BusIcon.astro';
-import { steps } from '../../data/nieuw';
+import BusPhoto from './BusPhoto.astro';
+import { aanvraagUrl, photos, steps, type Item, type Photo } from '../../data/nieuw';
 
 interface Props {
   /** Section title. */
   title?: string;
+  /** The stops on the route. */
+  items?: Item[];
+  /** Photo above the last stop. */
+  photo?: Photo;
+  /** Focal point of that photo. */
+  focus?: string;
+  /** Text on the button under the title. */
+  label?: string;
 }
-const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
+const {
+  title = 'Hoe gaat dat eigenlijk in z’n werk?',
+  items = steps,
+  photo = photos.veld,
+  focus = '30% 50%',
+  label = 'Aanvraag starten',
+} = Astro.props;
 ---
 
 <section class="bus-route_wrap u-section u-theme-bus-beige">
   <div class="bus-route_contain u-container">
-    <h2 class="bus-route_title u-text-style-poster-small">{title}</h2>
-    <div class="bus-route_road">
-      <div class="bus-route_line"></div>
-      <div class="bus-route_marker"><BusIcon facing="right" /></div>
-      <ol class="bus-route_list">
-        {steps.map((step, index) => (
-          <li class="bus-route_item">
-            <div class="bus-route_stop u-text-style-h4">{index + 1}</div>
-            <div class="bus-route_body">
-              <h3 class="bus-route_name u-text-style-bus-title">{step.title}</h3>
-              <p class="bus-route_text u-text-style-main">{step.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+    <div class="bus-route_layout" style={`--_count: ${items.length};`}>
+      <div class="bus-route_intro">
+        <h2 class="bus-route_title u-text-style-poster">{title}</h2>
+        <div class="bus-route_actions u-button-wrapper">
+          <BusButton label={label} href={aanvraagUrl()} />
+        </div>
+      </div>
+      <div class="bus-route_visual">
+        <BusPhoto photo={photo} shape="arch" focus={focus} sizes="(max-width: 50em) 100vw, 25vw" />
+      </div>
+      <div class="bus-route_road">
+        <div class="bus-route_line"></div>
+        <div class="bus-route_marker"><BusIcon facing="right" /></div>
+        <ol class="bus-route_list">
+          {items.map((step, index) => (
+            <li class="bus-route_item">
+              <div class="bus-route_stop u-text-style-h4">{index + 1}</div>
+              <div class="bus-route_body">
+                <h3 class="bus-route_name u-text-style-bus-title">{step.title}</h3>
+                <p class="bus-route_text u-text-style-main">{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   </div>
 </section>
@@ -37,8 +64,33 @@ const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
     background-color: var(--_theme---background);
     color: var(--_theme---text);
   }
-  .bus-route_title { margin-bottom: var(--_spacing---space--7); }
-  .bus-route_road { position: relative; }
+  .bus-route_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(var(--_count), minmax(0, 1fr));
+    align-items: end;
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .bus-route_intro {
+    grid-column: span calc(var(--_count) - 1);
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+    padding-bottom: var(--_spacing---space--4);
+  }
+  .bus-route_title { max-width: 16ch; }
+  .bus-route_actions { justify-content: flex-start; }
+  .bus-route_visual {
+    width: 100%;
+    order: var(--last-medium, 0);
+  }
+  .bus-route_road {
+    grid-column: 1 / -1;
+    position: relative;
+    width: 100%;
+  }
   .bus-route_line {
     position: absolute;
     top: calc(var(--size--step) / 2 * var(--_responsive---large));
@@ -51,8 +103,9 @@ const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
   .bus-route_marker {
     display: var(--none-medium, block);
     position: absolute;
+    --_past-stop: calc(var(--size--step) + var(--_spacing---space--2)); /* parks next to a stop, not behind it */
     bottom: calc(100% - var(--size--step) / 2 - var(--focus--width));
-    left: 0;
+    left: var(--_past-stop);
     width: var(--size--bus-marker);
   }
   @media (prefers-reduced-motion: no-preference) {
@@ -65,12 +118,12 @@ const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
     }
   }
   @keyframes bus-route-drive {
-    from { left: 0; }
-    to { left: 75%; }
+    from { left: var(--_past-stop); }
+    to { left: calc((100% + var(--site--gutter)) * (var(--_count) - 1) / var(--_count) + var(--_past-stop)); }
   }
   .bus-route_list {
     display: grid;
-    grid-template-columns: repeat(calc(var(--_responsive---large) * 4 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    grid-template-columns: repeat(calc(var(--_responsive---large) * var(--_count) + (1 - var(--_responsive---large))), minmax(0, 1fr));
     gap: var(--_spacing---space--6) var(--site--gutter);
     position: relative;
   }
@@ -82,6 +135,7 @@ const { title = 'Hoe gaat dat in z’n werk?' } = Astro.props;
   .bus-route_stop {
     display: flex;
     flex-shrink: 0;
+    align-self: flex-start;
     align-items: center;
     justify-content: center;
     width: var(--size--step);

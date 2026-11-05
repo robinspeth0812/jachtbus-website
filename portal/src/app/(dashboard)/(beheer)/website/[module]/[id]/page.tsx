@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Verwijderen } from "@/components/Formulier";
 import { ItemFormulier } from "@/components/ItemFormulier";
@@ -23,8 +24,13 @@ export default async function ModuleItem({ params, searchParams }: { params: Pro
   const doc = nieuw ? null : await payload.findByID({ collection: m.slug, id: Number(id), depth: 0, user, overrideAccess: false }).catch(() => null);
   if (!nieuw && !doc) notFound();
   const d = doc as unknown as (Record<string, unknown> & { id: number; status?: string }) | null;
-  const keuzes = m.velden.some((v) => v.bron === "media") ? await laadKeuzes(payload, user, ["media"]) : undefined;
+  const bronnen = (["media", "referenties"] as const).filter((bron) => m.velden.some((v) => v.bron === bron));
+  const keuzes = bronnen.length ? await laadKeuzes(payload, user, [...bronnen]) : undefined;
   const titel = d ? String(d[m.titelVeld] ?? m.enkel) : `${m.enkel} toevoegen`;
+  // The link is stored on the review; a reference shows it from its side too.
+  const gekoppeld = key === "referenties" && d
+    ? (await payload.find({ collection: "reviews", where: { referentie: { equals: d.id } }, sort: "-createdAt", depth: 0, limit: 100, pagination: false, user, overrideAccess: false })).docs
+    : [];
 
   return (
     <>
@@ -44,6 +50,23 @@ export default async function ModuleItem({ params, searchParams }: { params: Pro
         keuzes={keuzes}
         knop={nieuw ? `${m.enkel} opslaan` : "Opslaan"}
       />
+      {key === "referenties" && d && (
+        <section className="mt-6">
+          <h2 className="text-base font-semibold">Reviews bij deze referentie</h2>
+          {gekoppeld.length ? (
+            <ul className="mt-2 flex flex-col gap-1">
+              {gekoppeld.map((review) => (
+                <li key={review.id} className="flex flex-wrap items-center gap-2">
+                  <Link className="underline" href={`/website/reviews/${review.id}`}>{review.naam}</Link>
+                  <PublicatieLabel status={review.status} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-2">Nog geen review gekoppeld. Dat doe je bij de review zelf, onder Website en dan Reviews.</p>
+          )}
+        </section>
+      )}
       {d && (
         <div className="mt-6">
           <Verwijderen actie={verwijderItem} id={d.id} wat={m.enkel} naam={titel.slice(0, 50)} velden={{ module: key }} />

@@ -1,0 +1,86 @@
+---
+// The core values: title left, intro with Peer's signature right, and under that
+// three columns with an icon next to each value.
+import { values, valuesIntro } from '../../data/nieuw';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Intro next to the title. */
+  text?: string;
+  /** Handwritten signature under the intro. Empty hides it. */
+  signature?: string;
+}
+const { title = 'Onze kernwaarden', text = valuesIntro, signature = 'Peer Wagenaar' } = Astro.props;
+
+const iconPaths = {
+  pin: 'M8 1.5c-2.7 0-4.8 2.1-4.8 4.8 0 3.6 4.8 8.2 4.8 8.2s4.8-4.6 4.8-8.2c0-2.7-2.1-4.8-4.8-4.8Zm0 6.5a1.7 1.7 0 1 1 0-3.4 1.7 1.7 0 0 1 0 3.4Z',
+  leaf: 'M13.8 2.2c-7 .3-10.9 3.7-11.6 9.8-.1.9.1 1.7.5 2.3l1.2-1.1c2.6-4.6 5.9-6.9 8.2-7.9-2.9 2-5.6 4.7-7.3 8.2.7.4 1.6.6 2.6.5 6-.6 6.9-6.1 6.4-11.8Z',
+  tree: 'M8 1.5a4.4 4.4 0 0 0-4.3 5.4 3 3 0 0 0 .9 5.8h2.5v1.8h1.8v-1.8h2.5a3 3 0 0 0 .9-5.8A4.4 4.4 0 0 0 8 1.5Z',
+};
+---
+
+<section class="bus-values_wrap u-section u-theme-bus-beige">
+  <div class="bus-values_contain u-container">
+    <div class="bus-values_top">
+      <h2 class="bus-values_title u-text-style-poster-small">{title}</h2>
+      <div class="bus-values_intro">
+        <p class="bus-values_text u-text-style-large">{text}</p>
+        {signature && <p class="bus-values_signature u-text-style-accent u-text-style-h5">{signature}</p>}
+      </div>
+    </div>
+    <ul class="bus-values_list">
+      {values.map((value) => (
+        <li class="bus-values_item">
+          <svg class="bus-values_icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d={iconPaths[value.icon]} /></svg>
+          <div class="bus-values_body">
+            <h3 class="bus-values_name u-text-style-bus-title">{value.title}</h3>
+            <p class="bus-values_item_text u-text-style-main">{value.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bus-values_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-values_contain {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+  }
+  .bus-values_top {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--4) var(--site--gutter);
+  }
+  .bus-values_intro {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-values_text { max-width: 58ch; }
+  .bus-values_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+  }
+  .bus-values_item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-values_icon {
+    flex-shrink: 0;
+    width: var(--size--value-icon);
+    height: var(--size--value-icon);
+    color: var(--color--bus-yellow);
+  }
+  .bus-values_name { margin-bottom: var(--_spacing---space--1); }
+  .bus-values_item_text { max-width: 36ch; }
+</style>

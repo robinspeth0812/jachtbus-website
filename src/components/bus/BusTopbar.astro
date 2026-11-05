@@ -1,0 +1,262 @@
+---
+// Thin bar above the navigation. Left the announcements from the portal, running
+// by when they do not fit, or else where we work. Right the direct lines. Phones
+// have those in the bar at the bottom of the screen, so there only an announcement
+// shows. The site is static, so the browser checks days, times and periods, on
+// Dutch time. Everything is rendered twice for an endless loop; the copy is hidden
+// from screen readers and the keyboard.
+import { Image } from 'astro:assets';
+import facebookIcon from '../../assets/facebook-icon.svg';
+import instagramIcon from '../../assets/instagram-icon.png';
+import whatsappIcon from '../../assets/whatsapp-icon.svg';
+import { contact, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+
+interface Props {
+  /** Text on the left when no announcement is running. */
+  text?: string;
+}
+const { text = 'Foodtruck uit Gasselte, op locatie in Drenthe, Groningen en Friesland' } = Astro.props;
+const { mededelingen } = await getInhoud();
+---
+
+<div class="bus-topbar_wrap u-theme-bus-green">
+  <div class="bus-topbar_contain u-container">
+    <div class="bus-topbar_layout u-text-style-small">
+      <p class="bus-topbar_text">{text}</p>
+      {mededelingen.length > 0 && (
+        <div class="bus-topbar_notice" role="group" aria-label="Mededelingen">
+          <svg class="bus-topbar_notice_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10v4l3 .5V9.500zM6 9.500 19 4v16L6 14.500M9 15.500l1 4.500h3l-1.200-3.400M19 9.500a2.500 2.500 0 0 1 0 5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /></svg>
+          <div class="bus-topbar_window">
+            <div class="bus-topbar_track">
+              {[false, true].map((copy) => (
+                <ul class:list={['bus-topbar_run', { 'is-copy': copy }]} aria-hidden={copy ? 'true' : undefined}>
+                  {mededelingen.map((item) => (
+                    <li class="bus-topbar_message" data-vanaf={item.vanaf} data-tot={item.tot} data-dagen={item.dagen?.join(' ')} data-van={item.vanTijd} data-tot-tijd={item.totTijd}>
+                      {item.tekst}
+                      {item.linkUrl && <a class="bus-topbar_message_link" href={item.linkUrl} tabindex={copy ? -1 : undefined}>{item.linkTekst ?? 'Meer info'}</a>}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+          <button class="bus-topbar_pause" type="button" aria-label="Mededelingen pauzeren" data-trigger="hover focus">
+            <svg class="bus-topbar_pause_icon is-pause is-active" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z" fill="currentColor" /></svg>
+            <svg class="bus-topbar_pause_icon is-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.500v13l11-6.500z" fill="currentColor" /></svg>
+          </button>
+        </div>
+      )}
+      <div class="bus-topbar_lines">
+        <a class="bus-topbar_link" href={contact.telefoonHref}>{contact.telefoon}</a>
+        <a class="bus-topbar_link" href={url('contact')}>Contact</a>
+        <span class="bus-topbar_divider" aria-hidden="true"></span>
+        <ul class="bus-topbar_list">
+          <li class="bus-topbar_item">
+            <a class="bus-topbar_icon_link" href={contact.instagram} rel="external" aria-label="Instagram">
+              <Image class="bus-topbar_icon" src={instagramIcon} alt="" width={20} densities={[1, 2]} />
+            </a>
+          </li>
+          {contact.facebook && (
+            <li class="bus-topbar_item">
+              <a class="bus-topbar_icon_link" href={contact.facebook} rel="external" aria-label="Facebook">
+                <Image class="bus-topbar_icon" src={facebookIcon} alt="" width={20} height={20} />
+              </a>
+            </li>
+          )}
+          <li class="bus-topbar_item">
+            <a class="bus-topbar_icon_link" href={contact.whatsappHref} rel="external" aria-label="WhatsApp">
+              <Image class="bus-topbar_icon" src={whatsappIcon} alt="" width={20} height={20} />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bus-topbar_wrap {
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+  }
+  .bus-topbar_layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--5);
+  }
+  .bus-topbar_text { display: var(--none-medium, block); }
+  .bus-topbar_text.is-hidden { display: none; }
+  .bus-topbar_notice {
+    display: none;
+    flex: 1 1 0;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-width: 0;
+    min-height: var(--target--min);
+  }
+  .bus-topbar_notice.is-active { display: flex; }
+  .bus-topbar_notice_icon {
+    flex-shrink: 0;
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
+    color: var(--color--marigold-3);
+  }
+  .bus-topbar_window {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: clip;
+  }
+  .bus-topbar_track {
+    display: flex;
+    width: max-content;
+  }
+  /* Short enough, or no motion wanted: it just stands there and may wrap. */
+  .bus-topbar_notice.is-still .bus-topbar_track { width: auto; }
+  .bus-topbar_notice.is-still .bus-topbar_run { flex-wrap: wrap; }
+  .bus-topbar_notice.is-still .bus-topbar_run.is-copy,
+  .bus-topbar_notice.is-still .bus-topbar_pause { display: none; }
+  .bus-topbar_run {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--_spacing---space--7);
+    padding-right: var(--_spacing---space--7);
+  }
+  .bus-topbar_message { display: none; }
+  .bus-topbar_message.is-active { display: block; }
+  .bus-topbar_message_link {
+    margin-left: var(--_spacing---space--2);
+    color: inherit;
+  }
+  .bus-topbar_pause {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--target--min);
+    height: var(--target--min);
+    padding: 0;
+    background: none;
+    color: inherit;
+    border: none;
+    opacity: calc(0.7 * var(--_trigger---on) + var(--_trigger---off));
+    cursor: pointer;
+  }
+  .bus-topbar_pause_icon {
+    display: none;
+    width: var(--_spacing---space--3);
+    height: var(--_spacing---space--3);
+  }
+  .bus-topbar_pause_icon.is-active { display: block; }
+  .bus-topbar_lines {
+    display: var(--none-medium, flex);
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--_spacing---space--5);
+  }
+  .bus-topbar_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: inherit;
+    text-decoration: none;
+  }
+  .bus-topbar_divider {
+    width: var(--border-width--main);
+    height: var(--_spacing---space--4);
+    background-color: currentColor;
+    opacity: 0.5;
+  }
+  .bus-topbar_list {
+    display: flex;
+    align-items: center;
+  }
+  .bus-topbar_icon_link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--target--min);
+    height: var(--target--min);
+  }
+  .bus-topbar_icon {
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-topbar_notice:not(.is-still) .bus-topbar_track {
+      animation: bus-topbar-run var(--_duration) linear infinite;
+    }
+    .bus-topbar_notice.is-paused .bus-topbar_track,
+    .bus-topbar_notice.is-held .bus-topbar_track { animation-play-state: paused; }
+  }
+  @keyframes bus-topbar-run {
+    to { transform: translateX(-50%); }
+  }
+</style>
+
+<script>
+  const PIXELS_PER_SECOND = 50;
+  const dayNames = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+
+  // Now on Dutch time, wherever the visitor is.
+  const dutchNow = () => {
+    const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Amsterdam', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    }).formatToParts(new Date()).map((part) => [part.type, part.value]));
+    const date = `${parts.year}-${parts.month}-${parts.day}`;
+    return { date, time: `${parts.hour}:${parts.minute}`, day: dayNames[new Date(`${date}T12:00:00Z`).getUTCDay()] };
+  };
+
+  document.querySelectorAll<HTMLElement>('.bus-topbar_layout').forEach((root) => {
+    const notice = root.querySelector<HTMLElement>('.bus-topbar_notice');
+    const fallback = root.querySelector<HTMLElement>('.bus-topbar_text');
+    const windowEl = root.querySelector<HTMLElement>('.bus-topbar_window');
+    const run = root.querySelector<HTMLElement>('.bus-topbar_run');
+    const pause = root.querySelector<HTMLElement>('.bus-topbar_pause');
+    const pauseIcon = root.querySelector<SVGElement>('.bus-topbar_pause_icon.is-pause');
+    const playIcon = root.querySelector<SVGElement>('.bus-topbar_pause_icon.is-play');
+    if (!notice || !fallback || !windowEl || !run || !pause || !pauseIcon || !playIcon) return;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const update = () => {
+      const now = dutchNow();
+      let running = 0;
+      notice.querySelectorAll<HTMLElement>('.bus-topbar_message').forEach((message) => {
+        const { vanaf, tot, dagen, van, totTijd } = message.dataset;
+        const on = !(vanaf && now.date < vanaf.slice(0, 10))
+          && !(tot && now.date > tot.slice(0, 10))
+          && !(dagen && !dagen.split(' ').includes(now.day))
+          && !(van && now.time < van)
+          && !(totTijd && now.time >= totTijd);
+        message.classList.toggle('is-active', on);
+        if (on) running += 1;
+      });
+      notice.classList.toggle('is-active', running > 0);
+      fallback.classList.toggle('is-hidden', running > 0);
+      if (running === 0) return;
+      // Measured standing still and on one line: does it fit?
+      notice.classList.remove('is-still');
+      const fits = run.offsetWidth <= windowEl.clientWidth;
+      notice.classList.toggle('is-still', fits || still);
+      notice.style.setProperty('--_duration', `${run.offsetWidth / PIXELS_PER_SECOND}s`);
+    };
+    update();
+    window.setInterval(update, 60000);
+    new ResizeObserver(update).observe(root);
+
+    // Reading it holds it, the button stops it for good.
+    const hold = (held: boolean) => () => notice.classList.toggle('is-held', held);
+    notice.addEventListener('pointerenter', hold(true));
+    notice.addEventListener('pointerleave', hold(false));
+    notice.addEventListener('focusin', hold(true));
+    notice.addEventListener('focusout', hold(false));
+
+    pause.addEventListener('click', () => {
+      const paused = notice.classList.toggle('is-paused');
+      pause.setAttribute('aria-label', paused ? 'Mededelingen afspelen' : 'Mededelingen pauzeren');
+      pauseIcon.classList.toggle('is-active', !paused);
+      playIcon.classList.toggle('is-active', paused);
+    });
+  });
+</script>

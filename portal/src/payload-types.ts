@@ -511,7 +511,10 @@ export interface Referenty {
   slug: string;
   titel: string;
   plaats: string;
+  lat?: number | null;
+  lng?: number | null;
   gelegenheid: string;
+  mogelijkheden?: ('Walking dinner' | 'BBQ-smoker' | 'Streetfood' | 'Buffet' | 'Aan tafel')[] | null;
   gasten?: number | null;
   datum?: string | null;
   verhaal: string;
@@ -532,6 +535,8 @@ export interface Review {
   gelegenheid?: string | null;
   plaats?: string | null;
   tekst: string;
+  foto?: (number | null) | Media;
+  referentie?: (number | null) | Referenty;
   bron: 'Google' | 'Facebook' | 'E-mail van de klant' | 'WhatsApp van de klant';
   bronUrl?: string | null;
   bewijs?: string | null;
@@ -572,10 +577,14 @@ export interface Plaatsen {
 export interface Mededelingen {
   id: number;
   tekst: string;
-  linkTekst?: string | null;
-  linkUrl?: string | null;
+  dagen?: ('maandag' | 'dinsdag' | 'woensdag' | 'donderdag' | 'vrijdag' | 'zaterdag' | 'zondag')[] | null;
+  vanTijd?: string | null;
+  totTijd?: string | null;
   vanaf?: string | null;
   tot?: string | null;
+  linkTekst?: string | null;
+  linkUrl?: string | null;
+  volgorde?: number | null;
   status: 'concept' | 'gepubliceerd';
   updatedAt: string;
   createdAt: string;
@@ -1094,7 +1103,10 @@ export interface ReferentiesSelect<T extends boolean = true> {
   slug?: T;
   titel?: T;
   plaats?: T;
+  lat?: T;
+  lng?: T;
   gelegenheid?: T;
+  mogelijkheden?: T;
   gasten?: T;
   datum?: T;
   verhaal?: T;
@@ -1114,6 +1126,8 @@ export interface ReviewsSelect<T extends boolean = true> {
   gelegenheid?: T;
   plaats?: T;
   tekst?: T;
+  foto?: T;
+  referentie?: T;
   bron?: T;
   bronUrl?: T;
   bewijs?: T;
@@ -1151,10 +1165,14 @@ export interface PlaatsenSelect<T extends boolean = true> {
  */
 export interface MededelingenSelect<T extends boolean = true> {
   tekst?: T;
-  linkTekst?: T;
-  linkUrl?: T;
+  dagen?: T;
+  vanTijd?: T;
+  totTijd?: T;
   vanaf?: T;
   tot?: T;
+  linkTekst?: T;
+  linkUrl?: T;
+  volgorde?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

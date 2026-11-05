@@ -1,6 +1,6 @@
 ---
-// Services as big rows with a photo in a changing shape, instead of a grid of
-// identical cards. On hover the title shifts over and turns green.
+// Services next to a photo in a changing shape, in two columns on wide screens.
+// On hover the title shifts over and takes the accent color.
 import { Image } from 'astro:assets';
 import { services, url } from '../../data/nieuw';
 
@@ -9,27 +9,34 @@ interface Props {
   title?: string;
   /** Slug of a service to leave out, on that service's own page. */
   except?: string;
+  /** Show only occasions or only options. Empty shows them all. */
+  soort?: 'gelegenheid' | 'mogelijkheid';
+  /** Section theme. */
+  theme?: 'beige' | 'green';
 }
-const { title = 'Wat vieren we?', except = '' } = Astro.props;
-const rows = services.filter((service) => service.slug !== except);
+const { title = 'Wat vieren we?', except = '', soort, theme = 'beige' } = Astro.props;
+const rows = services.filter((service) => service.slug !== except && (!soort || service.soort === soort));
 ---
 
-<section class="bus-rows_wrap u-section u-theme-bus-beige">
+<section class:list={['bus-rows_wrap', 'u-section', `u-theme-bus-${theme}`]}>
   <div class="bus-rows_contain u-container">
     <h2 class="bus-rows_title u-text-style-poster-small">{title}</h2>
     <ul class="bus-rows_list">
       {rows.map((service) => (
         <li class="bus-rows_item">
           <a class="bus-rows_link" href={url(`catering/${service.slug}`)} data-trigger="hover focus">
-            <h3 class="bus-rows_name u-text-style-poster-row">{service.nav}</h3>
-            <p class="bus-rows_text u-text-style-large">{service.rowText}</p>
             <div class:list={['bus-rows_visual', `is-${service.shape}`]}>
               <Image class="bus-rows_img" src={service.photo.src} alt="" width={420} />
+            </div>
+            <div class="bus-rows_body">
+              <h3 class="bus-rows_name u-text-style-poster-row">{service.nav}</h3>
+              <p class="bus-rows_text u-text-style-large">{service.rowText}</p>
             </div>
           </a>
         </li>
       ))}
     </ul>
+    <slot />
   </div>
 </section>
 
@@ -39,34 +46,38 @@ const rows = services.filter((service) => service.slug !== except);
     color: var(--_theme---text);
   }
   .bus-rows_title { margin-bottom: var(--_spacing---space--5); }
-  .bus-rows_item { border-top: var(--focus--width) solid var(--_theme---border); }
-  .bus-rows_item:last-child { border-bottom: var(--focus--width) solid var(--_theme---border); }
-  .bus-rows_link {
+  .bus-rows_list {
     display: grid;
-    grid-template-columns: repeat(calc(var(--_responsive---large) * 12 + (1 - var(--_responsive---large)) * 3), minmax(0, 1fr));
-    grid-auto-flow: dense;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    column-gap: var(--site--gutter);
+    margin-bottom: var(--_spacing---space--5);
+  }
+  .bus-rows_item { border-top: var(--border-width--main) solid var(--_theme---divider); }
+  .bus-rows_link {
+    display: flex;
     align-items: center;
-    gap: var(--_spacing---space--2) var(--site--gutter);
+    gap: var(--_spacing---space--4);
     padding-block: var(--_spacing---space--4);
     color: var(--_theme---text);
     text-decoration: none;
   }
+  .bus-rows_body {
+    display: flex;
+    flex: 1 1 0;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+    min-width: 0;
+  }
   .bus-rows_name {
-    grid-column: span calc(var(--_responsive---large) * 5 + (1 - var(--_responsive---large)) * 2);
     transform: translateX(calc(var(--_spacing---space--4) * var(--_trigger---off)));
     color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
     transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms;
   }
-  .bus-rows_text {
-    grid-column: span calc(var(--_responsive---large) * 5 + (1 - var(--_responsive---large)) * 2);
-    max-width: 42ch;
-  }
+  .bus-rows_text { max-width: 36ch; }
   .bus-rows_visual {
-    grid-column: calc(var(--_responsive---large) * 11 + (1 - var(--_responsive---large)) * 3) / span calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large)));
-    grid-row: span calc(1 + (1 - var(--_responsive---large)));
-    justify-self: end;
-    width: 100%;
-    max-width: var(--size--row-img);
+    flex-shrink: 0;
+    order: var(--last-medium, 0);
+    width: calc(var(--_responsive---large) * var(--size--row-img) + (1 - var(--_responsive---large)) * var(--size--row-img-small));
     aspect-ratio: 1 / 1;
     overflow: clip;
     background-color: var(--_theme---background-skeleton);

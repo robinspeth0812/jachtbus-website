@@ -1,16 +1,22 @@
 ---
-// Region landing pages, with the towns where the bus actually stood. The final
-// set of location pages follows from keyword research.
+// Local pages per province: the first step of the form in view, the local story
+// next to a map of only this province, and everything below it about this province.
+// The final set of location pages follows from keyword research.
 import BusBase from '../../layouts/BusBase.astro';
 import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusFirstStep from '../../components/bus/BusFirstStep.astro';
 import BusPlaces from '../../components/bus/BusPlaces.astro';
-import BusStory from '../../components/bus/BusStory.astro';
+import BusMap from '../../components/bus/BusMap.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusFit from '../../components/bus/BusFit.astro';
+import BusReviews from '../../components/bus/BusReviews.astro';
+import BusMoments from '../../components/bus/BusMoments.astro';
 import BusFaq from '../../components/bus/BusFaq.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { photos, regions, url } from '../../data/nieuw';
+import { regions, url } from '../../data/nieuw';
 import type { Region } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+import { casesIn } from '../../lib/regio';
 import { faqSchema, serviceSchema } from '../../lib/schema';
 
 export function getStaticPaths() {
@@ -22,6 +28,8 @@ interface Props {
 const { region } = Astro.props;
 const crumbs = [{ label: `Foodtruck ${region.naam}`, href: url(region.slug) }];
 const others = regions.filter((other) => other.slug !== region.slug);
+const { referenties } = await getInhoud();
+const caseSlugs = casesIn(region.naam, referenties).map((item) => item.slug);
 ---
 
 <BusBase
@@ -30,28 +38,26 @@ const others = regions.filter((other) => other.slug !== region.slug);
   crumbs={crumbs}
   schema={[serviceSchema(`Foodtruckcatering in ${region.naam}`, region.metaDescription, [region.naam]), faqSchema(region.faq)]}
 >
-  <BusPageHero
-    title={region.title}
-    text={region.intro}
-    photo={region.photo}
-    shape="corner"
-    crumbs={crumbs}
-    checkLabel="Check je datum"
-  />
+  <BusPageHero title={region.title} text={region.intro} photo={region.photo} shape="corner" crumbs={crumbs}>
+    <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+  </BusPageHero>
   <BusPlaces places={region.plaatsen} />
-  <BusStory title={`De bus in ${region.naam}`} paragraphs={region.verhaal} photo={photos.luik} shape="arch" focus="50% 45%">
+  <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={region}>
     <p class="region_more u-text-style-main">
       Ook in {others.map((other, index) => (
         <>{index > 0 && ' en '}<a class="region_link" href={url(other.slug)}>{other.naam}</a></>
       ))} rijden we voor.
     </p>
-  </BusStory>
-  <BusRows title={`Wat vieren we in ${region.naam}?`} />
+  </BusMap>
+  <BusRows title={`Wat vieren we in ${region.naam}?`} soort="gelegenheid" theme="green" />
   <BusFit />
-  <BusFaq items={region.faq} />
+  <BusReviews title={`Echte reacties uit ${region.naam}`} cases={caseSlugs} />
+  <BusMoments title={region.extraTitel} items={region.extra} theme="green" />
+  <BusFaq title={`Veelgestelde vragen over ${region.naam}`} items={region.faq} />
   <BusClosing />
 </BusBase>
 
 <style>
+  .region_more { margin-top: var(--_spacing---space--3); }
   .region_link { color: var(--_theme---text-link--text); }
 </style>

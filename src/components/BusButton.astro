@@ -9,17 +9,20 @@ interface Props {
   href?: string;
   /** Visual style of the button. */
   variant?: 'primary' | 'secondary';
+  /** Show an arrow in a circle behind the text, for the main call to action. */
+  arrow?: boolean;
 }
 
-const { label = 'Start je aanvraag', href = '/aanvraag', variant = 'primary' } = Astro.props;
+const { label = 'Start je aanvraag', href = '/aanvraag', variant = 'primary', arrow = false } = Astro.props;
 ---
 
-<a class:list={['bus-button_wrap', `is-${variant}`]} href={href} data-trigger="hover focus">{label}</a>
+<a class:list={['bus-button_wrap', `is-${variant}`]} href={href} data-trigger="hover focus"><slot name="icon" />{label}{arrow && <span class="bus-button_arrow" aria-hidden="true"><svg class="bus-button_arrow_icon" viewBox="0 0 16 16" fill="none"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></span>}</a>
 
 <style>
   .bus-button_wrap {
     display: inline-flex;
     align-items: center;
+    gap: var(--_spacing---space--2);
     min-height: var(--target--min);
     padding: var(--_spacing---space--3) var(--_spacing---space--5);
     border-style: solid;
@@ -37,6 +40,27 @@ const { label = 'Start je aanvraag', href = '/aanvraag', variant = 'primary' } =
     background-color: color-mix(in hsl, var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off)));
     border-color: color-mix(in hsl, var(--_theme---button-primary--border) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--border-hover) calc(100% * var(--_trigger---off)));
     color: color-mix(in hsl, var(--_theme---button-primary--text) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--text-hover) calc(100% * var(--_trigger---off)));
+  }
+  /* The circle takes the text color, the arrow the color of the button. */
+  .bus-button_arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--size--button-arrow);
+    height: var(--size--button-arrow);
+    margin-right: calc(var(--_spacing---space--2) * -1);
+    background-color: currentColor;
+    border-radius: var(--radius--round);
+  }
+  .bus-button_arrow_icon {
+    width: 60%;
+    height: 60%;
+    color: color-mix(in hsl, var(--_theme---button-primary--background) calc(100% * var(--_trigger---on)), var(--_theme---button-primary--background-hover) calc(100% * var(--_trigger---off)));
+    transform: translateX(calc(var(--_spacing---space--1) * 0.5 * var(--_trigger---off)));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-button_arrow_icon { transition: transform 200ms, color 200ms; }
   }
   .bus-button_wrap.is-secondary {
     background-color: transparent;

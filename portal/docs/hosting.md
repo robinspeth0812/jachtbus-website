@@ -83,7 +83,7 @@ on:
     types: [portal-inhoud]
 ```
 
-Die workflow is in deze ronde niet aangepast. Een gewone webhook-URL (POST) werkt ook: laat dan het token leeg.
+De workflow reageert daar al op. Zet in GitHub onder Settings, Secrets and variables, Actions, de variabelen `CMS_URL` (`https://portal.jachtbusfoodtruck.nl`) en `PUBLIC_AANVRAAG_ENDPOINT` (`https://portal.jachtbusfoodtruck.nl/api/aanvraag`). Dan haalt elke build de inhoud uit het portaal, en komt een nieuwe referentie vanzelf op de kaart.
 
 ## 8. Controleren
 

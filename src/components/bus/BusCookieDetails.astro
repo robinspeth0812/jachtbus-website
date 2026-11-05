@@ -1,0 +1,55 @@
+---
+// The facts about one service: purpose, provider, cookies, transfer, legal basis.
+// Used in the banner and on the cookie page.
+import type { CookieService } from '../../data/cookies';
+
+interface Props {
+  /** The service to describe. */
+  service: CookieService;
+}
+const { service } = Astro.props;
+const rows = [
+  ['Doel', service.doel],
+  ['Aanbieder', service.aanbieder],
+  ['Opslag', service.cookies],
+  ['Buiten de EU', service.doorgifte],
+  ['Grondslag', service.grondslag],
+];
+---
+
+<div class="bus-cookie_wrap u-text-style-small">
+  <p class="bus-cookie_name u-text-style-bus-title">{service.naam}</p>
+  <dl class="bus-cookie_list">
+    {rows.map(([term, value]) => (
+      <div class="bus-cookie_row">
+        <dt class="bus-cookie_term">{term}</dt>
+        <dd class="bus-cookie_value">{value}</dd>
+      </div>
+    ))}
+  </dl>
+  {service.privacyUrl && <a class="bus-cookie_link" href={service.privacyUrl} rel="external">Privacyverklaring van de aanbieder</a>}
+</div>
+
+<style>
+  .bus-cookie_wrap {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+    padding: var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+  }
+  .bus-cookie_list {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-cookie_term { font-weight: var(--_typography---font--primary-bold); }
+  .bus-cookie_value { margin: 0; }
+  .bus-cookie_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: inherit;
+  }
+</style>

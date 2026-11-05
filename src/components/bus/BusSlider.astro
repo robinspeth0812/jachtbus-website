@@ -1,7 +1,8 @@
 ---
 // Row of photos that starts on the container and runs off the right edge of the
 // page: one whole photo, the next one half. Swipes and scrolls natively, the
-// script only adds the automatic advance and its pause button.
+// script adds the buttons and the automatic advance. The ring around the pause
+// button is the timer: when it is full, the next photo comes.
 import { Image } from 'astro:assets';
 import type { Photo } from '../../data/nieuw';
 
@@ -39,11 +40,22 @@ const { slides, label = 'Foto\'s van de Jachtbus', eager = false } = Astro.props
       </li>
     ))}
   </ul>
-  <button class="bus-slider_toggle u-text-style-small" type="button" data-trigger="hover focus">
-    <svg class="bus-slider_icon is-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z" fill="currentColor" /></svg>
-    <svg class="bus-slider_icon is-play" viewBox="0 0 16 16" aria-hidden="true" hidden><path d="M3 1.500v13l11-6.500z" fill="currentColor" /></svg>
-    <span class="bus-slider_label">Pauzeer de foto's</span>
-  </button>
+  <div class="bus-slider_controls">
+    <button class="bus-slider_button is-prev" type="button" aria-label="Vorige foto" data-trigger="hover focus">
+      <svg class="bus-slider_icon is-active" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.500 8h-10M7.500 3.500 3 8l4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+    </button>
+    <button class="bus-slider_button is-toggle" type="button" aria-label="Foto's pauzeren" data-trigger="hover focus">
+      <svg class="bus-slider_ring" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle class="bus-slider_ring_track" cx="24" cy="24" r="21" />
+        <circle class="bus-slider_ring_fill" cx="24" cy="24" r="21" pathLength="1" />
+      </svg>
+      <svg class="bus-slider_icon is-pause is-active" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h4v12H3zM9 2h4v12H9z" fill="currentColor" /></svg>
+      <svg class="bus-slider_icon is-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 1.500v13l11-6.500z" fill="currentColor" /></svg>
+    </button>
+    <button class="bus-slider_button is-next" type="button" aria-label="Volgende foto" data-trigger="hover focus">
+      <svg class="bus-slider_icon is-active" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+    </button>
+  </div>
 </div>
 
 <style>
@@ -73,26 +85,60 @@ const { slides, label = 'Foto\'s van de Jachtbus', eager = false } = Astro.props
     aspect-ratio: calc(var(--_responsive---large) * 1.6 + (1 - var(--_responsive---large)) * 1.25);
     height: auto;
   }
-  /* Only there when the script runs and motion is welcome. */
-  .bus-slider_toggle {
+  /* Only there when the script runs. */
+  .bus-slider_controls {
     display: none;
     position: absolute;
     left: calc(var(--_inset) + var(--_spacing---space--3));
     bottom: var(--_spacing---space--3);
     align-items: center;
     gap: var(--_spacing---space--2);
-    min-height: var(--target--min);
-    padding-inline: var(--_spacing---space--3);
-    background-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---on)), var(--color--bus-black) calc(100% * var(--_trigger---off)));
-    color: var(--color--white);
-    border: none;
-    cursor: pointer;
-    transition: background-color 150ms;
   }
-  .bus-slider_toggle.is-active { display: inline-flex; }
+  .bus-slider_controls.is-active { display: flex; }
+  .bus-slider_button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--slider-button);
+    height: var(--size--slider-button);
+    padding: 0;
+    background-color: color-mix(in hsl, var(--color--marigold-1) calc(100% * var(--_trigger---on)), var(--color--marigold-2) calc(100% * var(--_trigger---off)));
+    color: var(--color--bus-black);
+    border: none;
+    border-radius: var(--radius--round);
+    cursor: pointer;
+  }
+  /* The timer only runs when motion is welcome, so without it there is nothing to pause. */
+  .bus-slider_button.is-toggle { display: none; }
+  .bus-slider_button.is-toggle.is-active { display: flex; }
   .bus-slider_icon {
+    display: none;
     width: var(--_spacing---space--4);
     height: var(--_spacing---space--4);
+  }
+  .bus-slider_icon.is-active { display: block; }
+  /* Starts at the top and fills clockwise. */
+  .bus-slider_ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .bus-slider_ring_track {
+    stroke: var(--color--bus-black);
+    stroke-opacity: 0.15;
+    stroke-width: 3;
+  }
+  .bus-slider_ring_fill {
+    stroke: var(--color--bus-green);
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-slider_button { transition: background-color 150ms; }
   }
 </style>
 
@@ -100,45 +146,86 @@ const { slides, label = 'Foto\'s van de Jachtbus', eager = false } = Astro.props
   const INTERVAL = 5000;
 
   document.querySelectorAll<HTMLElement>('.bus-slider_wrap').forEach((root) => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const track = root.querySelector<HTMLElement>('.bus-slider_track');
-    const toggle = root.querySelector<HTMLElement>('.bus-slider_toggle');
-    const label = root.querySelector<HTMLElement>('.bus-slider_label');
+    const controls = root.querySelector<HTMLElement>('.bus-slider_controls');
+    const prev = root.querySelector<HTMLElement>('.bus-slider_button.is-prev');
+    const next = root.querySelector<HTMLElement>('.bus-slider_button.is-next');
+    const toggle = root.querySelector<HTMLElement>('.bus-slider_button.is-toggle');
+    const ring = root.querySelector<SVGElement>('.bus-slider_ring_fill');
     const pauseIcon = root.querySelector<SVGElement>('.bus-slider_icon.is-pause');
     const playIcon = root.querySelector<SVGElement>('.bus-slider_icon.is-play');
-    if (!track || !toggle || !label || !pauseIcon || !playIcon) return;
-
-    let paused = false;
-    let held = false;
-    let inView = true;
-    new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; }).observe(track);
+    if (!track || !controls || !prev || !next || !toggle || !ring || !pauseIcon || !playIcon) return;
 
     const startOf = (slide: Element) => (slide as HTMLElement).offsetLeft - (track.firstElementChild as HTMLElement).offsetLeft;
 
-    const advance = () => {
-      if (paused || held || !inView || document.hidden) return;
+    let driven = false;
+    const move = (step: 1 | -1) => {
       // Slides already passed go to the back, so the row never runs out.
       const slides = [...track.children];
       const current = slides.reduce((best, slide, index) =>
         Math.abs(startOf(slide) - track.scrollLeft) < Math.abs(startOf(slides[best]) - track.scrollLeft) ? index : best, 0);
       track.append(...slides.slice(0, current));
       track.scrollTo({ left: 0, behavior: 'instant' });
-      track.scrollTo({ left: startOf(track.children[1]), behavior: 'smooth' });
+      driven = true;
+      if (step === -1) {
+        track.prepend(track.lastElementChild as Element);
+        track.scrollTo({ left: startOf(track.children[1]), behavior: 'instant' });
+      }
+      track.scrollTo({ left: step === 1 ? startOf(track.children[1]) : 0, behavior: still ? 'instant' : 'smooth' });
     };
-    window.setInterval(advance, INTERVAL);
+
+    controls.classList.add('is-active');
+    let restart = () => {};
+    prev.addEventListener('click', () => { move(-1); restart(); });
+    next.addEventListener('click', () => { move(1); restart(); });
+    if (still) return;
+
+    let paused = false;
+    let held = false;
+    let inView = true;
+    const timer = ring.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: INTERVAL, fill: 'both' });
+    const sync = () => {
+      if (paused || held || !inView || document.hidden) timer.pause();
+      else timer.play();
+    };
+    restart = () => {
+      timer.currentTime = 0;
+      sync();
+    };
+    timer.addEventListener('finish', () => {
+      move(1);
+      restart();
+    });
+    // A swipe by hand also gets a full round before the next photo.
+    track.addEventListener('scrollend', () => {
+      if (!driven) restart();
+      driven = false;
+    });
+
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    }).observe(track);
+    document.addEventListener('visibilitychange', sync);
 
     // Reading or touching the row holds it, the button stops it for good.
-    root.addEventListener('pointerenter', () => { held = true; });
-    root.addEventListener('pointerleave', () => { held = false; });
-    root.addEventListener('focusin', () => { held = true; });
-    root.addEventListener('focusout', () => { held = false; });
+    const hold = (value: boolean) => () => {
+      held = value;
+      sync();
+    };
+    root.addEventListener('pointerenter', hold(true));
+    root.addEventListener('pointerleave', hold(false));
+    root.addEventListener('focusin', hold(true));
+    root.addEventListener('focusout', hold(false));
 
     toggle.classList.add('is-active');
     toggle.addEventListener('click', () => {
       paused = !paused;
-      label.textContent = paused ? "Speel de foto's af" : "Pauzeer de foto's";
-      pauseIcon.toggleAttribute('hidden', paused);
-      playIcon.toggleAttribute('hidden', !paused);
+      toggle.setAttribute('aria-label', paused ? "Foto's afspelen" : "Foto's pauzeren");
+      pauseIcon.classList.toggle('is-active', !paused);
+      playIcon.classList.toggle('is-active', paused);
+      sync();
     });
   });
 </script>

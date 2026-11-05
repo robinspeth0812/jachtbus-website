@@ -1,7 +1,8 @@
 ---
-// Closing call to action. The answer to "what are we celebrating?" already
-// fills in the first question of the form.
+// Closing call to action: the first step of the form again, or one button when
+// the page already knows the occasion.
 import BusButton from '../BusButton.astro';
+import BusFirstStep from './BusFirstStep.astro';
 import { aanvraagUrl, contact } from '../../data/nieuw';
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
   label?: string;
 }
 const {
-  title = 'Wat vieren we?',
+  title = 'Wij staan klaar voor jouw feest!',
   text = 'Een richtdatum en een schatting van het aantal gasten is genoeg om te beginnen. We komen vanaf 40 personen.',
   occasion = '',
   label = 'Start je aanvraag',
@@ -28,21 +29,18 @@ const {
       <h2 class="bus-closing_title u-text-style-poster">{title}</h2>
       <div class="bus-closing_content">
         <p class="bus-closing_text u-text-style-large">{text}</p>
-        <div class="bus-closing_actions u-button-wrapper">
-          {occasion ? (
-            <BusButton label={label} href={aanvraagUrl(occasion)} />
-          ) : (
-            <>
-              <BusButton label="Een bruiloft" href={aanvraagUrl('bruiloft')} />
-              <BusButton label="Een bedrijfsfeest" href={aanvraagUrl('bedrijfsfeest')} />
-              <BusButton label="Een evenement" href={aanvraagUrl('evenement')} />
-              <BusButton label="Iets anders" href={aanvraagUrl('overige')} variant="secondary" />
-            </>
-          )}
-        </div>
-        <p class="bus-closing_call u-text-style-main">
-          Liever even praten? Bel <a class="bus-closing_link" href={contact.telefoonHref}>{contact.telefoon}</a> of <a class="bus-closing_link" href={contact.whatsappHref} rel="external">app ons</a>.
-        </p>
+        {occasion ? (
+          <>
+            <div class="bus-closing_actions u-button-wrapper">
+              <BusButton label={label} href={aanvraagUrl(occasion)} />
+            </div>
+            <p class="bus-closing_call u-text-style-main">
+              Liever even praten? Bel <a class="bus-closing_link" href={contact.telefoonHref}>{contact.telefoon}</a> of <a class="bus-closing_link" href={contact.whatsappHref} rel="external">app ons</a>.
+            </p>
+          </>
+        ) : (
+          <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+        )}
       </div>
     </div>
   </div>

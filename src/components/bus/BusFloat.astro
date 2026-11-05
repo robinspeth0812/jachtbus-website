@@ -1,0 +1,195 @@
+---
+// Fixed at the bottom right: back to top, and on wider screens the WhatsApp chat
+// with Peer. Phones already have WhatsApp in the bar at the bottom, so there only
+// the back to top button shows, just above that bar. The chat opens a panel with
+// WhatsApp Web and a QR code for your phone, which is made at build time.
+import { Image } from 'astro:assets';
+import QRCode from 'qrcode';
+import whatsappIcon from '../../assets/whatsapp-icon.svg';
+import peer from '../../assets/peer-wagenaar.png';
+import ChatBubble from '../ChatBubble.astro';
+import { contact } from '../../data/nieuw';
+
+interface Props {
+  /** Text on the chat button. */
+  label?: string;
+  /** What Peer says in the panel. */
+  message?: string;
+}
+const { label = 'App met Peer', message = 'Hoe kan ik helpen? App gerust.' } = Astro.props;
+
+const phone = contact.whatsappHref.replace(/\D/g, '');
+const webUrl = `https://web.whatsapp.com/send?phone=${phone}`;
+// Pure black on white on purpose: QR scanners need maximum contrast. Scanner
+// data, not brand colors, hence no tokens here.
+const qrSvg = await QRCode.toString(contact.whatsappHref, {
+  type: 'svg',
+  margin: 1,
+  color: { dark: '#000000', light: '#ffffff' },
+});
+---
+
+<div class="bus-float_wrap">
+  <a class="bus-float_top" href="#top" aria-label="Terug naar boven" data-trigger="hover focus">
+    <svg class="bus-float_top_icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 13.500v-10M3.500 7.500 8 3l4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+  </a>
+  <div class="bus-float_chat">
+    <div class="bus-float_panel u-theme-bus-beige" inert>
+      <ChatBubble message={message} />
+      <div class="bus-float_qr" set:html={qrSvg} />
+      <p class="bus-float_text u-text-style-small">Scan de code met je telefoon, of open de chat in je browser.</p>
+      <a class="bus-float_web" href={webUrl} rel="external" data-trigger="hover focus">Open WhatsApp Web</a>
+    </div>
+    <button class="bus-float_toggle" type="button" aria-expanded="false" data-trigger="hover focus">
+      <span class="bus-float_avatar">
+        <Image class="bus-float_avatar_img" src={peer} alt="" width={80} densities={[1, 2]} />
+        <Image class="bus-float_avatar_badge" src={whatsappIcon} alt="" width={20} height={20} />
+      </span>
+      {label}
+    </button>
+  </div>
+</div>
+
+<style>
+  .bus-float_wrap {
+    position: fixed;
+    right: var(--site--margin);
+    bottom: calc(var(--_spacing---space--4) + (1 - var(--_responsive---large)) * (var(--size--mobile-bar) + var(--size--stripe-thin)) + env(safe-area-inset-bottom));
+    z-index: 45;
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  /* Only there once you have scrolled, and only with the script that notices that. */
+  .bus-float_top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--slider-button);
+    height: var(--size--slider-button);
+    background-color: color-mix(in hsl, var(--color--bus-black) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--color--white) calc(100% * var(--_trigger---on)), var(--color--bus-black) calc(100% * var(--_trigger---off)));
+    border: var(--border-width--main) solid var(--color--bus-yellow);
+    opacity: 0;
+    visibility: hidden;
+  }
+  .bus-float_top.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .bus-float_top_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  .bus-float_chat {
+    position: relative;
+    display: var(--none-medium, block);
+  }
+  .bus-float_toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--size--slider-button);
+    padding: 0 var(--_spacing---space--4) 0 0;
+    background-color: color-mix(in hsl, var(--color--bus-black) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--color--white) calc(100% * var(--_trigger---on)), var(--color--bus-black) calc(100% * var(--_trigger---off)));
+    border: var(--border-width--main) solid var(--color--bus-yellow);
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--h5);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+  }
+  /* The photo fills the left of the button, edge to edge. */
+  .bus-float_avatar {
+    position: relative;
+    flex-shrink: 0;
+    align-self: stretch;
+    width: var(--size--float-avatar);
+  }
+  .bus-float_avatar_img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Floats over the border of the button. */
+  .bus-float_avatar_badge {
+    position: absolute;
+    right: calc(var(--_spacing---space--2) * -1);
+    bottom: calc(var(--_spacing---space--2) * -1);
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  .bus-float_panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--_spacing---space--3));
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: var(--size--float-panel);
+    padding: var(--_spacing---space--5);
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+    box-shadow: 0 0 0 var(--border-width--main) var(--_theme---divider);
+    opacity: var(--_state---false);
+    visibility: hidden;
+  }
+  .bus-float_chat.is-active .bus-float_panel { visibility: visible; }
+  .bus-float_qr {
+    align-self: center;
+    width: var(--size--float-qr);
+  }
+  .bus-float_text { text-align: center; }
+  .bus-float_web {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target--min);
+    background-color: color-mix(in hsl, var(--color--bus-yellow) calc(100% * var(--_trigger---on)), var(--color--bus-black) calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--color--bus-black) calc(100% * var(--_trigger---on)), var(--color--white) calc(100% * var(--_trigger---off)));
+    font-family: var(--_typography---font--heading);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-float_top { transition: opacity 200ms, visibility 200ms, background-color 150ms; }
+    .bus-float_toggle,
+    .bus-float_web { transition: background-color 150ms, color 150ms; }
+    .bus-float_panel { transition: opacity 200ms, visibility 200ms; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.bus-float_wrap').forEach((root) => {
+    const top = root.querySelector<HTMLElement>('.bus-float_top');
+    const chat = root.querySelector<HTMLElement>('.bus-float_chat');
+    const toggle = root.querySelector<HTMLElement>('.bus-float_toggle');
+    const panel = root.querySelector<HTMLElement>('.bus-float_panel');
+    if (!top || !chat || !toggle || !panel) return;
+
+    const onScroll = () => top.classList.toggle('is-active', window.scrollY > window.innerHeight);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    const setOpen = (open: boolean) => {
+      chat.classList.toggle('is-active', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.inert = !open;
+    };
+    toggle.addEventListener('click', () => setOpen(!chat.classList.contains('is-active')));
+    root.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && chat.classList.contains('is-active')) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (chat.classList.contains('is-active') && !chat.contains(event.target as Node)) setOpen(false);
+    });
+  });
+</script>

@@ -1,0 +1,316 @@
+---
+// The consent banner, in two layers. First: refuse or accept, equally big, with a
+// way into the settings. Second: per purpose a switch, all off by default, with
+// the facts per service behind a fold. It never blocks the page. Any element with
+// data-consent-open brings the settings back, so changing your mind is as easy as
+// choosing. Comes first in the page, so the keyboard reaches it first.
+import BusCookieDetails from './BusCookieDetails.astro';
+import { cookieGroups } from '../../data/cookies';
+import { url } from '../../data/nieuw';
+
+const namen = (keys: string[]) => cookieGroups.filter((group) => group.key && keys.includes(group.key)).flatMap((group) => group.diensten.map((dienst) => dienst.naam));
+const metingen = namen(['statistics', 'marketing']);
+---
+
+<section class="bus-consent_wrap u-theme-bus-black" aria-label="Cookies en privacy">
+  <div class="bus-consent_scroll">
+    <div class="bus-consent_layer is-first is-active">
+      <p class="bus-consent_title u-text-style-bus-title">Cookies en privacy</p>
+      <p class="bus-consent_text u-text-style-small">
+        Wat nodig is om de site te laten werken, staat altijd aan.
+        {metingen.length > 0 && <>Daarnaast willen we graag meten hoe de site en onze advertenties het doen, met {metingen.join(' en ')}. Daarbij kunnen gegevens naar de VS gaan.</>}
+        De kaart met onze klussen komt van een andere partij en laadt ook pas na jouw ja.
+        Het is jouw keuze, de site werkt ook zonder. Je past het altijd aan via Cookie-instellingen onder aan elke pagina.
+      </p>
+    </div>
+    <div class="bus-consent_layer is-settings">
+      <p class="bus-consent_title u-text-style-bus-title">Cookie-instellingen</p>
+      <p class="bus-consent_text u-text-style-small">Kies wat we mogen gebruiken. Zonder jouw ja blijft alles uit, behalve wat noodzakelijk is.</p>
+      <ul class="bus-consent_groups">
+        {cookieGroups.map((group) => (
+          <li class="bus-consent_group">
+            <div class="bus-consent_group_top">
+              <p class="bus-consent_group_name u-text-style-bus-title" id={`consent-${group.naam}`}>{group.naam}</p>
+              {group.key
+                ? (
+                  <label class="bus-consent_switch u-text-style-small">
+                    <input class="bus-consent_input" type="checkbox" role="switch" data-key={group.key} aria-labelledby={`consent-${group.naam}`} />
+                    <span class="bus-consent_track" aria-hidden="true"></span>
+                    <span class="bus-consent_state is-off">Uit</span>
+                    <span class="bus-consent_state is-on">Aan</span>
+                  </label>
+                )
+                : <span class="bus-consent_always u-text-style-small">Altijd aan</span>}
+            </div>
+            <p class="bus-consent_group_text u-text-style-small">{group.tekst}</p>
+            <details class="bus-consent_more">
+              <summary class="bus-consent_more_title u-text-style-small">{group.diensten.map((dienst) => dienst.naam).join(', ')}</summary>
+              <div class="bus-consent_services">
+                {group.diensten.map((dienst) => <BusCookieDetails service={dienst} />)}
+              </div>
+            </details>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <p class="bus-consent_links u-text-style-small">
+      <a class="bus-consent_link" href={url('privacy')}>Privacyverklaring</a>
+      <a class="bus-consent_link" href={url('cookies')}>Cookiebeleid</a>
+    </p>
+  </div>
+  <div class="bus-consent_foot">
+    <div class="bus-consent_actions">
+      <button class="bus-consent_button is-no" type="button" data-trigger="hover focus">Weigeren</button>
+      <button class="bus-consent_button is-save" type="button" data-trigger="hover focus">Keuze opslaan</button>
+      <button class="bus-consent_button is-yes" type="button" data-trigger="hover focus">Alles accepteren</button>
+    </div>
+    <button class="bus-consent_switcher u-text-style-small" type="button">Instellingen</button>
+  </div>
+</section>
+
+<style>
+  .bus-consent_wrap {
+    display: none;
+    position: fixed;
+    left: var(--site--margin);
+    bottom: calc(var(--_spacing---space--4) + (1 - var(--_responsive---large)) * (var(--size--mobile-bar) + var(--size--stripe-thin)) + env(safe-area-inset-bottom));
+    z-index: 60;
+    flex-flow: column;
+    width: min(var(--size--consent), 100% - var(--site--margin) * 2);
+    /* Never taller than the screen: the choices stay in view, the text scrolls. */
+    max-height: calc(100dvh - var(--size--consent-gap) - (1 - var(--_responsive---large)) * var(--size--mobile-bar));
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+  }
+  .bus-consent_wrap.is-active { display: flex; }
+  .bus-consent_scroll {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    min-height: 0;
+    padding: var(--_spacing---space--5);
+    overflow-y: auto;
+  }
+  .bus-consent_layer {
+    display: none;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-consent_layer.is-active { display: flex; }
+  .bus-consent_groups {
+    display: flex;
+    flex-flow: column;
+  }
+  .bus-consent_group {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    padding-block: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .bus-consent_group_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-consent_always { opacity: 0.8; }
+  /* The word next to the switch says the state, so color and position are not the only signal. */
+  .bus-consent_switch {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    cursor: pointer;
+  }
+  .bus-consent_input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .bus-consent_track {
+    position: relative;
+    width: var(--size--switch);
+    height: var(--size--switch-height);
+    border: var(--border-width--main) solid var(--color--white);
+    border-radius: var(--radius--round);
+  }
+  .bus-consent_track::after {
+    content: '';
+    position: absolute;
+    top: var(--border-width--main);
+    bottom: var(--border-width--main);
+    left: var(--border-width--main);
+    aspect-ratio: 1;
+    background-color: var(--color--white);
+    border-radius: var(--radius--round);
+  }
+  .bus-consent_input:checked + .bus-consent_track {
+    background-color: var(--color--bus-yellow);
+    border-color: var(--color--bus-yellow);
+  }
+  .bus-consent_input:checked + .bus-consent_track::after {
+    left: auto;
+    right: var(--border-width--main);
+    background-color: var(--color--bus-black);
+  }
+  .bus-consent_input:focus-visible + .bus-consent_track {
+    outline: var(--focus--width) solid var(--color--white);
+    outline-offset: var(--border-width--main);
+  }
+  .bus-consent_state.is-on { display: none; }
+  .bus-consent_input:checked ~ .bus-consent_state.is-on { display: inline; }
+  .bus-consent_input:checked ~ .bus-consent_state.is-off { display: none; }
+  /* A list item keeps the fold arrow; the padding makes the full target size. */
+  .bus-consent_more_title {
+    display: list-item;
+    padding-block: var(--_spacing---space--3);
+    text-decoration: underline;
+    cursor: pointer;
+    list-style-position: inside;
+  }
+  .bus-consent_services {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-consent_links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--_spacing---space--4);
+    margin: 0;
+  }
+  .bus-consent_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--small);
+    color: inherit;
+  }
+  .bus-consent_foot {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--1);
+    padding: var(--_spacing---space--4) var(--_spacing---space--5) var(--_spacing---space--2);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  /* Saying no sits next to saying yes, at exactly the same size. */
+  .bus-consent_actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--_spacing---space--2);
+    width: 100%;
+  }
+  .bus-consent_button {
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--1);
+    background-color: color-mix(in hsl, var(--color--bus-yellow) calc(100% * var(--_trigger---on)), var(--color--white) calc(100% * var(--_trigger---off)));
+    color: var(--color--bus-black);
+    border: none;
+    font-family: var(--_typography---font--heading);
+    font-size: var(--_typography---size--main);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+  }
+  .bus-consent_button.is-save {
+    display: none;
+    grid-column: 1 / -1;
+    order: 1;
+  }
+  .bus-consent_wrap.is-settings .bus-consent_button.is-save { display: block; }
+  .bus-consent_switcher {
+    min-height: var(--target--min);
+    padding: 0;
+    background: none;
+    color: inherit;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-consent_button { transition: background-color 150ms; }
+  }
+</style>
+
+<script>
+  import { CONSENT_EVENT, type Consent, type ConsentKey, readConsent, saveConsent } from '../../lib/consent';
+  import { applyTracking, clearTrackingCookies } from '../../lib/tracking';
+
+  document.querySelectorAll<HTMLElement>('.bus-consent_wrap').forEach((root) => {
+    const yes = root.querySelector<HTMLElement>('.bus-consent_button.is-yes');
+    const no = root.querySelector<HTMLElement>('.bus-consent_button.is-no');
+    const save = root.querySelector<HTMLElement>('.bus-consent_button.is-save');
+    const switcher = root.querySelector<HTMLElement>('.bus-consent_switcher');
+    const first = root.querySelector<HTMLElement>('.bus-consent_layer.is-first');
+    const settings = root.querySelector<HTMLElement>('.bus-consent_layer.is-settings');
+    const scroll = root.querySelector<HTMLElement>('.bus-consent_scroll');
+    const inputs = [...root.querySelectorAll<HTMLInputElement>('.bus-consent_input')];
+    if (!yes || !no || !save || !switcher || !first || !settings || !scroll) return;
+
+    const collect = (value?: boolean) => {
+      const choices: Consent = { statistics: false, marketing: false, media: false };
+      inputs.forEach((input) => { choices[input.dataset.key as ConsentKey] = value ?? input.checked; });
+      return choices;
+    };
+    const showSettings = (show: boolean) => {
+      root.classList.toggle('is-settings', show);
+      first.classList.toggle('is-active', !show);
+      settings.classList.toggle('is-active', show);
+      switcher.textContent = show ? 'Terug' : 'Instellingen';
+      scroll.scrollTop = 0;
+    };
+
+    let opener: HTMLElement | null = null;
+    const close = () => {
+      root.classList.remove('is-active');
+      opener?.focus();
+      opener = null;
+    };
+    yes.addEventListener('click', () => { saveConsent(collect(true)); close(); });
+    no.addEventListener('click', () => { saveConsent(collect(false)); close(); });
+    save.addEventListener('click', () => { saveConsent(collect()); close(); });
+    switcher.addEventListener('click', () => {
+      showSettings(!root.classList.contains('is-settings'));
+      switcher.focus();
+    });
+
+    // The settings always open on what was chosen before.
+    const fill = () => {
+      const current = readConsent();
+      inputs.forEach((input) => { input.checked = current?.[input.dataset.key as ConsentKey] ?? false; });
+    };
+    document.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLElement>('[data-consent-open]');
+      if (!button) return;
+      opener = button;
+      fill();
+      showSettings(true);
+      root.classList.add('is-active');
+      inputs[0]?.focus();
+    });
+    // Only a visitor who opened it again can walk away: the first time, an answer counts.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && opener) close();
+    });
+
+    const apply = () => {
+      const choices = readConsent();
+      if (!choices) return;
+      // A yes taken back: clean up, and a fresh page is the only sure way to stop a script.
+      clearTrackingCookies(choices);
+      if (applyTracking(choices)) window.location.reload();
+    };
+    document.addEventListener(CONSENT_EVENT, apply);
+    apply();
+
+    if (!readConsent()) root.classList.add('is-active');
+  });
+</script>

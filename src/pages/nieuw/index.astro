@@ -1,21 +1,22 @@
 ---
-// Home of the new site. The hero slider is the only thing that moves on its
-// own, everything after that moves with the visitor's scroll.
+// Home of the new site, in the order of the home page outline: the first step
+// of the form right in view, then whatever takes away the doubt, and the form
+// again at the end. The hero slider is the only thing that moves on its own.
 import BusBase from '../../layouts/BusBase.astro';
 import BusButton from '../../components/BusButton.astro';
-import BusDateCheck from '../../components/bus/BusDateCheck.astro';
+import BusFirstStep from '../../components/bus/BusFirstStep.astro';
 import BusSlider from '../../components/bus/BusSlider.astro';
-import BusPlaces from '../../components/bus/BusPlaces.astro';
+import BusMoments from '../../components/bus/BusMoments.astro';
+import BusMap from '../../components/bus/BusMap.astro';
+import BusValues from '../../components/bus/BusValues.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusStory from '../../components/bus/BusStory.astro';
 import BusRoute from '../../components/bus/BusRoute.astro';
-import BusMenu from '../../components/bus/BusMenu.astro';
-import BusQuote from '../../components/bus/BusQuote.astro';
 import BusFit from '../../components/bus/BusFit.astro';
 import BusReviews from '../../components/bus/BusReviews.astro';
 import BusFaq from '../../components/bus/BusFaq.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { contact, photos, url, values } from '../../data/nieuw';
+import { aanvraagUrl, photos, twijfels, url, waarom } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 import sideImg from '../../assets/ambachtelijk-eten.jpg';
 import { faqSchema } from '../../lib/schema';
@@ -32,16 +33,22 @@ const faqItems = faq.slice(0, 6);
   <section class="home-hero_wrap u-theme-bus-green">
     <div class="home-hero_contain u-container">
       <div class="home-hero_layout">
-        <h1 class="home-hero_title u-text-style-poster">Zet ons neer, wij koken.</h1>
-        <div class="home-hero_content">
+        <div class="home-hero_intro">
+          <h1 class="home-hero_label u-text-style-main">Mobiele cateraar/foodtruck in Drenthe, Friesland, Groningen e.o.</h1>
+          <h2 class="home-hero_title u-text-style-poster">Eerlijk, ambachtelijk bereid eten op locatie</h2>
           <p class="home-hero_text u-text-style-large">
-            We rijden naar je tuin, je bedrijf of je weiland, zetten de luiken open
-            en koken ter plekke. In Drenthe, Groningen en Friesland.
+            Eerlijke catering, vers bereid en zorgvuldig samengesteld. Op jouw locatie in
+            <a class="home-hero_link" href={url('foodtruck-drenthe')}>Drenthe</a>,
+            <a class="home-hero_link" href={url('foodtruck-groningen')}>Groningen</a> of
+            <a class="home-hero_link" href={url('foodtruck-friesland')}>Friesland</a>
+            met de Jachtbus Foodtruck.
           </p>
-          <BusDateCheck />
-          <p class="home-hero_call u-text-style-small">
-            Of bel Peer op <a class="home-hero_link" href={contact.telefoonHref}>{contact.telefoon}</a>. Vanaf 40 personen.
-          </p>
+          <div class="home-hero_cta u-button-wrapper">
+            <BusButton label="Start je aanvraag" href={aanvraagUrl()} />
+          </div>
+        </div>
+        <div class="home-hero_form">
+          <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
         </div>
       </div>
     </div>
@@ -60,26 +67,28 @@ const faqItems = faq.slice(0, 6);
     </div>
   </section>
 
-  <section class="home-proof_wrap u-section u-theme-bus-black" aria-labelledby="home-proof-title">
-    <div class="home-proof_contain u-container">
-      <h2 class="home-proof_title u-text-style-poster-small" id="home-proof-title">
-        In augustus 2025 reden we voor het eerst uit. In 2026 stonden we al op zo’n 40 feesten.
-      </h2>
-    </div>
-  </section>
-  <BusPlaces />
+  <BusValues />
 
-  <BusRows />
+  <BusMoments title="Op zoek naar écht goede foodtruckcatering?" items={twijfels} />
+
+
+  <BusRows title="Waar staat de Jachtbus straks?" soort="gelegenheid" theme="green">
+    <div class="home-rows_more">
+      <BusButton label="Bekijk al onze catering" href={url('catering')} arrow />
+    </div>
+  </BusRows>
+
+  <BusRoute />
 
   <BusStory
-    title="Wat op de bus staat, doen we ook"
+    title="Waarom de Jachtbus?"
     photo={{ src: sideImg, alt: 'De zijkant van de bus, met de woorden lokaal verkregen, eerlijke producten en ambachtelijk bereid' }}
     shape="corner"
     theme="green"
     focus="60% 50%"
   >
     <ul class="home-values_list">
-      {values.map((value) => (
+      {waarom.map((value) => (
         <li class="home-values_item">
           <h3 class="home-values_name u-text-style-poster-label">{value.title}</h3>
           <p class="home-values_text u-text-style-main">{value.text}</p>
@@ -88,18 +97,17 @@ const faqItems = faq.slice(0, 6);
     </ul>
   </BusStory>
 
-  <BusMenu />
-  <BusRoute />
-  <BusQuote />
-  <BusFit />
+  <BusMap />
   <BusReviews />
+
+  <BusFit />
   <BusFaq items={faqItems} />
   <section class="home-more_wrap u-theme-bus-beige">
     <div class="home-more_contain u-container">
       <BusButton label="Alle vragen" href={url('veelgestelde-vragen')} variant="secondary" />
     </div>
   </section>
-  <BusClosing />
+  <BusClosing text="Kies wat je viert, dan vragen we alleen nog wat we echt moeten weten. Een richtdatum en een schatting van het aantal gasten is genoeg." />
 </BusBase>
 
 <style>
@@ -111,38 +119,53 @@ const faqItems = faq.slice(0, 6);
     display: var(--flex-medium, grid);
     flex-direction: column;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    align-items: var(--start-medium, end);
+    align-items: start;
     gap: var(--_spacing---space--5) var(--site--gutter);
     /* Clears the logo that hangs out of the bar. */
     padding-top: calc(var(--size--nav-logo-now) - var(--size--nav-bar) + var(--_spacing---space--6));
     padding-bottom: var(--_spacing---space--7);
   }
-  .home-hero_title {
+  .home-hero_intro {
     grid-column: 1 / span 6;
-    max-width: 11ch;
-  }
-  .home-hero_content {
-    grid-column: 7 / span 6;
     display: flex;
     flex-flow: column;
     gap: var(--_spacing---space--4);
     width: 100%;
   }
-  .home-hero_text { max-width: 52ch; }
-  .home-hero_link { color: var(--_theme---text-link--text); }
-
+  .home-hero_label {
+    font-weight: var(--_typography---font--primary-bold);
+    text-transform: none;
+    /* The capitals line up with the top of the form block. */
+    text-box: trim-start cap alphabetic;
+  }
+  .home-hero_title {
+    max-width: 17ch;
+    font-size: var(--_typography---size--poster-hero);
+  }
+  /* On phones the button opens the form, wider the first step is on the page. */
+  .home-hero_cta {
+    display: var(--flex-medium, none);
+    justify-content: flex-start;
+  }
+  .home-hero_text { max-width: 44ch; }
+  .home-hero_link { color: inherit; }
+  /* Next to the text the block takes no height, so the text sets where the
+     photos start and the block lies over them. */
+  .home-hero_form {
+    grid-column: 7 / span 6;
+    position: relative;
+    z-index: 1;
+    display: var(--none-medium, block);
+    width: 100%;
+    height: 0;
+  }
   .home-hero_visual { padding-bottom: var(--_spacing---space--7); }
 
-  .home-proof_wrap {
-    padding-bottom: var(--_spacing---space--5);
-    background-color: var(--_theme---background);
-    color: var(--_theme---text);
-  }
-  .home-proof_title { max-width: 28ch; }
+  .home-rows_more { margin-top: var(--_spacing---space--5); }
 
   .home-values_item {
     padding-block: var(--_spacing---space--3);
-    border-top: var(--focus--width) solid var(--color--bus-yellow);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
   }
   .home-values_name { margin-bottom: var(--_spacing---space--1); }
 

@@ -1,116 +1,246 @@
 ---
-// Closing block of every page: the side panel pattern, the name large in the
-// lettering of the bus, and everything you might still look for.
+// Closing block of every page: the side panel pattern, the name in the lettering
+// of the bus, five link columns, and a bottom row with the legal links and credits
+// over a faded logo. Keeps room at the bottom for the fixed buttons on the right.
 import { Image } from 'astro:assets';
 import scriptLogo from '../../assets/jachtbus-script-wit.svg';
+import ringLogo from '../../assets/jachtbus-logo-wit.png';
 import BusStrip from './BusStrip.astro';
-import { contact, regions, services, url } from '../../data/nieuw';
+import { contact, regions, url } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 
 const { email } = await getInhoud();
 const year = new Date().getFullYear();
+const creditsUrl = 'https://www.smakenvan.nl/?utm_source=jachtbusfoodtruck.nl&utm_medium=referral&utm_campaign=footer-credit';
+// Replace with the link to the Google Business Profile once it exists: until then a Maps search.
+const googleReviewsUrl = 'https://www.google.com/maps/search/?api=1&query=Jachtbus%20Foodtruck';
+const adres = `${contact.adres}, ${contact.postcode} ${contact.plaats}`;
+const adresUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(adres)}`;
+
+const columns = [
+  {
+    title: 'Catering tijdens ...',
+    links: [
+      { label: 'Bruiloft', href: url('catering/bruiloft') },
+      { label: 'Bedrijfsfeest', href: url('catering/bedrijfsfeest') },
+      { label: 'Tuinfeest', href: url('catering/tuinfeest') },
+      { label: 'Evenementen', href: url('catering/evenement') },
+    ],
+  },
+  {
+    title: 'Catering met ...',
+    links: [
+      { label: 'BBQ-smoker', href: url('catering/bbq-smoker') },
+      { label: 'Walking dinner', href: url('catering/walking-dinner') },
+      // No page of its own yet, so it goes to the overview.
+      { label: 'Streetfood', href: url('catering') },
+    ],
+  },
+  {
+    title: 'Informatie',
+    links: [
+      { label: 'Referenties', href: url('referenties') },
+      { label: 'Reviews op Google', href: googleReviewsUrl, external: true },
+      { label: 'Veelgestelde vragen', href: url('veelgestelde-vragen') },
+      { label: 'Over ons', href: url('over-ons') },
+    ],
+  },
+  {
+    title: 'Contact',
+    wide: true,
+    links: [
+      { label: 'Contact', href: url('contact') },
+      { label: contact.telefoon, href: contact.telefoonHref },
+      { label: email, href: `mailto:${email}` },
+      { label: 'WhatsApp', href: contact.whatsappHref, external: true },
+      { label: 'Instagram', href: contact.instagram, external: true },
+    ],
+  },
+];
+const legal = [
+  { label: 'Privacy', href: url('privacy') },
+  { label: 'Voorwaarden', href: url('voorwaarden') },
+  { label: 'Cookies', href: url('cookies') },
+];
 ---
 
 <footer class="bus-footer_wrap u-theme-bus-black">
   <BusStrip rows={1} />
   <div class="bus-footer_contain u-container">
-    <div class="bus-footer_layout">
+    <div class="bus-footer_layout u-text-style-small">
       <div class="bus-footer_brand">
         <Image class="bus-footer_logo" src={scriptLogo} alt="Jachtbus" width={480} />
-        <p class="bus-footer_tag u-text-style-large">Zet ons neer, wij koken. In Drenthe, Groningen en Friesland.</p>
+        <p class="bus-footer_tag">
+          Foodtruckcatering in
+          {regions.map((region, index) => (
+            <>
+              <a class="bus-footer_tag_link" href={url(region.slug)}>{region.naam}</a>{index === 0 ? ', ' : index === 1 ? ' en ' : '. '}
+            </>
+          ))}
+          Eerlijk, vers en ambachtelijk bereid.
+        </p>
       </div>
-      <nav class="bus-footer_col" aria-label="Catering">
-        <h2 class="bus-footer_title u-text-style-bus-title">Catering</h2>
+      {columns.map((column) => (
+        <nav class:list={['bus-footer_col', { 'is-wide': column.wide }]} aria-label={column.title.replace(' ...', '')}>
+          <h2 class="bus-footer_title u-text-style-bus-title">{column.title}</h2>
+          <ul class="bus-footer_list">
+            {column.links.map((link) => (
+              <li class="bus-footer_item">
+                <a class="bus-footer_link" href={link.href} rel={link.external ? 'external' : undefined} data-trigger="hover focus">
+                  <span class="bus-footer_link_text u-hover-underline">{link.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))}
+      <div class="bus-footer_col is-wide">
+        <h2 class="bus-footer_title u-text-style-bus-title">Bedrijfsinformatie</h2>
         <ul class="bus-footer_list">
-          {services.map((service) => <li><a class="bus-footer_link" href={url(`catering/${service.slug}`)}>{service.nav}</a></li>)}
-        </ul>
-      </nav>
-      <nav class="bus-footer_col" aria-label="Werkgebied en meer">
-        <h2 class="bus-footer_title u-text-style-bus-title">Waar en wie</h2>
-        <ul class="bus-footer_list">
-          {regions.map((region) => <li><a class="bus-footer_link" href={url(region.slug)}>Foodtruck {region.naam}</a></li>)}
-          <li><a class="bus-footer_link" href={url('referenties')}>Referenties</a></li>
-          <li><a class="bus-footer_link" href={url('over-ons')}>Over ons</a></li>
-          <li><a class="bus-footer_link" href={url('veelgestelde-vragen')}>Veelgestelde vragen</a></li>
-        </ul>
-      </nav>
-      <div class="bus-footer_col">
-        <h2 class="bus-footer_title u-text-style-bus-title">Even bellen?</h2>
-        <ul class="bus-footer_list">
-          <li><a class="bus-footer_link" href={contact.telefoonHref}>{contact.telefoon}</a></li>
-          <li><a class="bus-footer_link" href={contact.whatsappHref} rel="external">WhatsApp</a></li>
-          <li><a class="bus-footer_link" href={`mailto:${email}`}>{email}</a></li>
-          <li><a class="bus-footer_link" href={contact.instagram} rel="external">Instagram</a></li>
+          <li class="bus-footer_item is-info">{contact.bedrijf}</li>
+          <li class="bus-footer_item is-info">KvK: {contact.kvk}</li>
+          <li class="bus-footer_item">
+            <a class="bus-footer_link" href={adresUrl} rel="external" data-trigger="hover focus">
+              <span class="bus-footer_link_text u-hover-underline">{adres}</span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>
     <div class="bus-footer_legal u-text-style-small">
-      <p class="bus-footer_legal_text">
-        © {year} {contact.bedrijf}, KvK {contact.kvk}, {contact.adres}, {contact.postcode} {contact.plaats}
-      </p>
+      <p class="bus-footer_legal_text">© {year} {contact.bedrijf}</p>
       <ul class="bus-footer_legal_list">
-        <li><a class="bus-footer_link" href={url('voorwaarden')}>Voorwaarden</a></li>
-        <li><a class="bus-footer_link" href={url('privacy')}>Privacy</a></li>
-        <li><a class="bus-footer_link" href={url('cookies')}>Cookies</a></li>
+        {legal.map((link) => (
+          <li class="bus-footer_item">
+            <a class="bus-footer_link" href={link.href} data-trigger="hover focus">
+              <span class="bus-footer_link_text u-hover-underline">{link.label}</span>
+            </a>
+          </li>
+        ))}
+        <li class="bus-footer_item">
+          <button class="bus-footer_link is-button" type="button" data-consent-open data-trigger="hover focus">
+            <span class="bus-footer_link_text u-hover-underline">Cookie-instellingen</span>
+          </button>
+        </li>
       </ul>
     </div>
+    <p class="bus-footer_credits u-text-style-small">
+      Website door Robin Speth ·
+      <a class="bus-footer_credits_link" href={creditsUrl} rel="external">SmakenVan</a>
+    </p>
+  </div>
+  <div class="bus-footer_mark" aria-hidden="true">
+    <Image class="bus-footer_mark_img" src={ringLogo} alt="" width={640} />
   </div>
 </footer>
 
 <style>
   .bus-footer_wrap {
+    position: relative;
     background-color: var(--_theme---background);
     color: var(--_theme---text);
+    overflow: clip;
     /* Room for the fixed action bar on phones. */
     padding-bottom: calc(var(--size--mobile-bar) * (1 - var(--_responsive---large)));
   }
   .bus-footer_contain {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-flow: column;
-    gap: var(--_spacing---space--7);
-    padding-block: var(--_spacing---space--7) var(--_spacing---space--5);
+    gap: var(--_spacing---space--6);
+    /* The fixed buttons on the bottom right never lie over a link at the end of the page. */
+    padding-block: var(--_spacing---space--7) calc(var(--size--slider-button) + var(--_spacing---space--6));
   }
+  /* Sixteen parts on wide screens: 4 for the logo, 2 per link column, 3 for the two long ones. */
   .bus-footer_layout {
     display: grid;
-    grid-template-columns: repeat(calc(var(--_responsive---large) * 12 + (1 - var(--_responsive---large)) * 2), minmax(0, 1fr));
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 16 + (1 - var(--_responsive---large)) * 2), minmax(0, 1fr));
     gap: var(--_spacing---space--6) var(--site--gutter);
   }
   .bus-footer_brand {
-    grid-column: span calc(var(--_responsive---large) * 6 + (1 - var(--_responsive---large)) * 2);
+    grid-column: span calc(var(--_responsive---large) * 4 + (1 - var(--_responsive---large)) * 2);
     display: flex;
     flex-flow: column;
     gap: var(--_spacing---space--4);
   }
   .bus-footer_logo {
+    width: 100%;
     height: auto;
     max-width: var(--size--logo-footer);
   }
-  .bus-footer_tag { max-width: 34ch; }
-  .bus-footer_col { grid-column: span 2; }
-  .bus-footer_title {
-    margin-bottom: var(--_spacing---space--3);
-    padding-bottom: var(--_spacing---space--2);
-    border-bottom: var(--focus--width) solid var(--color--bus-yellow);
+  .bus-footer_tag { max-width: 32ch; }
+  .bus-footer_tag_link { color: inherit; }
+  .bus-footer_col {
+    grid-column: span calc(var(--_responsive---large) * 2 + (1 - var(--_responsive---large)));
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-footer_col.is-wide { grid-column: span calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large)) * 2); }
+  .bus-footer_list {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+  }
+  .bus-footer_item.is-info {
+    display: flex;
+    align-items: center;
+    min-height: var(--target--small);
   }
   .bus-footer_link {
     display: inline-flex;
     align-items: center;
     min-height: var(--target--small);
     color: inherit;
+    text-decoration: none;
     overflow-wrap: anywhere;
   }
+  .bus-footer_link.is-button {
+    padding: 0;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  /* The line fades out around the logo behind it and back in after it. */
   .bus-footer_legal {
     display: flex;
     flex-flow: var(--column-medium, row);
     justify-content: space-between;
     align-items: var(--start-medium, center);
-    gap: var(--_spacing---space--3);
-    padding-top: var(--_spacing---space--4);
-    border-top: var(--border-width--main) solid var(--color--bus-yellow);
+    gap: var(--_spacing---space--2) var(--_spacing---space--5);
+    padding-top: var(--_spacing---space--5);
+    background-image: linear-gradient(to right, var(--_theme---divider) 26%, transparent 38%, transparent 62%, var(--_theme---divider) 74%);
+    background-repeat: no-repeat;
+    background-size: 100% var(--border-width--main);
   }
   .bus-footer_legal_list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--_spacing---space--4);
+    gap: var(--_spacing---space--1) var(--_spacing---space--4);
+  }
+  .bus-footer_credits {
+    align-self: var(--start-medium, flex-end);
+    opacity: 0.7;
+  }
+  .bus-footer_credits_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--small);
+    color: inherit;
+  }
+  .bus-footer_mark {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: var(--size--footer-mark);
+    opacity: 0.07;
+    transform: translate(-50%, 35%);
+    pointer-events: none;
+  }
+  .bus-footer_mark_img {
+    width: 100%;
+    height: auto;
   }
 </style>

@@ -1,0 +1,135 @@
+---
+// The first step of the request form, in its own block on the page. A choice
+// is the answer to the first question: it opens the form in the modal on the
+// second step, or without JS goes to the form page with the answer filled in.
+// Peer and the direct lines sit under it for everyone who would rather talk.
+import { Image } from 'astro:assets';
+import BusButton from '../BusButton.astro';
+import ChatBubble from '../ChatBubble.astro';
+import whatsappIcon from '../../assets/whatsapp-icon.svg';
+import { aanvraagUrl, contact, services } from '../../data/nieuw';
+
+interface Props {
+  /** The question as a heading. Leave out when the section title already asks it. */
+  title?: string;
+  /** Show Peer with the phone and WhatsApp buttons under the choices. */
+  direct?: boolean;
+}
+const { title = '', direct = true } = Astro.props;
+// Only what you can celebrate: a BBQ smoker is something we bring, not an occasion.
+const choices = services.filter((service) => service.soort === 'gelegenheid').map((service) => ({ value: service.gelegenheid, label: service.nav }));
+---
+
+<div class="bus-first_wrap u-theme-bus-beige">
+  <div class="bus-first_top">
+    {title && <h2 class="bus-first_title u-text-style-poster-label">{title}</h2>}
+    <div class="bus-first_progress">
+      <span class="bus-first_step u-text-style-small">Stap 1 van 4</span>
+      <span class="bus-first_bar" aria-hidden="true">
+        {[0, 1, 2, 3].map((index) => <span class:list={['bus-first_segment', index === 0 && 'is-active']}></span>)}
+      </span>
+    </div>
+  </div>
+  <ul class="bus-first_choices">
+    {choices.map((choice) => (
+      <li class="bus-first_item">
+        <a class="bus-first_choice u-text-style-bus-title" href={aanvraagUrl(choice.value)} data-trigger="hover focus">
+          <span class="bus-first_mark" aria-hidden="true"></span>
+          {choice.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="bus-first_other u-text-style-main">
+    Iets anders? <a class="bus-first_link" href={aanvraagUrl('overige')}>Vertel het ons</a>
+  </p>
+  {direct && (<div class="bus-first_direct">
+    <ChatBubble message="Neem direct contact met mij op." />
+    <div class="bus-first_contact u-button-wrapper">
+      <BusButton label={contact.telefoon} href={contact.telefoonHref} variant="secondary">
+        <svg slot="icon" class="bus-first_icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.600 10.800a15.100 15.100 0 0 0 6.600 6.600l2.200-2.200a1 1 0 0 1 1-.25 11.400 11.400 0 0 0 3.600.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.500a1 1 0 0 1 1 1c0 1.250.2 2.450.57 3.570a1 1 0 0 1-.25 1z" fill="currentColor" /></svg>
+      </BusButton>
+      <BusButton label="WhatsApp" href={contact.whatsappHref} variant="secondary">
+        <Image slot="icon" class="bus-first_icon" src={whatsappIcon} alt="" width={24} height={24} />
+      </BusButton>
+    </div>
+  </div>)}
+</div>
+
+<style>
+  .bus-first_wrap {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+    padding: calc(var(--_responsive---large) * var(--_spacing---space--5) + (1 - var(--_responsive---large)) * var(--_spacing---space--4));
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+  }
+  .bus-first_top {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-first_progress {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  .bus-first_step { flex-shrink: 0; }
+  .bus-first_bar {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--_spacing---space--1);
+    max-width: var(--size--check-field);
+  }
+  .bus-first_segment {
+    height: var(--focus--width);
+    background-color: var(--_theme---divider);
+  }
+  .bus-first_segment.is-active { background-color: var(--color--bus-green); }
+  .bus-first_choices {
+    display: grid;
+    /* Two columns at most, one where a phone is too narrow for the longest word. */
+    grid-template-columns: repeat(auto-fit, minmax(max(var(--size--first-tile-min), 40%), 1fr));
+    gap: var(--_spacing---space--2);
+  }
+  .bus-first_choice {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--size--first-tile);
+    padding-inline: var(--_spacing---space--3);
+    font-size: calc(var(--_responsive---large) * var(--_typography---size--bus-title) + (1 - var(--_responsive---large)) * var(--_typography---size--h6));
+    background-color: color-mix(in hsl, var(--color--white) calc(100% * var(--_trigger---on)), var(--color--bus-green) calc(100% * var(--_trigger---off)));
+    border: var(--border-width--main) solid var(--color--bus-green);
+    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--color--white) calc(100% * var(--_trigger---off)));
+    text-decoration: none;
+    transition: background-color 150ms, border-color 150ms, color 150ms;
+  }
+  /* Reads as a choice, the same way the options in the form do. */
+  .bus-first_mark {
+    flex-shrink: 0;
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    background-color: color-mix(in hsl, transparent calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    border: var(--border-width--main) solid currentColor;
+    border-radius: var(--radius--round);
+  }
+  .bus-first_link { color: var(--_theme---text-link--text); }
+  .bus-first_direct {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .bus-first_contact { justify-content: flex-start; }
+  .bus-first_icon {
+    width: var(--size--modal-icon);
+    height: var(--size--modal-icon);
+    flex-shrink: 0;
+  }
+</style>

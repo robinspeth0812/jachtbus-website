@@ -226,13 +226,59 @@ await payload.create({
   data: { slug: "voorbeeld-zonder-toestemming", titel: "Voorbeeld: nog geen toestemming", plaats: "Voorbeelddorp", gelegenheid: "Bruiloft", verhaal: "Voorbeeld: blijft concept tot de klant akkoord is.", toestemming: false, status: "concept" },
   context,
 });
+// Visibly test data, spread over the map. Saving runs the lookup of the map
+// position, as it does for a real reference.
+const kaartCases = [
+  { slug: "bruiloft-assen", titel: "Testcase: bruiloft in de tuin", plaats: "Assen", gelegenheid: "Bruiloft", gasten: 90, datum: "2026-06-13", verhaal: "Testtekst. Hier vertelt Peer straks hoe de dag verliep, wat er op het menu stond en wat de gasten ervan vonden." },
+  { slug: "bedrijfsfeest-assen", titel: "Testcase: personeelsfeest", plaats: "Assen", gelegenheid: "Bedrijfsfeest", gasten: 120, datum: "2026-09-04", verhaal: "Testtekst. Twee klussen in dezelfde plaats komen naast elkaar op de kaart te staan." },
+  { slug: "walking-dinner-gasselte", titel: "Testcase: walking dinner op het erf", plaats: "Gasselte", gelegenheid: "Tuinfeest", gasten: 45, datum: "2026-05-23", verhaal: "Testtekst. Een klus bij ons om de hoek." },
+  { slug: "tuinfeest-roden", titel: "Testcase: tuinfeest", plaats: "Roden", gelegenheid: "Tuinfeest", gasten: 60, datum: "2026-07-18", verhaal: "Testtekst. Zo ziet een klus eruit in de kaart." },
+  { slug: "bruiloft-leeuwarden", titel: "Testcase: bruiloft in Friesland", plaats: "Leeuwarden", gelegenheid: "Bruiloft", gasten: 110, datum: "2026-08-08", verhaal: "Testtekst. Zo zie je de spreiding tot ver over de provinciegrens." },
+  { slug: "evenement-drachten", titel: "Testcase: dorpsfeest", plaats: "Drachten", gelegenheid: "Evenement", gasten: 200, datum: "2026-06-27", verhaal: "Testtekst. Een evenement met wat meer volk." },
+  { slug: "bbq-stiens", titel: "Testcase: BBQ-smoker op locatie", plaats: "Stiens", gelegenheid: "Bedrijfsfeest", gasten: 50, datum: "2026-07-04", verhaal: "Testtekst. Het noordelijkste punt op de kaart." },
+  { slug: "bedrijfsfeest-stadskanaal", titel: "Testcase: jubileum van een bedrijf", plaats: "Stadskanaal", gelegenheid: "Bedrijfsfeest", gasten: 75, datum: "2026-04-17", verhaal: "Testtekst. Een jubileum in Groningen." },
+  { slug: "tuinfeest-wedde", titel: "Testcase: verjaardag in Westerwolde", plaats: "Wedde", gelegenheid: "Tuinfeest", gasten: 40, datum: "2026-05-09", verhaal: "Testtekst. Precies het minimum aantal gasten." },
+  // Not in the site's list of known towns: these two only land on the map
+  // because the portal looks up their position when saving.
+  { slug: "bruiloft-zuidlaren", titel: "Testcase: bruiloft aan het meer", plaats: "Zuidlaren", gelegenheid: "Bruiloft", gasten: 80, datum: "2026-09-12", verhaal: "Testtekst. Deze plaats stond nog niet in de lijst van de site: het portaal zocht het punt zelf op." },
+  { slug: "evenement-emmen", titel: "Testcase: open dag", plaats: "Emmen", gelegenheid: "Evenement", gasten: 150, datum: "2026-10-03", verhaal: "Testtekst. Ook dit punt zocht het portaal zelf op." },
+];
+// What the test jobs did, so the filters on the references page have something to show.
+const kaartMogelijkheden: Record<string, ("Walking dinner" | "BBQ-smoker" | "Streetfood" | "Buffet" | "Aan tafel")[]> = {
+  "bruiloft-assen": ["Walking dinner", "Streetfood"],
+  "bedrijfsfeest-assen": ["BBQ-smoker"],
+  "walking-dinner-gasselte": ["Walking dinner"],
+  "tuinfeest-roden": ["Streetfood"],
+  "bbq-stiens": ["BBQ-smoker"],
+  "bedrijfsfeest-stadskanaal": ["Buffet"],
+  "bruiloft-zuidlaren": ["Aan tafel"],
+};
+const kaartCaseIds: Record<string, number> = {};
+for (const item of kaartCases) {
+  const kaartCase = await payload.create({
+    collection: "referenties",
+    data: { ...item, mogelijkheden: kaartMogelijkheden[item.slug], slug: `testcase-${item.slug}`, foto: item.slug === "bruiloft-assen" ? fBus.id : undefined, toestemming: true, status: "gepubliceerd" },
+    context,
+  });
+  kaartCaseIds[item.slug] = kaartCase.id;
+  // The lookup service asks for at most one request per second.
+  await new Promise((resolve) => setTimeout(resolve, 1100));
+}
 await payload.create({
   collection: "reviews",
   data: { naam: "Voorbeeld Reviewer", gelegenheid: "Voorbeeld", plaats: "Voorbeelddorp", tekst: "Dit is geen echte review, alleen voorbeeldtekst om het scherm te kunnen beoordelen.", bron: "E-mail van de klant", bewijs: "Voorbeeld: mail van 3 mei", status: "gepubliceerd" },
   context,
 });
+// Linked to a job in each province, so the local pages can filter on them.
+for (const [naam, gelegenheid, plaats, tekst, referentie] of [
+  ["Voorbeeld Bruidspaar", "Bruiloft", "Assen", "Voorbeeld: hier komt straks een echte reactie van een bruidspaar. Dit is geen echte review.", kaartCaseIds["bruiloft-assen"]],
+  ["Voorbeeld Bedrijf", "Bedrijfsfeest", "Groningen", "Voorbeeld: hier komt straks een echte reactie van een bedrijf. Dit is geen echte review.", kaartCaseIds["bedrijfsfeest-stadskanaal"]],
+  ["Voorbeeld Feestvierder", "Tuinfeest", "Drachten", "Voorbeeld: hier komt straks een echte reactie van iemand die een tuinfeest gaf. Dit is geen echte review.", kaartCaseIds["evenement-drachten"]],
+] as const) {
+  await payload.create({ collection: "reviews", data: { naam, gelegenheid, plaats, tekst, referentie, bron: "E-mail van de klant", bewijs: "Voorbeeld: geen echte mail", status: "gepubliceerd" }, context });
+}
 await payload.create({ collection: "reviews", data: { naam: "Voorbeeld Google", tekst: "Voorbeeld: nog geen bronlink, dus nog niet op de site.", bron: "Google", status: "concept" }, context });
-await payload.create({ collection: "mededelingen", data: { tekst: "Voorbeeld: in de kerstweek zijn we dicht.", linkTekst: "Plan je feest", linkUrl: "/aanvraag", vanaf: op(-1), tot: op(50), status: "concept" }, context });
+await payload.create({ collection: "mededelingen", data: { tekst: "Voorbeeld: in de kerstweek zijn we dicht.", linkTekst: "Plan je feest", linkUrl: "/aanvraag", vanaf: op(-1), tot: op(50), dagen: ["maandag", "dinsdag"], vanTijd: "09:00", totTijd: "17:00", volgorde: 100, status: "concept" }, context });
 
 const ticket = await payload.create({ collection: "tickets", data: { titel: "Voorbeeld: kan de openingsfoto anders?", soort: "website", omschrijving: "Dit is een voorbeeldticket. Op de home staat nog een oude foto.", status: "wacht-op-melder", melder: peer.id } });
 await payload.update({ collection: "tickets", id: ticket.id, data: { berichten: [{ door: robin.id, tekst: "Voorbeeld: kun je me de nieuwe foto sturen?", op: new Date().toISOString(), statusNaar: "wacht-op-melder" }] } });

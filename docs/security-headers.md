@@ -10,7 +10,7 @@ Set these on all responses:
 | `X-Content-Type-Options` | `nosniff` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
-| `Content-Security-Policy` | `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https:` |
+| `Content-Security-Policy` | `default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.facebook.com; connect-src 'self' https://tiles.openfreemap.org https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.facebook.com; worker-src blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https:` |
 
 Notes:
 

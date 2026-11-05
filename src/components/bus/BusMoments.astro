@@ -8,7 +8,7 @@ interface Props {
   /** Items in the list. */
   items: Item[];
   /** Section theme. */
-  theme?: 'beige' | 'green' | 'black';
+  theme?: 'beige' | 'green';
 }
 const { title, items, theme = 'beige' } = Astro.props;
 ---
@@ -43,7 +43,7 @@ const { title, items, theme = 'beige' } = Astro.props;
   }
   .bus-moments_item {
     padding-top: var(--_spacing---space--3);
-    border-top: var(--focus--width) solid var(--_theme---text-accent);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
   }
   .bus-moments_name { margin-bottom: var(--_spacing---space--3); }
   .bus-moments_text { max-width: 34ch; }
