@@ -13,6 +13,7 @@ import {
   Inbox,
   Camera,
   ListChecks,
+  Lock,
   LogOut,
   MapPin,
   MapPinned,
@@ -37,6 +38,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { uitloggen } from "@/app/(dashboard)/inloggen/actions";
 import { BEDRIJF, GOOGLE_PROFIEL_URL, INSTAGRAM_URL } from "@/lib/bedrijf";
+import { type Module, moduleAan } from "@/lib/pakket";
 
 type Props = {
   gebruikersnaam: string;
@@ -50,7 +52,7 @@ type Props = {
   instagram: string | null;
 };
 
-type Item = { href: string; label: string; icoon: typeof House; badge?: number; badgeLabel?: string; alleenBeheerder?: boolean; extern?: boolean };
+type Item = { href: string; label: string; icoon: typeof House; badge?: number; badgeLabel?: string; alleenBeheerder?: boolean; extern?: boolean; module?: Module };
 type Sectie = { id: "dagelijks" | "website" | "beheer"; label: string; icoon: typeof House; groepen: { titel?: string; items: Item[] }[] };
 
 export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringenTeLaat, ticketsAanZet, beheerder, googleProfiel, instagram }: Props) {
@@ -87,11 +89,11 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
           items: [
             { href: "/", label: "Home", icoon: House },
             { href: "/aanvragen", label: "Aanvragen", icoon: Inbox, badge: nieuweAanvragen, badgeLabel: "nieuw" },
-            { href: "/offertes", label: "Offertes", icoon: FileText, alleenBeheerder: true },
-            { href: "/agenda", label: "Agenda", icoon: CalendarDays },
-            { href: "/klussen", label: "Klussen", icoon: Truck },
-            { href: "/taken", label: "Taken", icoon: ListChecks, badge: takenTeDoen, badgeLabel: "nu te doen" },
-            { href: "/klanten", label: "Klanten", icoon: Contact },
+            { href: "/offertes", label: "Offertes", icoon: FileText, alleenBeheerder: true, module: "offertes" },
+            { href: "/agenda", label: "Agenda", icoon: CalendarDays, module: "agenda" },
+            { href: "/klussen", label: "Klussen", icoon: Truck, module: "klussen" },
+            { href: "/taken", label: "Taken", icoon: ListChecks, badge: takenTeDoen, badgeLabel: "nu te doen", module: "taken" },
+            { href: "/klanten", label: "Klanten", icoon: Contact, module: "klanten" },
           ],
         },
       ],
@@ -131,8 +133,8 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
         {
           titel: "De bus",
           items: [
-            { href: "/bus/keuringen", label: "Keuringen en onderhoud", icoon: Wrench, badge: keuringenTeLaat, badgeLabel: "te laat" },
-            { href: "/bus/voedselveiligheid", label: "Voedselveiligheid", icoon: Thermometer },
+            { href: "/bus/keuringen", label: "Keuringen en onderhoud", icoon: Wrench, badge: keuringenTeLaat, badgeLabel: "te laat", module: "keuringen" },
+            { href: "/bus/voedselveiligheid", label: "Voedselveiligheid", icoon: Thermometer, module: "voedselveiligheid" },
           ],
         },
         {
@@ -149,7 +151,9 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
   const secties = alleSecties
     .map((s) => ({
       ...s,
-      groepen: s.groepen.map((g) => ({ ...g, items: g.items.filter((i) => beheerder || !i.alleenBeheerder) })).filter((g) => g.items.length > 0),
+      groepen: s.groepen
+        .map((g) => ({ ...g, items: g.items.filter((i) => beheerder || !i.alleenBeheerder).map((i) => (i.module && !moduleAan(i.module) ? { ...i, badge: 0 } : i)) }))
+        .filter((g) => g.items.length > 0),
     }))
     .filter((s) => s.groepen.length > 0);
 
@@ -157,19 +161,25 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
 
   // The page decides the section; screens outside the menu (such as search) keep the last choice.
   const sectieVanPagina = secties.find((s) => s.groepen.some((g) => g.items.some((i) => !i.extern && isActief(i.href))))?.id;
+  const opSlot = (i: Item) => !!i.module && !moduleAan(i.module);
+  const huidigeHeeftSlot = (id: Sectie["id"]) => secties.find((s) => s.id === id)?.groepen.some((g) => g.items.some(opSlot)) ?? false;
   const [gekozen, setGekozen] = useState<Sectie["id"]>(sectieVanPagina ?? "dagelijks");
   useEffect(() => {
     if (sectieVanPagina) setGekozen(sectieVanPagina);
   }, [sectieVanPagina, pad]);
   const huidige = secties.find((s) => s.id === gekozen) ?? secties[0];
 
-  // The four things you do next to the bus, always under your thumb on the phone.
+  // The four things you do most, always under your thumb on the phone. Only what is in the package.
   const onder = [
-    { href: "/", label: "Home", icoon: House, badge: 0 },
-    { href: "/aanvragen", label: "Aanvragen", icoon: Inbox, badge: nieuweAanvragen },
-    { href: "/klussen", label: "Klussen", icoon: Truck, badge: 0 },
-    { href: "/bus/voedselveiligheid", label: "Meten", icoon: ShieldCheck, badge: 0 },
-  ];
+    { href: "/", actiefOp: "/", label: "Home", icoon: House, badge: 0, zichtbaar: true },
+    { href: "/aanvragen", actiefOp: "/aanvragen", label: "Aanvragen", icoon: Inbox, badge: nieuweAanvragen, badgeLabel: "nieuw", zichtbaar: true },
+    { href: "/klussen", actiefOp: "/klussen", label: "Klussen", icoon: Truck, badge: 0, zichtbaar: moduleAan("klussen") },
+    { href: "/bus/voedselveiligheid", actiefOp: "/bus/voedselveiligheid", label: "Meten", icoon: ShieldCheck, badge: 0, zichtbaar: moduleAan("voedselveiligheid") },
+    { href: "/website/arrangementen", actiefOp: "/website", label: "Website", icoon: Globe, badge: 0, zichtbaar: beheerder },
+    { href: "/tickets", actiefOp: "/tickets", label: "Tickets", icoon: Ticket, badge: ticketsAanZet, badgeLabel: "wachten op je reactie", zichtbaar: true },
+  ]
+    .filter((o) => o.zichtbaar)
+    .slice(0, 4);
 
   return (
     <>
@@ -202,7 +212,7 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
             }}
           >
             <label htmlFor="zoeken" className="sr-only">
-              Zoeken in aanvragen, klanten, klussen en website
+              Zoeken in {["aanvragen", moduleAan("klanten") && "klanten", moduleAan("klussen") && "klussen"].filter(Boolean).join(", ")} en website
             </label>
             <div className="flex min-h-doel items-center gap-2 border border-nav-rand bg-donker-hoog px-3 focus-within:border-nav-muted">
               <Search aria-hidden size={18} className="shrink-0 text-nav-muted" />
@@ -257,7 +267,23 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
                     </p>
                   )}
                   <ul className="space-y-0.5" aria-labelledby={groep.titel ? `${navId}-groep-${gi}` : undefined}>
-                    {groep.items.map(({ href, label, icoon: Icoon, badge, badgeLabel, extern }) => {
+                    {groep.items.map((item) => {
+                      const { href, label, icoon: Icoon, badge, badgeLabel, extern } = item;
+                      if (opSlot(item)) {
+                        // Not a link: shows the idea without a dead end.
+                        return (
+                          <li key={href}>
+                            <span aria-disabled="true" className="flex min-h-doel cursor-not-allowed items-center gap-3 px-3 text-nav-muted opacity-60">
+                              <Icoon aria-hidden size={20} className="shrink-0" />
+                              <span className="min-w-0 flex-1">
+                                {label}
+                                <span className="sr-only"> (niet in je pakket)</span>
+                              </span>
+                              <Lock aria-hidden size={16} className="shrink-0" />
+                            </span>
+                          </li>
+                        );
+                      }
                       if (extern) {
                         return (
                           <li key={href}>
@@ -300,6 +326,17 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
                   </ul>
                 </div>
               ))}
+              {beheerder && huidigeHeeftSlot(huidige.id) && (
+                <p className="mt-4 flex gap-2 px-3 pb-2 text-sm text-nav-muted">
+                  <Lock aria-hidden size={14} className="mt-1 shrink-0" />
+                  <span>
+                    Met een slotje: nog niet in je pakket.{" "}
+                    <Link href="/tickets/nieuw" className="inline-flex min-h-doel items-center text-nav-text underline">
+                      Vraag het aan
+                    </Link>
+                  </span>
+                </p>
+              )}
             </div>
           </nav>
 
@@ -319,9 +356,9 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
 
       {/* Phone: bottom navigation with big targets. */}
       <nav aria-label="Snelmenu" className="fixed inset-x-0 bottom-0 z-50 border-t border-nav-rand bg-donker pb-[env(safe-area-inset-bottom)] text-nav-text lg:hidden">
-        <ul className="grid h-onderbalk-knoppen grid-cols-5">
-          {onder.map(({ href, label, icoon: Icoon, badge }) => {
-            const actief = isActief(href) && !open;
+        <ul className="grid h-onderbalk-knoppen" style={{ gridTemplateColumns: `repeat(${onder.length + 1}, minmax(0, 1fr))` }}>
+          {onder.map(({ href, actiefOp, label, icoon: Icoon, badge, badgeLabel }) => {
+            const actief = isActief(actiefOp) && !open;
             return (
               <li key={href}>
                 <Link
@@ -334,7 +371,7 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
                   {badge > 0 && (
                     <span className="absolute top-1.5 left-1/2 ml-2 bg-signaal px-1 text-xs font-semibold text-donker">
                       {badge}
-                      <span className="sr-only"> nieuw</span>
+                      <span className="sr-only"> {badgeLabel}</span>
                     </span>
                   )}
                 </Link>

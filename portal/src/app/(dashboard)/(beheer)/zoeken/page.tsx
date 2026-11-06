@@ -5,6 +5,7 @@ import { LegeStaat, PaginaKop } from "@/components/ui";
 import { payloadClient, vereisGebruiker } from "@/lib/auth";
 import { kortDatum } from "@/lib/datum";
 import { gelegenheden, labelVan } from "@/lib/opties";
+import { moduleAan } from "@/lib/pakket";
 
 export const metadata: Metadata = { title: "Zoeken" };
 
@@ -17,12 +18,15 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
   const beheerder = heeftRol(user, "superadmin", "eigenaar");
   const toegang = { user, overrideAccess: false, depth: 0, limit: 8 } as const;
   const groepen: { titel: string; treffers: Treffer[] }[] = [];
+  const metKlanten = moduleAan("klanten");
+  const metKlussen = moduleAan("klussen");
+  const waarin = ["aanvragen", metKlanten && "klanten", metKlussen && "klussen"].filter(Boolean).join(", ");
 
   if (q) {
     const [aanvragen, klanten, klussen, arr, ref, rev, faq, plaatsen] = await Promise.all([
       payload.find({ collection: "aanvragen", where: { or: [{ naam: { contains: q } }, { email: { contains: q } }, { plaats: { contains: q } }, { opmerking: { contains: q } }] }, ...toegang }),
-      payload.find({ collection: "klanten", where: { or: [{ naam: { contains: q } }, { bedrijf: { contains: q } }, { email: { contains: q } }, { plaats: { contains: q } }] }, ...toegang }),
-      payload.find({ collection: "klussen", where: { or: [{ titel: { contains: q } }, { plaats: { contains: q } }, { adres: { contains: q } }] }, ...toegang }),
+      metKlanten ? payload.find({ collection: "klanten", where: { or: [{ naam: { contains: q } }, { bedrijf: { contains: q } }, { email: { contains: q } }, { plaats: { contains: q } }] }, ...toegang }) : null,
+      metKlussen ? payload.find({ collection: "klussen", where: { or: [{ titel: { contains: q } }, { plaats: { contains: q } }, { adres: { contains: q } }] }, ...toegang }) : null,
       beheerder ? payload.find({ collection: "arrangementen", where: { or: [{ titel: { contains: q } }, { kort: { contains: q } }] }, ...toegang }) : null,
       beheerder ? payload.find({ collection: "referenties", where: { or: [{ titel: { contains: q } }, { plaats: { contains: q } }] }, ...toegang }) : null,
       beheerder ? payload.find({ collection: "reviews", where: { or: [{ naam: { contains: q } }, { tekst: { contains: q } }] }, ...toegang }) : null,
@@ -31,8 +35,8 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
     ]);
     groepen.push(
       { titel: "Aanvragen", treffers: aanvragen.docs.map((a) => ({ href: `/aanvragen/${a.id}`, titel: a.naam, onder: [labelVan(gelegenheden, a.gelegenheid), a.plaats, a.datum && kortDatum(a.datum)].filter(Boolean).join(", ") })) },
-      { titel: "Klanten", treffers: klanten.docs.map((k) => ({ href: `/klanten/${k.id}`, titel: k.naam, onder: [k.bedrijf, k.plaats].filter(Boolean).join(", ") })) },
-      { titel: "Klussen", treffers: klussen.docs.map((k) => ({ href: `/klussen/${k.id}`, titel: k.titel, onder: [k.plaats, kortDatum(k.datum)].filter(Boolean).join(", ") })) },
+      { titel: "Klanten", treffers: (klanten?.docs ?? []).map((k) => ({ href: `/klanten/${k.id}`, titel: k.naam, onder: [k.bedrijf, k.plaats].filter(Boolean).join(", ") })) },
+      { titel: "Klussen", treffers: (klussen?.docs ?? []).map((k) => ({ href: `/klussen/${k.id}`, titel: k.titel, onder: [k.plaats, kortDatum(k.datum)].filter(Boolean).join(", ") })) },
       { titel: "Arrangementen", treffers: (arr?.docs ?? []).map((d) => ({ href: `/website/arrangementen/${d.id}`, titel: d.titel, onder: d.kort })) },
       { titel: "Referenties", treffers: (ref?.docs ?? []).map((d) => ({ href: `/website/referenties/${d.id}`, titel: d.titel, onder: d.plaats })) },
       { titel: "Reviews", treffers: (rev?.docs ?? []).map((d) => ({ href: `/website/reviews/${d.id}`, titel: d.naam, onder: d.tekst.slice(0, 80) })) },
@@ -47,7 +51,7 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
       <PaginaKop titel="Zoeken" />
       <form role="search" className="mb-6 flex max-w-xl gap-2">
         <label htmlFor="zoekterm" className="sr-only">
-          Zoeken in aanvragen, klanten, klussen en website
+          Zoeken in {waarin} en website
         </label>
         <input id="zoekterm" name="q" type="search" defaultValue={q} placeholder="Naam, plaats, mail…" className="veld" />
         <button type="submit" className="knop knop-primair shrink-0">
@@ -55,7 +59,7 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
         </button>
       </form>
       {!q ? (
-        <p className="max-w-prose text-ink-muted">Zoek op naam, plaats of mailadres, in aanvragen, klanten, klussen en de teksten van de site.</p>
+        <p className="max-w-prose text-ink-muted">Zoek op naam, plaats of mailadres, in {waarin} en de teksten van de site.</p>
       ) : gevuld.length === 0 ? (
         <LegeStaat titel={`Niets gevonden voor "${q}"`}>Probeer een deel van de naam, of alleen de plaats.</LegeStaat>
       ) : (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { payloadClient, vereisGebruiker } from "@/lib/auth";
+import { payloadClient, vereisGebruiker, vereisModule } from "@/lib/auth";
 import { datumLang } from "@/lib/datum";
 import { Afdrukbalk } from "../../Afdrukbalk";
 import "../../afdruk.css";
@@ -8,6 +8,7 @@ import "../../afdruk.css";
 export const metadata: Metadata = { title: "Boodschappenlijst afdrukken" };
 
 export default async function BoodschappenAfdruk({ params }: { params: Promise<{ id: string }> }) {
+  vereisModule("klussen");
   const user = await vereisGebruiker();
   const payload = await payloadClient();
   const id = Number((await params).id);

@@ -5,6 +5,7 @@ import { AanvraagLabel, LegeStaat, PaginaKop, TabLinks } from "@/components/ui";
 import { payloadClient, vereisGebruiker } from "@/lib/auth";
 import { datum, kortDatum } from "@/lib/datum";
 import { gelegenheden, labelVan } from "@/lib/opties";
+import { moduleAan } from "@/lib/pakket";
 import { Bord } from "./Bord";
 
 export const metadata: Metadata = { title: "Aanvragen" };
@@ -20,7 +21,11 @@ export default async function AanvragenPagina({ searchParams }: { searchParams: 
     <>
       <PaginaKop
         titel="Aanvragen"
-        info="Alles wat via het formulier op de site binnenkomt, of wat je zelf toevoegt na een telefoontje. Verplaats een aanvraag naar de volgende fase: de bijbehorende taak (reageren, offerte sturen, nabellen) komt vanzelf op je lijst."
+        info={
+          moduleAan("taken")
+            ? "Alles wat via het formulier op de site binnenkomt, of wat je zelf toevoegt na een telefoontje. Verplaats een aanvraag naar de volgende fase: de bijbehorende taak (reageren, offerte sturen, nabellen) komt vanzelf op je lijst."
+            : "Alles wat via het formulier op de site binnenkomt, of wat je zelf toevoegt na een telefoontje. Verplaats een aanvraag naar de volgende fase, dan zie je in één oogopslag waar iedereen staat."
+        }
         actie={
           <Link href="/aanvragen/nieuw" className="knop knop-primair">
             <Plus aria-hidden size={18} /> Aanvraag toevoegen

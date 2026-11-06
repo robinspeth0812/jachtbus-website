@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getPayload } from "payload";
 import { cache } from "react";
 import { heeftRol } from "@/access";
+import { type Module, moduleAan } from "@/lib/pakket";
 import type { User } from "@/payload-types";
 
 export const payloadClient = () => getPayload({ config });
@@ -29,6 +30,11 @@ export async function vereisGebruiker(): Promise<User> {
   const user = await huidigeGebruiker();
   if (!user) redirect("/inloggen");
   return user;
+}
+
+/** Screens of a module outside the package: back home, also when the address is typed in. */
+export function vereisModule(m: Module): void {
+  if (!moduleAan(m)) redirect("/");
 }
 
 /** Owner or web builder only: prices, website content and settings. */

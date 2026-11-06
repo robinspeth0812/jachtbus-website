@@ -1,3 +1,4 @@
+import type React from "react";
 import { FileText, Mail, MessageCircle, Phone, Truck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -11,6 +12,7 @@ import { payloadClient, vereisGebruiker } from "@/lib/auth";
 import { BEDRIJF, telefoonInternationaal } from "@/lib/bedrijf";
 import { datumLang, isoNaarDag, momentTekst } from "@/lib/datum";
 import { aanvraagFasen, gelegenheden, labelVan, momentenOpties } from "@/lib/opties";
+import { moduleAan } from "@/lib/pakket";
 import { FaseKeuze, NotitieVeld } from "./Onderdelen";
 import { maakKlus, verwijderAanvraag } from "../actions";
 
@@ -27,7 +29,9 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
   const beheerder = heeftRol(user, "superadmin", "eigenaar");
   const klant = typeof a.klant === "object" ? a.klant : null;
   const klus = typeof a.klus === "object" ? a.klus : null;
-  const bezet = a.datum ? await payload.find({ collection: "klussen", where: bezetOpDag(isoNaarDag(a.datum)), depth: 0, limit: 5, user, overrideAccess: false }) : null;
+  const metKlussen = moduleAan("klussen");
+  const metOffertes = beheerder && moduleAan("offertes");
+  const bezet = metKlussen && a.datum ? await payload.find({ collection: "klussen", where: bezetOpDag(isoNaarDag(a.datum)), depth: 0, limit: 5, user, overrideAccess: false }) : null;
   const anderen = bezet?.docs.filter((k) => k.id !== klus?.id) ?? [];
   const whatsapp = telefoonInternationaal(a.telefoon);
   const gelegenheid = a.gelegenheid === "overige" && a.gelegenheidOverig ? `Iets anders: ${a.gelegenheidOverig}` : labelVan(gelegenheden, a.gelegenheid);
@@ -89,7 +93,7 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
               ["Telefoon", a.telefoon],
               ["Opmerking", a.opmerking],
               ["Binnengekomen", `${momentTekst(a.createdAt)}, ${a.bron === "handmatig" ? "zelf toegevoegd" : "via de site"}`],
-              ["Klant", klant ? <Link key="k" href={`/klanten/${klant.id}`} className="inline-flex min-h-doel items-center underline">{klant.naam}</Link> : null],
+              ...(moduleAan("klanten") ? [["Klant", klant ? <Link key="k" href={`/klanten/${klant.id}`} className="inline-flex min-h-doel items-center underline">{klant.naam}</Link> : null] as [string, React.ReactNode]] : []),
             ]}
           />
         </Paneel>
@@ -98,8 +102,9 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
           <Paneel id="fase-kop" titel="Volgende stap">
             <div className="space-y-4 p-4">
               <FaseKeuze id={a.id} fase={a.fase} fasen={aanvraagFasen.map((f) => ({ value: f.value, label: f.label }))} />
+              {(metKlussen || metOffertes) && (
               <div className="flex flex-wrap gap-3 border-t border-rule pt-4">
-                {klus ? (
+                {!metKlussen ? null : klus ? (
                   <Link href={`/klussen/${klus.id}`} className="knop knop-secundair">
                     <Truck aria-hidden size={18} /> Naar de klus
                   </Link>
@@ -108,12 +113,13 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
                     <Truck aria-hidden size={18} /> Maak klus
                   </ActieKnop>
                 )}
-                {beheerder && (
+                {metOffertes && (
                   <Link href={`/offertes/nieuw?aanvraag=${a.id}`} className="knop knop-secundair">
                     <FileText aria-hidden size={18} /> Maak offerte
                   </Link>
                 )}
               </div>
+              )}
             </div>
           </Paneel>
 
@@ -126,7 +132,7 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
       </div>
 
       <div className="mt-6">
-        <Verwijderen actie={verwijderAanvraag} id={a.id} wat="Aanvraag" naam={a.naam} extra="De taken die erbij horen gaan ook weg. De klant blijft staan." />
+        <Verwijderen actie={verwijderAanvraag} id={a.id} wat="Aanvraag" naam={a.naam} extra={moduleAan("taken") ? "De taken die erbij horen gaan ook weg. De klant blijft staan." : undefined} />
       </div>
     </>
   );
