@@ -1,0 +1,158 @@
+---
+// The public events of the coming weeks as a row you can swipe or scroll. The
+// buttons only appear when the script runs and the row is wider than the page.
+// No automatic advance: you read an event at your own pace. The window is
+// counted at build time; the site rebuilds every night.
+import { getInhoud } from '../../lib/cms';
+import { dagPlus, vandaag } from '../../lib/agenda';
+import BusEventCard from './BusEventCard.astro';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Show the events that start within this many days from today. */
+  days?: number;
+  /** Text when no event falls in that window. */
+  emptyText?: string;
+  /** Section theme. */
+  theme?: 'beige' | 'green';
+}
+const {
+  title = 'Binnenkort',
+  days = 30,
+  emptyText = 'De komende maand staan we niet op een openbaar event. Hieronder zie je wat er verder op de planning staat.',
+  theme = 'beige',
+} = Astro.props;
+const { evenementen } = await getInhoud();
+const tot = dagPlus(vandaag(), days);
+const items = evenementen.filter((item) => item.datum <= tot);
+---
+
+<section class:list={['bus-event-slider_wrap', 'u-section', `u-theme-bus-${theme}`]}>
+  <div class="bus-event-slider_contain u-container">
+    <div class="bus-event-slider_head">
+      <h2 class="bus-event-slider_title u-text-style-poster-small">{title}</h2>
+      {items.length > 1 && (
+        <div class="bus-event-slider_controls">
+          <button class="bus-event-slider_button is-prev" type="button" aria-label="Vorige events" data-trigger="hover focus">
+            <svg class="bus-event-slider_icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.500 8h-10M7.500 3.500 3 8l4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+          </button>
+          <button class="bus-event-slider_button is-next" type="button" aria-label="Volgende events" data-trigger="hover focus">
+            <svg class="bus-event-slider_icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+          </button>
+        </div>
+      )}
+    </div>
+    {items.length === 0 ? (
+      <p class="bus-event-slider_empty u-text-style-large">{emptyText}</p>
+    ) : (
+      <ul class="bus-event-slider_track" tabindex="0" aria-label={`Events in de komende ${days} dagen`}>
+        {items.map((item) => (
+          <li class="bus-event-slider_slide">
+            <BusEventCard item={item} />
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .bus-event-slider_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-event-slider_contain {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--6);
+  }
+  .bus-event-slider_head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--_spacing---space--4);
+  }
+  .bus-event-slider_empty { max-width: 50ch; }
+  .bus-event-slider_track {
+    display: flex;
+    gap: var(--site--gutter);
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--_theme---text-accent) transparent;
+    padding-bottom: var(--_spacing---space--3);
+    outline-offset: var(--focus--offset);
+  }
+  .bus-event-slider_slide {
+    display: flex;
+    flex: 0 0 min(85%, var(--size--review-card));
+    scroll-snap-align: start;
+  }
+  /* Only there when the script runs and there is something to scroll. */
+  .bus-event-slider_controls {
+    display: none;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-event-slider_controls.is-active { display: flex; }
+  .bus-event-slider_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size--slider-button);
+    height: var(--size--slider-button);
+    min-width: var(--target--min);
+    min-height: var(--target--min);
+    padding: 0;
+    background-color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), transparent calc(100% * var(--_trigger---off)));
+    color: color-mix(in hsl, var(--_theme---background) calc(100% * var(--_trigger---on)), var(--_theme---text) calc(100% * var(--_trigger---off)));
+    border: var(--focus--width) solid var(--_theme---border);
+    border-radius: var(--radius--round);
+    cursor: pointer;
+  }
+  /* At the start or the end: still visible, so the pair keeps its place, but clearly off. */
+  .bus-event-slider_button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .bus-event-slider_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-event-slider_button { transition: background-color 150ms, color 150ms; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.bus-event-slider_wrap').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('.bus-event-slider_track');
+    const controls = root.querySelector<HTMLElement>('.bus-event-slider_controls');
+    const prev = root.querySelector<HTMLButtonElement>('.bus-event-slider_button.is-prev');
+    const next = root.querySelector<HTMLButtonElement>('.bus-event-slider_button.is-next');
+    if (!track || !controls || !prev || !next) return;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // One card plus the gap between cards.
+    const step = () => {
+      const first = track.firstElementChild as HTMLElement | null;
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return first ? first.offsetWidth + gap : track.clientWidth;
+    };
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      controls.classList.toggle('is-active', max > 1);
+      prev.disabled = track.scrollLeft <= 1;
+      next.disabled = track.scrollLeft >= max - 1;
+    };
+    const move = (direction: 1 | -1) => track.scrollBy({ left: direction * step(), behavior: still.matches ? 'auto' : 'smooth' });
+
+    prev.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(update).observe(track);
+    update();
+  });
+</script>

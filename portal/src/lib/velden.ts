@@ -45,6 +45,8 @@ export type VeldDef = {
   voorbeeld?: string;
   /** Visible heading starting a new group of fields. */
   groep?: string;
+  /** Only shown while the field "soort" has this value (CSS in globals.css, the server still reads it). */
+  alleenAls?: "event";
 };
 
 export type HerhaalKolom = Omit<VeldDef, "bron" | "groep" | "rijen">;

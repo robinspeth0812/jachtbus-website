@@ -27,11 +27,18 @@ export function AutoVelden({
 }
 
 function FragmentVeld({ v, status, doc, keuzes }: { v: VeldDef; status: FormStatus; doc?: Record<string, unknown> | null; keuzes: Keuzes }) {
-  return (
+  const veld = (
     <>
       {v.groep && <h2 className="mt-3 w-full border-t border-rule pt-5 text-lg font-semibold">{v.groep}</h2>}
       <EenVeld v={v} status={status} doc={doc} keuzes={keuzes} />
     </>
+  );
+  return v.alleenAls ? (
+    <div className="contents" data-alleen-als={v.alleenAls}>
+      {veld}
+    </div>
+  ) : (
+    veld
   );
 }
 

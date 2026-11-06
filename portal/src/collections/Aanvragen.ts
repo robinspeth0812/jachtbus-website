@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 import { ingelogd } from "../access";
 import { aanvraagFasen, gelegenheden, momentenOpties } from "../lib/opties";
 import { koppelKlant, ruimTakenOp, volgAanvraagOp } from "../lib/opvolging";
+import { herbouwSiteBijBoeking, herbouwSiteNaVerwijderen } from "../lib/siteBuild";
 
 /**
  * Requests for a job. The public form posts to /api/aanvraag (lib/aanvraagEndpoint.ts),
@@ -13,7 +14,7 @@ export const Aanvragen: CollectionConfig = {
   admin: { useAsTitle: "naam", defaultColumns: ["naam", "gelegenheid", "datum", "fase"] },
   defaultSort: "-createdAt",
   access: { create: ingelogd, read: ingelogd, update: ingelogd, delete: ingelogd },
-  hooks: { beforeChange: [koppelKlant], afterChange: [volgAanvraagOp], afterDelete: [ruimTakenOp] },
+  hooks: { beforeChange: [koppelKlant], afterChange: [volgAanvraagOp, herbouwSiteBijBoeking], afterDelete: [ruimTakenOp, herbouwSiteNaVerwijderen] },
   fields: [
     { name: "gelegenheid", type: "select", required: true, options: [...gelegenheden] },
     { name: "gelegenheidOverig", type: "text", maxLength: 120 },

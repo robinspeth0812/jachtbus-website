@@ -108,7 +108,7 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
           items: [
             { href: "/website/arrangementen", label: "Arrangementen", icoon: UtensilsCrossed, alleenBeheerder: true },
             { href: "/website/galerij", label: "Galerij", icoon: Images, alleenBeheerder: true },
-            { href: "/website/events", label: "Events", icoon: CalendarDays, alleenBeheerder: true },
+            { href: "/website/agenda", label: "Agenda en events", icoon: CalendarDays, alleenBeheerder: true },
             { href: "/website/werkgebied", label: "Werkgebied", icoon: MapPinned, alleenBeheerder: true },
             { href: "/website/faq", label: "Veelgestelde vragen", icoon: MessageCircleQuestion, alleenBeheerder: true },
             { href: BEDRIJF.site, label: "Bekijk de site", icoon: Globe, extern: true, alleenBeheerder: true },

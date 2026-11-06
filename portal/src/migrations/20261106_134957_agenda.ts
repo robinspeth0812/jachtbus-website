@@ -2,20 +2,23 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
-   CREATE TYPE "public"."enum_evenementen_status" AS ENUM('concept', 'gepubliceerd');
+   CREATE TYPE "public"."enum_evenementen_soort" AS ENUM('event', 'afspraak');
+  CREATE TYPE "public"."enum_evenementen_status" AS ENUM('concept', 'gepubliceerd');
   CREATE TABLE "evenementen" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"titel" varchar NOT NULL,
+  	"soort" "enum_evenementen_soort" DEFAULT 'event' NOT NULL,
+  	"titel" varchar,
   	"datum" timestamp(3) with time zone NOT NULL,
   	"tot_datum" timestamp(3) with time zone,
   	"van_tijd" varchar,
   	"tot_tijd" varchar,
-  	"plaats" varchar NOT NULL,
+  	"plaats" varchar,
   	"locatie" varchar,
   	"tekst" varchar,
   	"link_tekst" varchar,
   	"link_url" varchar,
   	"foto_id" integer,
+  	"notitie" varchar,
   	"status" "enum_evenementen_status" DEFAULT 'concept' NOT NULL,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
@@ -23,6 +26,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "payload_locked_documents_rels" ADD COLUMN "evenementen_id" integer;
   ALTER TABLE "evenementen" ADD CONSTRAINT "evenementen_foto_id_media_id_fk" FOREIGN KEY ("foto_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  CREATE INDEX "evenementen_soort_idx" ON "evenementen" USING btree ("soort");
   CREATE INDEX "evenementen_datum_idx" ON "evenementen" USING btree ("datum");
   CREATE INDEX "evenementen_tot_datum_idx" ON "evenementen" USING btree ("tot_datum");
   CREATE INDEX "evenementen_foto_idx" ON "evenementen" USING btree ("foto_id");
@@ -41,5 +45,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   
   DROP INDEX "payload_locked_documents_rels_evenementen_id_idx";
   ALTER TABLE "payload_locked_documents_rels" DROP COLUMN "evenementen_id";
+  DROP TYPE "public"."enum_evenementen_soort";
   DROP TYPE "public"."enum_evenementen_status";`)
 }

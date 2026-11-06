@@ -7,6 +7,15 @@ import { type FormStatus, leesId, maakSlug } from "@/lib/formulier";
 import { websiteModules } from "@/lib/modules";
 import { leesRegels, leesVelden } from "@/lib/velden";
 
+/** A public event needs a name and a place; a booking needs neither. */
+function verplichtPerSoort(moduleKey: string, d: Record<string, unknown>): Record<string, string> {
+  if (moduleKey !== "agenda" || d.soort !== "event") return {};
+  return {
+    ...(d.titel ? {} : { titel: "Een event heeft een naam nodig. Is het een besloten feest? Kies dan Afspraak." }),
+    ...(d.plaats ? {} : { plaats: "Waar staat de bus? Vul de plaats in." }),
+  };
+}
+
 /** Honesty rules for going public: the same rule for the form and the list button. */
 function magOpSite(moduleKey: string, d: Record<string, unknown>): Record<string, string> {
   if (d.status !== "gepubliceerd") return {};
@@ -24,7 +33,7 @@ export async function bewaarItem(moduleKey: string, id: number | null, _v: FormS
   const m = websiteModules[moduleKey];
   if (!m) return { fout: "Dit onderdeel bestaat niet." };
   const { data, velden } = leesVelden(formData, m.velden);
-  const fouten = { ...velden, ...magOpSite(moduleKey, data) };
+  const fouten = { ...velden, ...verplichtPerSoort(moduleKey, data), ...magOpSite(moduleKey, data) };
   for (const h of m.herhalingen ?? []) {
     const r = leesRegels(formData, h);
     data[h.naam] = r.rijen;

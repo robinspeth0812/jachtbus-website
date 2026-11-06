@@ -132,6 +132,12 @@ export const provincies = [
   { value: "Friesland", label: "Friesland" },
 ] as const;
 
+/** A public event shows name and place; a private booking only shows the date as booked. */
+export const agendaSoorten = [
+  { value: "event", label: "Openbaar event: naam en plaats op de site" },
+  { value: "afspraak", label: "Afspraak: alleen de datum, als geboekt" },
+] as const;
+
 export const publicatieStatussen = [
   { value: "concept", label: "Concept" },
   { value: "gepubliceerd", label: "Op de site" },

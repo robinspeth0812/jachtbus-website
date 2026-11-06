@@ -1,0 +1,60 @@
+---
+// The honest small print of the agenda: an empty day is not a free day. Always
+// shown, also when the agenda itself is empty.
+import { aanvraagUrl } from '../../data/nieuw';
+
+interface Props {
+  /** Full note for the agenda page, or one short line for a teaser elsewhere. */
+  size?: 'full' | 'short';
+}
+const { size = 'full' } = Astro.props;
+---
+
+<aside class:list={['bus-agenda-note_wrap', `is-${size}`]} aria-label="Let op bij de agenda">
+  <svg class="bus-agenda-note_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="9.500" stroke="currentColor" stroke-width="2" />
+    <path d="M12 10.500v6M12 7v.500" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" />
+  </svg>
+  {size === 'full' ? (
+    <p class="bus-agenda-note_text">
+      <strong class="bus-agenda-note_title">Staat jouw datum er niet bij?</strong> Dan is hij niet per se vrij. We houden de agenda bij, maar niet elke boeking staat erin. Zekerheid krijg je alleen van ons.{' '}
+      <a class="bus-agenda-note_link" href={aanvraagUrl()}>Check je datum</a>
+    </p>
+  ) : (
+    <p class="bus-agenda-note_text">
+      Een lege dag in de agenda is geen garantie dat de bus vrij is. <a class="bus-agenda-note_link" href={aanvraagUrl()}>Check je datum</a>
+    </p>
+  )}
+</aside>
+
+<style>
+  .bus-agenda-note_wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--_spacing---space--3);
+    max-width: 62ch;
+  }
+  .bus-agenda-note_wrap.is-full {
+    padding: var(--_spacing---space--4) var(--_spacing---space--5);
+    border-left: var(--size--stripe-thin) solid var(--_theme---text-accent);
+    background-color: var(--_theme---background-2);
+  }
+  .bus-agenda-note_icon {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--5);
+    height: var(--_spacing---space--5);
+    margin-top: var(--_spacing---space--1);
+    color: var(--_theme---text-accent);
+  }
+  .bus-agenda-note_title { font-weight: var(--_typography---font--primary-bold); }
+  /* Inline in running text: the line height gives the target, and it sits apart from other links. */
+  .bus-agenda-note_link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--min);
+    color: var(--_theme---heading);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: underline;
+    text-underline-offset: var(--_spacing---space--1);
+  }
+</style>

@@ -233,3 +233,8 @@
     display: none !important;
   }
 }
+
+/* Agenda form: a private booking has no public name or place, so those fields step aside. */
+form:has(select[name="soort"] option[value="afspraak"]:checked) [data-alleen-als="event"] {
+  display: none;
+}

@@ -3,6 +3,7 @@
  * No Payload imports: also used in client components.
  */
 import {
+  agendaSoorten,
   faqPaginas,
   fotoLicenties,
   fotoPersonen,
@@ -100,17 +101,19 @@ export const mededelingVelden: VeldDef[] = [
 ];
 
 export const evenementVelden: VeldDef[] = [
-  { naam: "titel", label: "Naam van het event", soort: "tekst", verplicht: true, max: 120, breedte: "lang", hulp: "Bijv. Koningsdag Assen of Foodtruckfestival Emmen." },
-  { naam: "datum", label: "Datum", soort: "datum", verplicht: true, breedte: "datum", hulp: "De dag na het event staat het vanzelf niet meer op de site." },
-  { naam: "totDatum", label: "Tot en met", soort: "datum", breedte: "datum", hulp: "Alleen bij een event van meer dagen." },
-  { naam: "vanTijd", label: "Van (tijd)", soort: "tijd", breedte: "tijd" },
-  { naam: "totTijd", label: "Tot (tijd)", soort: "tijd", breedte: "tijd" },
-  { naam: "plaats", label: "Plaats", soort: "tekst", verplicht: true, max: 80, breedte: "kort" },
-  { naam: "locatie", label: "Waar precies", soort: "tekst", max: 160, breedte: "middel", hulp: "Optioneel. Bijv. de Brink, of het adres." },
-  { naam: "tekst", label: "Korte tekst", soort: "lang", max: 1000, rijen: 3, breedte: "lang", hulp: "Optioneel. Wat staat er op de kaart, of wat is er te doen?" },
-  { naam: "linkTekst", label: "Tekst van de link", soort: "tekst", max: 60, breedte: "middel", hulp: "Leeg = Meer over dit event." },
-  { naam: "linkUrl", label: "Link", soort: "url", breedte: "lang", hulp: "Optioneel. De site van het event, of de tickets." },
-  { naam: "foto", label: "Foto", soort: "foto", hulp: "Optioneel." },
+  { naam: "soort", label: "Wat is het?", soort: "keuze", verplicht: true, opties: agendaSoorten, breedte: "lang", hulp: "Een afspraak staat op de site alleen als geboekte datum, zonder naam of plaats." },
+  { naam: "datum", label: "Datum", soort: "datum", verplicht: true, breedte: "datum", hulp: "De dag erna staat het vanzelf niet meer op de site." },
+  { naam: "totDatum", label: "Tot en met", soort: "datum", breedte: "datum", hulp: "Alleen bij meer dagen." },
+  { naam: "vanTijd", label: "Van (tijd)", soort: "tijd", breedte: "tijd", alleenAls: "event" },
+  { naam: "totTijd", label: "Tot (tijd)", soort: "tijd", breedte: "tijd", alleenAls: "event" },
+  { naam: "titel", label: "Naam van het event", soort: "tekst", max: 120, breedte: "lang", groep: "Over het event", alleenAls: "event", hulp: "Verplicht bij een event. Bijv. Koningsdag Assen of Foodtruckfestival Emmen." },
+  { naam: "plaats", label: "Plaats", soort: "tekst", max: 80, breedte: "kort", alleenAls: "event", hulp: "Verplicht bij een event." },
+  { naam: "locatie", label: "Waar precies", soort: "tekst", max: 160, breedte: "middel", alleenAls: "event", hulp: "Optioneel. Bijv. de Brink, of het adres." },
+  { naam: "tekst", label: "Korte tekst", soort: "lang", max: 1000, rijen: 3, breedte: "lang", alleenAls: "event", hulp: "Optioneel. Wat staat er op de kaart, of wat is er te doen?" },
+  { naam: "linkTekst", label: "Tekst van de link", soort: "tekst", max: 60, breedte: "middel", alleenAls: "event", hulp: "Leeg = Meer over dit event." },
+  { naam: "linkUrl", label: "Link", soort: "url", breedte: "lang", alleenAls: "event", hulp: "Optioneel. De site van het event, of de tickets." },
+  { naam: "foto", label: "Foto", soort: "foto", alleenAls: "event", hulp: "Optioneel." },
+  { naam: "notitie", label: "Notitie voor jezelf", soort: "tekst", max: 240, breedte: "lang", groep: "Alleen in het portaal", hulp: "Komt nooit op de site. Bijv. Bruiloft Jansen, of wie het geregeld heeft." },
   statusVeld,
 ];
 

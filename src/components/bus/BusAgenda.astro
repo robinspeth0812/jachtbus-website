@@ -1,0 +1,166 @@
+---
+// The full agenda, per month: public events with all their details, and private
+// bookings as a date only, because who books the bus is nobody else's business.
+// The two differ in words and icon, not just in colour. The note that an empty
+// day is no free day is always there, also when the agenda is empty.
+import { getInhoud } from '../../lib/cms';
+import { agendaPerMaand, formatDag, wanneer } from '../../lib/agenda';
+import BusEventCard from './BusEventCard.astro';
+import BusAgendaNote from './BusAgendaNote.astro';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Short line under the title. */
+  text?: string;
+  /** Text when there is nothing in the agenda at all. */
+  emptyText?: string;
+  /** Section theme. */
+  theme?: 'beige' | 'green';
+}
+const {
+  title = 'De volledige agenda',
+  text = 'Openbare events met alles erbij. Bij een boeking zie je alleen de datum: dat feest is van iemand anders.',
+  emptyText = 'Er staat nu niets in de agenda.',
+  theme = 'beige',
+} = Astro.props;
+const { evenementen, bezet } = await getInhoud();
+const maanden = agendaPerMaand(evenementen, bezet);
+---
+
+<section class:list={['bus-agenda_wrap', 'u-section', `u-theme-bus-${theme}`]}>
+  <div class="bus-agenda_contain u-container">
+    <div class="bus-agenda_head">
+      <h2 class="bus-agenda_title u-text-style-poster-small">{title}</h2>
+      {text && <p class="bus-agenda_intro u-text-style-large">{text}</p>}
+    </div>
+    <BusAgendaNote />
+    {maanden.length === 0 ? (
+      <p class="bus-agenda_empty u-text-style-large">{emptyText}</p>
+    ) : (
+      <div class="bus-agenda_months">
+        {maanden.map((maand) => (
+          <div class="bus-agenda_month">
+            <h3 class="bus-agenda_month-title u-text-style-bus-title">{maand.naam.replace(/^./, (c) => c.toUpperCase())}</h3>
+            <ul class="bus-agenda_list">
+              {maand.items.map((regel) =>
+                regel.soort === 'event' ? (
+                  <li class="bus-agenda_item">
+                    <BusEventCard item={regel.item} level="h4" tag />
+                  </li>
+                ) : (
+                  <li class="bus-agenda_item">
+                    <div class="bus-agenda_booking_wrap">
+                      <p class="bus-agenda_booking_date" aria-hidden="true">
+                        <span class="bus-agenda_booking_day u-text-style-poster-row">{formatDag(regel.item.datum, { day: 'numeric' })}</span>
+                        <span class="bus-agenda_booking_month">{formatDag(regel.item.datum, { month: 'short' }).replace('.', '')}</span>
+                      </p>
+                      <div class="bus-agenda_booking_body">
+                        <p class="bus-agenda_booking_tag u-text-style-small">
+                          <svg class="bus-agenda_booking_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="5" y="10.500" width="14" height="10" stroke="currentColor" stroke-width="2" />
+                            <path d="M8.500 10.500V7.500a3.500 3.500 0 0 1 7 0v3" stroke="currentColor" stroke-width="2" />
+                          </svg>
+                          Geboekt, privéfeest
+                        </p>
+                        <p class="bus-agenda_booking_when">
+                          <time datetime={regel.item.datum}>{wanneer(regel.item)}</time>
+                        </p>
+                        <p class="bus-agenda_booking_text u-text-style-small">De bus is bezet. Niet openbaar, dus geen naam of plek.</p>
+                      </div>
+                    </div>
+                  </li>
+                ),
+              )}
+            </ul>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .bus-agenda_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-agenda_contain {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--6);
+  }
+  .bus-agenda_head {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    max-width: 60ch;
+  }
+  .bus-agenda_empty { max-width: 50ch; }
+  .bus-agenda_months {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--7);
+    width: 100%;
+  }
+  .bus-agenda_month {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+  }
+  .bus-agenda_month-title {
+    padding-bottom: var(--_spacing---space--2);
+    border-bottom: var(--focus--width) solid var(--_theme---border);
+  }
+  .bus-agenda_list {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    max-width: var(--max-width--main);
+  }
+  .bus-agenda_item { display: flex; }
+  /* A booking: the same calendar page, but hollow and quiet, so an event stands out. */
+  .bus-agenda_booking_wrap {
+    display: flex;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+    padding: var(--_spacing---space--4) var(--_spacing---space--5);
+    border: var(--focus--width) dashed var(--_theme---divider);
+  }
+  .bus-agenda_booking_date {
+    display: flex;
+    flex: 0 0 auto;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    min-width: var(--size--first-tile);
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
+    border: var(--focus--width) dashed var(--_theme---border);
+    line-height: 1;
+  }
+  .bus-agenda_booking_month {
+    margin-top: var(--_spacing---space--1);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-agenda_booking_body {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    min-width: 0;
+  }
+  .bus-agenda_booking_tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-agenda_booking_icon {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  .bus-agenda_booking_when { font-weight: var(--_typography---font--primary-bold); }
+  .bus-agenda_booking_when::first-letter { text-transform: uppercase; }
+</style>

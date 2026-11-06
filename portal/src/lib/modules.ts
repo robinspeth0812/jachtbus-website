@@ -85,16 +85,16 @@ export const websiteModules: Record<string, WebsiteModule> = {
     leeg: "Zet hier de plaatsen waar de bus al gestaan heeft. Alleen echte plaatsen: dat is het sterkste bewijs dat je er kunt komen.",
     velden: plaatsVelden,
   },
-  events: {
+  agenda: {
     slug: "evenementen",
-    pad: "events",
-    titel: "Events",
-    enkel: "Event",
+    pad: "agenda",
+    titel: "Agenda op de site",
+    enkel: "Event of afspraak",
     titelVeld: "titel",
     sort: "datum",
-    info: "Openbare events waar mensen bij de bus kunnen eten, zoals een festival of markt. Ze staan in de agenda op de site, en de dag na afloop verdwijnen ze vanzelf.",
-    legeTitel: "Nog geen events",
-    leeg: "Sta je binnenkort op een festival, markt of open dag? Zet het hier, dan weten mensen waar ze je kunnen vinden.",
+    info: "Openbare events staan met naam en plaats in de agenda op de site. Afspraken alleen als geboekte datum. Bevestigde aanvragen met een datum komen er vanzelf bij als geboekt. De dag na afloop verdwijnt alles vanzelf.",
+    legeTitel: "Nog niets in de agenda",
+    leeg: "Sta je binnenkort op een festival of markt? Zet het hier als event. Een besloten feest zet je als afspraak: dan ziet de site alleen dat die dag geboekt is.",
     velden: evenementVelden,
   },
   mededelingen: {

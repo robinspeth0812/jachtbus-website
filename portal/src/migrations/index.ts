@@ -4,7 +4,7 @@ import * as migration_20261105_125927_mededeling_planning from './20261105_12592
 import * as migration_20261105_133128_review_foto_referentie from './20261105_133128_review_foto_referentie';
 import * as migration_20261105_134730_referentie_mogelijkheden from './20261105_134730_referentie_mogelijkheden';
 import * as migration_20261105_151408_aanvraag_bedrijf from './20261105_151408_aanvraag_bedrijf';
-import * as migration_20261106_133457_evenementen from './20261106_133457_evenementen';
+import * as migration_20261106_134957_agenda from './20261106_134957_agenda';
 
 export const migrations = [
   {
@@ -38,8 +38,8 @@ export const migrations = [
     name: '20261105_151408_aanvraag_bedrijf',
   },
   {
-    up: migration_20261106_133457_evenementen.up,
-    down: migration_20261106_133457_evenementen.down,
-    name: '20261106_133457_evenementen'
+    up: migration_20261106_134957_agenda.up,
+    down: migration_20261106_134957_agenda.down,
+    name: '20261106_134957_agenda'
   },
 ];

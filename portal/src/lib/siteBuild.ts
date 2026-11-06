@@ -67,3 +67,10 @@ export const herbouwSiteGlobal: GlobalAfterChangeHook = ({ global, req, context 
   if (context.geenSiteBuild) return;
   plan(req.payload, global.slug);
 };
+
+/** A request counts as a booked day on the site once confirmed: rebuild only when that changes. */
+export const herbouwSiteBijBoeking: CollectionAfterChangeHook = ({ doc, previousDoc, operation, req, context }) => {
+  if (context.geenSiteBuild) return;
+  const telt = (d: { fase?: string; datum?: string | null } | undefined) => (d?.fase === "bevestigd" && d.datum ? d.datum : null);
+  if (operation === "create" ? telt(doc) : telt(doc) !== telt(previousDoc)) plan(req.payload, "aanvragen");
+};

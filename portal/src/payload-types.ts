@@ -598,17 +598,19 @@ export interface Mededelingen {
  */
 export interface Evenementen {
   id: number;
-  titel: string;
+  soort: 'event' | 'afspraak';
+  titel?: string | null;
   datum: string;
   totDatum?: string | null;
   vanTijd?: string | null;
   totTijd?: string | null;
-  plaats: string;
+  plaats?: string | null;
   locatie?: string | null;
   tekst?: string | null;
   linkTekst?: string | null;
   linkUrl?: string | null;
   foto?: (number | null) | Media;
+  notitie?: string | null;
   status: 'concept' | 'gepubliceerd';
   updatedAt: string;
   createdAt: string;
@@ -1211,6 +1213,7 @@ export interface MededelingenSelect<T extends boolean = true> {
  * via the `definition` "evenementen_select".
  */
 export interface EvenementenSelect<T extends boolean = true> {
+  soort?: T;
   titel?: T;
   datum?: T;
   totDatum?: T;
@@ -1222,6 +1225,7 @@ export interface EvenementenSelect<T extends boolean = true> {
   linkTekst?: T;
   linkUrl?: T;
   foto?: T;
+  notitie?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

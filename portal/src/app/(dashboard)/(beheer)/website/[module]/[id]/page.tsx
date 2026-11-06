@@ -26,7 +26,7 @@ export default async function ModuleItem({ params, searchParams }: { params: Pro
   const d = doc as unknown as (Record<string, unknown> & { id: number; status?: string }) | null;
   const bronnen = (["media", "referenties"] as const).filter((bron) => m.velden.some((v) => v.bron === bron));
   const keuzes = bronnen.length ? await laadKeuzes(payload, user, [...bronnen]) : undefined;
-  const titel = d ? String(d[m.titelVeld] ?? m.enkel) : `${m.enkel} toevoegen`;
+  const titel = !d ? `${m.enkel} toevoegen` : key === "agenda" && d.soort === "afspraak" ? (d.notitie ? `Afspraak: ${String(d.notitie)}` : "Afspraak") : String(d[m.titelVeld] || m.enkel);
   // The link is stored on the review; a reference shows it from its side too.
   const gekoppeld = key === "referenties" && d
     ? (await payload.find({ collection: "reviews", where: { referentie: { equals: d.id } }, sort: "-createdAt", depth: 0, limit: 100, pagination: false, user, overrideAccess: false })).docs

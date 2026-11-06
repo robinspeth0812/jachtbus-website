@@ -3985,11 +3985,19 @@
           "primaryKey": true,
           "notNull": true
         },
+        "soort": {
+          "name": "soort",
+          "type": "enum_evenementen_soort",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'event'"
+        },
         "titel": {
           "name": "titel",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "datum": {
           "name": "datum",
@@ -4019,7 +4027,7 @@
           "name": "plaats",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "locatie": {
           "name": "locatie",
@@ -4051,6 +4059,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "notitie": {
+          "name": "notitie",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "status": {
           "name": "status",
           "type": "enum_evenementen_status",
@@ -4075,6 +4089,21 @@
         }
       },
       "indexes": {
+        "evenementen_soort_idx": {
+          "name": "evenementen_soort_idx",
+          "columns": [
+            {
+              "expression": "soort",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "evenementen_datum_idx": {
           "name": "evenementen_datum_idx",
           "columns": [
@@ -7335,6 +7364,14 @@
         "gepubliceerd"
       ]
     },
+    "public.enum_evenementen_soort": {
+      "name": "enum_evenementen_soort",
+      "schema": "public",
+      "values": [
+        "event",
+        "afspraak"
+      ]
+    },
     "public.enum_evenementen_status": {
       "name": "enum_evenementen_status",
       "schema": "public",
@@ -7444,6 +7481,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "512f40e1-8a16-42ed-805c-085d896b63c4",
+  "id": "5ea48025-0c12-4326-8b1b-54b34692139b",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

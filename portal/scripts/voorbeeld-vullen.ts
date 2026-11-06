@@ -279,9 +279,10 @@ for (const [naam, gelegenheid, plaats, tekst, referentie] of [
 }
 await payload.create({ collection: "reviews", data: { naam: "Voorbeeld Google", tekst: "Voorbeeld: nog geen bronlink, dus nog niet op de site.", bron: "Google", status: "concept" }, context });
 await payload.create({ collection: "mededelingen", data: { tekst: "Voorbeeld: in de kerstweek zijn we dicht.", linkTekst: "Plan je feest", linkUrl: "/aanvraag", vanaf: op(-1), tot: op(50), dagen: ["maandag", "dinsdag"], vanTijd: "09:00", totTijd: "17:00", volgorde: 100, status: "concept" }, context });
-await payload.create({ collection: "evenementen", data: { titel: "Voorbeeld: Foodtruckfestival Assen", datum: op(12), totDatum: op(13), vanTijd: "12:00", totTijd: "22:00", plaats: "Assen", locatie: "Voorbeeld: de Brink", tekst: "Voorbeeld: de BBQ-smoker draait de hele dag.", status: "gepubliceerd" }, context });
-await payload.create({ collection: "evenementen", data: { titel: "Voorbeeld: Zomermarkt Gasselte", datum: op(30), vanTijd: "10:00", totTijd: "17:00", plaats: "Gasselte", status: "gepubliceerd" }, context });
-await payload.create({ collection: "evenementen", data: { titel: "Voorbeeld: Oogstfeest Rolde", datum: op(-3), plaats: "Rolde", status: "gepubliceerd" }, context });
+await payload.create({ collection: "evenementen", data: { soort: "event", titel: "Voorbeeld: Foodtruckfestival Assen", datum: op(12), totDatum: op(13), vanTijd: "12:00", totTijd: "22:00", plaats: "Assen", locatie: "Voorbeeld: de Brink", tekst: "Voorbeeld: de BBQ-smoker draait de hele dag.", status: "gepubliceerd" }, context });
+await payload.create({ collection: "evenementen", data: { soort: "event", titel: "Voorbeeld: Zomermarkt Gasselte", datum: op(30), vanTijd: "10:00", totTijd: "17:00", plaats: "Gasselte", status: "gepubliceerd" }, context });
+await payload.create({ collection: "evenementen", data: { soort: "afspraak", datum: op(19), notitie: "Voorbeeld: bruiloft, alleen de datum staat op de site.", status: "gepubliceerd" }, context });
+await payload.create({ collection: "evenementen", data: { soort: "event", titel: "Voorbeeld: Oogstfeest Rolde", datum: op(-3), plaats: "Rolde", status: "gepubliceerd" }, context });
 
 const ticket = await payload.create({ collection: "tickets", data: { titel: "Voorbeeld: kan de openingsfoto anders?", soort: "website", omschrijving: "Dit is een voorbeeldticket. Op de home staat nog een oude foto.", status: "wacht-op-melder", melder: peer.id } });
 await payload.update({ collection: "tickets", id: ticket.id, data: { berichten: [{ door: robin.id, tekst: "Voorbeeld: kun je me de nieuwe foto sturen?", op: new Date().toISOString(), statusNaar: "wacht-op-melder" }] } });

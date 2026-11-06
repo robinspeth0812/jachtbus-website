@@ -148,7 +148,7 @@ export default async function Home() {
             <ul className="divide-y divide-rule">
               {[
                 { href: "/website/arrangementen", label: "Arrangementen", onder: "Wat je aanbiedt, met tekst en foto's", icoon: UtensilsCrossed },
-                { href: "/website/events", label: "Events", onder: "Waar mensen je binnenkort kunnen vinden", icoon: CalendarDays },
+                { href: "/website/agenda", label: "Agenda en events", onder: "Waar mensen je kunnen vinden, en wat geboekt is", icoon: CalendarDays },
                 { href: "/website/referenties", label: "Referenties", onder: "Klussen die je hebt gedraaid", icoon: Medal },
                 { href: "/website/reviews", label: "Reviews", onder: "Wat klanten over je zeggen", icoon: Star },
                 { href: "/website/galerij", label: "Galerij", onder: "Foto's op de site", icoon: Images },

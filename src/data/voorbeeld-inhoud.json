@@ -205,7 +205,7 @@
   "evenementen": [
     {
       "titel": "Voorbeeld: zomermarkt in het dorp",
-      "datum": "2027-06-12",
+      "over": 6,
       "vanTijd": "11:00",
       "totTijd": "17:00",
       "plaats": "Gasselte",
@@ -216,8 +216,8 @@
     },
     {
       "titel": "Voorbeeld: muziekfestival",
-      "datum": "2027-07-02",
-      "totDatum": "2027-07-04",
+      "over": 13,
+      "dagen": 3,
       "vanTijd": "14:00",
       "totTijd": "23:00",
       "plaats": "Assen",
@@ -225,18 +225,45 @@
     },
     {
       "titel": "Voorbeeld: open dag bij een boerderij",
-      "datum": "2027-08-21",
+      "over": 24,
       "plaats": "Rolde",
       "locatie": "Voorbeeldboerderij",
       "tekst": "Voorbeeld: een event zonder tijden en zonder link."
     },
     {
       "titel": "Voorbeeld: oogstfeest",
-      "datum": "2027-09-18",
+      "over": 48,
       "vanTijd": "12:00",
       "totTijd": "20:00",
       "plaats": "Drachten",
-      "tekst": "Voorbeeld: het vierde event, dat zie je alleen op de agendapagina."
+      "tekst": "Voorbeeld: dit event is later dan een maand, dus het staat alleen in de volledige agenda."
+    }
+  ],
+  "bezet": [
+    {
+      "over": 2
+    },
+    {
+      "over": 9
+    },
+    {
+      "over": 9
+    },
+    {
+      "over": 13
+    },
+    {
+      "over": 30,
+      "dagen": 2
+    },
+    {
+      "over": 31
+    },
+    {
+      "over": 41
+    },
+    {
+      "over": 62
     }
   ]
 }

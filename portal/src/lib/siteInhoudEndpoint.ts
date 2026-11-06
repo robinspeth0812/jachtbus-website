@@ -1,6 +1,8 @@
-import { headersWithCors, type Endpoint } from "payload";
+import { headersWithCors, type Endpoint, type Where } from "payload";
 import type { Media } from "@/payload-types";
 import { BEDRIJF } from "./bedrijf";
+import { bezetteStatussen } from "./opties";
+import { moduleAan } from "./pakket";
 import { dagNaarIso, isoNaarDag, nederlandseDatum } from "./datum";
 
 const SERVER = process.env.NEXT_PUBLIC_SERVER_URL || "https://portal.jachtbusfoodtruck.nl";
@@ -33,7 +35,8 @@ export const siteInhoudEndpoint: Endpoint = {
 
     // Today at noon UTC, like every stored date: an event stays on until its last day is over.
     const vandaag = dagNaarIso(nederlandseDatum());
-    const [instellingen, mededelingen, arrangementen, referenties, reviews, faq, plaatsen, evenementen] = await Promise.all([
+    const vanafVandaag: Where = { or: [{ datum: { greater_than_equal: vandaag } }, { totDatum: { greater_than_equal: vandaag } }] };
+    const [instellingen, mededelingen, arrangementen, referenties, reviews, faq, plaatsen, evenementen, afspraken, geboekt, klussen] = await Promise.all([
       payload.findGlobal({ slug: "instellingen", depth: 0, overrideAccess: true }),
       payload.find({ collection: "mededelingen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "arrangementen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
@@ -41,14 +44,26 @@ export const siteInhoudEndpoint: Endpoint = {
       payload.find({ collection: "reviews", where: GEPUBLICEERD, sort: "-createdAt", depth: 2, ...vraag }),
       payload.find({ collection: "veelgesteld", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "plaatsen", where: GEPUBLICEERD, sort: "naam", depth: 0, ...vraag }),
-      payload.find({
-        collection: "evenementen",
-        where: { and: [GEPUBLICEERD, { or: [{ datum: { greater_than_equal: vandaag } }, { totDatum: { greater_than_equal: vandaag } }] }] },
-        sort: "datum",
-        depth: 1,
-        ...vraag,
-      }),
+      payload.find({ collection: "evenementen", where: { and: [GEPUBLICEERD, { soort: { equals: "event" } }, vanafVandaag] }, sort: "datum", depth: 1, ...vraag }),
+      payload.find({ collection: "evenementen", where: { and: [GEPUBLICEERD, { soort: { equals: "afspraak" } }, vanafVandaag] }, sort: "datum", depth: 0, ...vraag }),
+      // Confirmed requests count as booked without anyone typing them in twice. Only the date leaves the portal.
+      payload.find({ collection: "aanvragen", where: { and: [{ fase: { equals: "bevestigd" } }, { datum: { greater_than_equal: vandaag } }] }, sort: "datum", depth: 0, select: { datum: true }, ...vraag }),
+      moduleAan("klussen")
+        ? payload.find({ collection: "klussen", where: { and: [{ status: { in: bezetteStatussen } }, { datum: { greater_than_equal: vandaag } }] }, sort: "datum", depth: 0, select: { datum: true }, ...vraag })
+        : { docs: [] as { datum: string }[] },
     ]);
+
+    // Private bookings: the date only, one entry per day or range.
+    type Bezet = { datum: string; totDatum?: string };
+    const bezet = (
+      [
+      ...afspraken.docs.map((a) => ({ datum: isoNaarDag(a.datum), ...(a.totDatum ? { totDatum: isoNaarDag(a.totDatum) } : {}) })),
+      ...geboekt.docs.map((a) => ({ datum: isoNaarDag(a.datum) })),
+      ...klussen.docs.map((k) => ({ datum: isoNaarDag(k.datum) })),
+      ] as Bezet[]
+    )
+      .filter((b, i, alle) => b.datum && alle.findIndex((c) => c.datum === b.datum && c.totDatum === b.totDatum) === i)
+      .sort((a, b) => a.datum.localeCompare(b.datum));
 
     const body = {
       contact: {
@@ -98,6 +113,7 @@ export const siteInhoudEndpoint: Endpoint = {
       }),
       faq: faq.docs.map((f) => ({ vraag: f.vraag, antwoord: f.antwoord, pagina: f.pagina })),
       plaatsen: plaatsen.docs.map((p) => ({ naam: p.naam, provincie: p.provincie })),
+      bezet,
       evenementen: evenementen.docs.map((e) =>
         zonderLeeg({
           titel: e.titel,

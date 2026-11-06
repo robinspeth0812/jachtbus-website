@@ -1,19 +1,20 @@
 ---
-// Public events where you can come and eat at the bus. Peer keeps them up to
-// date in the portal; a nightly build takes the ones that are over off the page.
+// Where the bus stands: first the public events of the coming month, then the
+// full agenda with private bookings as a date only. Peer keeps it up to date in
+// the portal; a nightly build takes what is over off the page.
 import BusBase from '../../layouts/BusBase.astro';
 import BusPageHero from '../../components/bus/BusPageHero.astro';
-import BusEvents from '../../components/bus/BusEvents.astro';
-import BusButton from '../../components/BusButton.astro';
+import BusEventSlider from '../../components/bus/BusEventSlider.astro';
+import BusAgenda from '../../components/bus/BusAgenda.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { aanvraagUrl, photos, url } from '../../data/nieuw';
+import { photos, url } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 
 const { evenementen } = await getInhoud();
 const crumbs = [{ label: 'Agenda', href: url('agenda') }];
 const site = 'https://jachtbusfoodtruck.nl';
 
-// Only fields that are really known; no invented prices or organisers.
+// Public events only, never bookings. Only fields that are really known; no invented prices or organisers.
 const eventSchema = evenementen.map((item) => ({
   '@context': 'https://schema.org',
   '@type': 'Event',
@@ -38,18 +39,14 @@ const eventSchema = evenementen.map((item) => ({
 >
   <BusPageHero
     title="Waar staat de bus?"
-    text="Op deze markten, festivals en open dagen kun je gewoon langskomen en een hapje halen. Geen reservering nodig."
+    text="Op markten, festivals en open dagen kun je gewoon langskomen en een hapje halen. En je ziet welke dagen de bus al geboekt is."
     photo={photos.festival}
     shape="arch"
     crumbs={crumbs}
   />
 
-  <BusEvents
-    title="Komende events"
-    emptyText="Nu even geen openbare events. Wil je de bus zelf boeken voor je feest? Dat kan het hele jaar."
-  >
-    {evenementen.length === 0 && <BusButton label="Start je aanvraag" href={aanvraagUrl()} />}
-  </BusEvents>
+  <BusEventSlider title="Binnenkort: kom langs" />
+  <BusAgenda />
 
   <BusClosing title="Liever de bus op je eigen feest?" />
 </BusBase>

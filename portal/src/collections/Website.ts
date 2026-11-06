@@ -1,6 +1,6 @@
 import type { CollectionConfig, Field } from "payload";
 import { beheerder } from "../access";
-import { faqPaginas, provincies, publicatieStatussen, referentieMogelijkheden, reviewBronnen, weekdagen } from "../lib/opties";
+import { agendaSoorten, faqPaginas, provincies, publicatieStatussen, referentieMogelijkheden, reviewBronnen, weekdagen } from "../lib/opties";
 import { zoekKaartpunt } from "../lib/kaartpunt";
 import { herbouwSite, herbouwSiteNaVerwijderen } from "../lib/siteBuild";
 
@@ -122,26 +122,32 @@ export const Plaatsen: CollectionConfig = {
   ],
 };
 
-/** Public events where people can come and eat at the bus. Past ones drop off the site by themselves. */
+/**
+ * The agenda on the site. A public event (name, place) or a private booking that
+ * only shows its date as booked. Past items drop off the site by themselves.
+ */
 export const Evenementen: CollectionConfig = {
   slug: "evenementen",
-  labels: { singular: "Event", plural: "Events" },
+  labels: { singular: "Agenda-item", plural: "Agenda" },
   admin: { useAsTitle: "titel" },
   defaultSort: "datum",
   access: toegang,
   hooks: haken,
   fields: [
-    { name: "titel", type: "text", required: true, maxLength: 120 },
+    { name: "soort", type: "select", required: true, defaultValue: "event", index: true, options: [...agendaSoorten] },
+    { name: "titel", type: "text", maxLength: 120 },
     { name: "datum", type: "date", required: true, index: true },
     { name: "totDatum", type: "date", index: true },
     { name: "vanTijd", type: "text", maxLength: 5 },
     { name: "totTijd", type: "text", maxLength: 5 },
-    { name: "plaats", type: "text", required: true, maxLength: 80 },
+    { name: "plaats", type: "text", maxLength: 80 },
     { name: "locatie", type: "text", maxLength: 160 },
     { name: "tekst", type: "textarea", maxLength: 1000 },
     { name: "linkTekst", type: "text", maxLength: 60 },
     { name: "linkUrl", type: "text", maxLength: 500 },
     { name: "foto", type: "upload", relationTo: "media" },
+    // Never published: only for the team.
+    { name: "notitie", type: "text", maxLength: 240 },
     status,
   ],
 };

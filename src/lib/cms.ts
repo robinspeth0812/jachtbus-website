@@ -2,6 +2,7 @@
 // the portal cannot be reached, the site builds from src/data/nieuw.ts and the
 // lists that have no honest default (reviews, references) stay empty.
 import { arrangementen as defaultArrangementen, contact, faqAlgemeen, photos } from '../data/nieuw';
+import { dagPlus, vandaag } from './agenda';
 
 export interface Review {
   naam: string;
@@ -55,6 +56,13 @@ export interface Evenement {
   fotoUrl?: string;
   fotoAlt?: string;
 }
+/** A private booking: only the date is public, never who or where. */
+export interface Bezet {
+  /** First day, YYYY-MM-DD. */
+  datum: string;
+  /** Last day for bookings of more than one day, YYYY-MM-DD. */
+  totDatum?: string;
+}
 interface Remote {
   contact?: { telefoon?: string; whatsapp?: string; email?: string };
   mededelingen?: Mededeling[];
@@ -63,10 +71,27 @@ interface Remote {
   reviews?: Review[];
   faq?: { vraag: string; antwoord: string; pagina: string }[];
   evenementen?: Evenement[];
+  bezet?: Bezet[];
 }
 
-/** Today in the Netherlands as YYYY-MM-DD, also when the build runs on a server in UTC. */
-const vandaag = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Amsterdam' }).format(new Date());
+// Two bookings on one day, or overlapping ones, show as one: spread them over
+// their days, keep each day once and join days that follow each other.
+function bezetteDagen(items: Bezet[]): Bezet[] {
+  const vanaf = vandaag();
+  const dagen = new Set<string>();
+  for (const item of items) {
+    const eind = item.totDatum && item.totDatum > item.datum ? item.totDatum : item.datum;
+    // A typo in the end date never fills a whole year.
+    for (let d = item.datum, n = 0; d <= eind && n < 31; d = dagPlus(d, 1), n++) if (d >= vanaf) dagen.add(d);
+  }
+  const blokken: Bezet[] = [];
+  for (const d of [...dagen].sort()) {
+    const laatste = blokken.at(-1);
+    if (laatste && dagPlus(laatste.totDatum ?? laatste.datum, 1) === d) laatste.totDatum = d;
+    else blokken.push({ datum: d });
+  }
+  return blokken;
+}
 
 let cached: Promise<Remote> | undefined;
 
@@ -74,13 +99,16 @@ let cached: Promise<Remote> | undefined;
 // Only with VOORBEELD_INHOUD set, and only without a portal. Remove before launch.
 async function loadVoorbeeld(): Promise<Remote> {
   const { default: voorbeeld } = await import('../data/voorbeeld-inhoud.json');
+  // Sample dates count from the day of the build, so the coming month always has something to show.
+  const op = (over: number) => dagPlus(vandaag(), over);
   const fotos = [photos.veld, photos.bediening, photos.plank, photos.grill, photos.festival, photos.bus];
   const foto = (index: number) => fotos[index % fotos.length].src.src;
   return {
     mededelingen: voorbeeld.mededelingen as Mededeling[],
     referenties: (voorbeeld.referenties as Referentie[]).map((item, index) => ({ ...item, fotoUrl: foto(index), fotoAlt: '' })),
     reviews: (voorbeeld.reviews as Review[]).map((item, index) => (item.fotoUrl ? { ...item, fotoUrl: foto(index), fotoAlt: '' } : item)),
-    evenementen: voorbeeld.evenementen as Evenement[],
+    evenementen: voorbeeld.evenementen.map(({ over, dagen, ...item }) => ({ ...item, datum: op(over), ...(dagen ? { totDatum: op(over + dagen - 1) } : {}) })) as Evenement[],
+    bezet: voorbeeld.bezet.map(({ over, dagen }) => ({ datum: op(over), ...(dagen ? { totDatum: op(over + dagen - 1) } : {}) })),
   };
 }
 
@@ -106,6 +134,7 @@ export async function getInhoud() {
     referenties: remote.referenties ?? [],
     // The portal already leaves out what is over; this keeps it so between builds of a cached response.
     evenementen: (remote.evenementen ?? []).filter((item) => (item.totDatum ?? item.datum) >= vandaag()).sort((a, b) => a.datum.localeCompare(b.datum)),
+    bezet: bezetteDagen(remote.bezet ?? []),
     arrangementen: remote.arrangementen?.length
       ? [...remote.arrangementen].sort((a, b) => a.volgorde - b.volgorde).map((item) => ({ title: item.titel, text: item.kort }))
       : defaultArrangementen,

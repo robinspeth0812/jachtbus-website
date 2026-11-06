@@ -16,6 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ module: s
   return { title: websiteModules[(await params).module]?.titel ?? "Website" };
 }
 
+/** A booking has no public name: the list shows the note, or just that it is a booking. */
+function titelVan(key: string, d: Doc, titelVeld: string) {
+  if (key === "agenda" && d.soort === "afspraak") return d.notitie ? `Afspraak: ${String(d.notitie)}` : "Afspraak";
+  return String(d[titelVeld] ?? "");
+}
+
 /** The second line of a row, per module. */
 function onderregel(key: string, d: Doc) {
   switch (key) {
@@ -29,11 +35,12 @@ function onderregel(key: string, d: Doc) {
       return labelVan(faqPaginas, d.pagina as string);
     case "werkgebied":
       return String(d.provincie ?? "");
-    case "events": {
+    case "agenda": {
       const eind = (d.totDatum || d.datum) as string | undefined;
       const voorbij = eind ? isoNaarDag(eind) < nederlandseDatum() : false;
       const wanneer = `${datum(d.datum as string)}${d.totDatum ? ` tot en met ${datum(d.totDatum as string)}` : ""}`;
-      return [wanneer, d.plaats, voorbij ? "voorbij, staat niet meer op de site" : ""].filter(Boolean).join(", ");
+      const soort = d.soort === "afspraak" ? "afspraak, op de site als geboekt" : "openbaar event";
+      return [wanneer, d.soort === "afspraak" ? "" : d.plaats, soort, voorbij ? "voorbij, staat niet meer op de site" : ""].filter(Boolean).join(", ");
     }
     case "mededelingen":
       return d.vanaf || d.tot ? `${d.vanaf ? `Vanaf ${datum(d.vanaf as string)}` : ""}${d.tot ? ` tot en met ${datum(d.tot as string)}` : ""}` : "Geen einddatum";
@@ -65,7 +72,7 @@ export default async function ModuleLijst({ params }: { params: Promise<{ module
         <ul className="paneel divide-y divide-rule">
           {(docs as unknown as Doc[]).map((d) => {
             const op = d.status === "gepubliceerd";
-            const titel = String(d[m.titelVeld] ?? "");
+            const titel = titelVan(key, d, m.titelVeld);
             return (
               <li key={d.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
                 <Link href={`/website/${key}/${d.id}`} className="min-w-0 flex-1 basis-56 no-underline hover:underline">
