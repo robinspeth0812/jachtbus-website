@@ -89,7 +89,7 @@ export default async function AanvraagDetail({ params, searchParams }: { params:
               ["Telefoon", a.telefoon],
               ["Opmerking", a.opmerking],
               ["Binnengekomen", `${momentTekst(a.createdAt)}, ${a.bron === "handmatig" ? "zelf toegevoegd" : "via de site"}`],
-              ["Klant", klant ? <Link key="k" href={`/klanten/${klant.id}`} className="underline">{klant.naam}</Link> : null],
+              ["Klant", klant ? <Link key="k" href={`/klanten/${klant.id}`} className="inline-flex min-h-doel items-center underline">{klant.naam}</Link> : null],
             ]}
           />
         </Paneel>

@@ -218,7 +218,7 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
             </div>
           </form>
 
-          <nav aria-label="Hoofdmenu" className="flex min-h-0 flex-1 flex-col">
+          <nav aria-label="Hoofdmenu" className="flex shrink-0 flex-col lg:min-h-0 lg:flex-1 lg:shrink">
             {/* Switches the list below without leaving the page. */}
             <ul aria-label="Onderdeel kiezen" className={`grid shrink-0 gap-1 px-2 pb-3 ${secties.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
               {secties.map((sectie) => {
@@ -303,7 +303,7 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
             </div>
           </nav>
 
-          <div className="mt-4 shrink-0 border-t border-nav-rand px-2 py-3 lg:mt-0">
+          <div className="mt-auto shrink-0 border-t border-nav-rand px-2 py-3">
             <form action={uitloggen}>
               <button type="submit" className="flex min-h-doel w-full items-center gap-3 px-3 text-left transition-colors duration-150 hover:bg-donker-hover">
                 <LogOut aria-hidden size={20} className="shrink-0 text-nav-muted" />
@@ -318,8 +318,8 @@ export function Zijbalk({ gebruikersnaam, nieuweAanvragen, takenTeDoen, keuringe
       </header>
 
       {/* Phone: bottom navigation with big targets. */}
-      <nav aria-label="Snelmenu" className="fixed inset-x-0 bottom-0 z-50 border-t border-nav-rand bg-donker text-nav-text lg:hidden">
-        <ul className="grid h-onderbalk grid-cols-5">
+      <nav aria-label="Snelmenu" className="fixed inset-x-0 bottom-0 z-50 border-t border-nav-rand bg-donker pb-[env(safe-area-inset-bottom)] text-nav-text lg:hidden">
+        <ul className="grid h-onderbalk-knoppen grid-cols-5">
           {onder.map(({ href, label, icoon: Icoon, badge }) => {
             const actief = isActief(href) && !open;
             return (

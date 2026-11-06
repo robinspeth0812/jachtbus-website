@@ -56,14 +56,14 @@ function MeetVelden({ status, klussen }: { status: FormStatus; klussen: Optie[] 
     <>
       <fieldset>
         <legend className="label">Wat meet je?</legend>
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {meetSoorten.map((m) => (
-            <label key={m.value} className={`flex min-h-16 cursor-pointer flex-col justify-center border-[1.5px] px-3 py-2 ${soort === m.value ? "border-donker bg-laag font-semibold" : "border-control"}`}>
+            <label key={m.value} className={`flex min-h-doel cursor-pointer items-center justify-between gap-x-3 border-[1.5px] px-3 py-2 sm:min-h-16 sm:flex-col sm:items-start sm:justify-center ${soort === m.value ? "border-donker bg-laag font-semibold" : "border-control"}`}>
               <span className="flex items-center gap-2">
                 <input type="radio" name="soort" value={m.value} checked={soort === m.value} onChange={() => setSoort(m.value)} className="size-5 shrink-0" />
                 {m.label}
               </span>
-              <span className="pl-7 text-sm font-normal text-ink-muted">{m.norm}</span>
+              <span className="text-right text-sm font-normal text-ink-muted sm:pl-7 sm:text-left">{m.norm}</span>
             </label>
           ))}
         </div>

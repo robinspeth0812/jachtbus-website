@@ -54,7 +54,8 @@
   --color-fout-bg: #fbeceb; /* 6.5:1 */
 
   --spacing-doel: 2.75rem; /* 44px target size */
-  --spacing-onderbalk: 4.25rem; /* phone bottom navigation */
+  --spacing-onderbalk-knoppen: 4.25rem; /* phone bottom navigation, the buttons */
+  --spacing-onderbalk: calc(4.25rem + env(safe-area-inset-bottom, 0px)); /* with the phone's home bar */
 }
 
 @layer base {

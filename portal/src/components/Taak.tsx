@@ -39,7 +39,7 @@ export function TaakRegel({ taak }: { taak: Taken }) {
     <li className="flex flex-wrap items-start gap-x-4 gap-y-2 px-4 py-3">
       <div className="min-w-0 flex-1 basis-56">
         <p className={`font-semibold [overflow-wrap:anywhere] ${taak.klaar ? "font-normal text-ink-muted line-through" : ""}`}>{taak.titel}</p>
-        <p className="mt-0.5 flex flex-wrap gap-x-3 text-sm">
+        <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-sm">
           {taak.klaar ? (
             <span className="inline-flex items-center gap-1 text-st-goed">
               <Check aria-hidden size={14} strokeWidth={2.5} className="shrink-0" />
@@ -49,17 +49,17 @@ export function TaakRegel({ taak }: { taak: Taken }) {
             <Termijnlabel vervalt={taak.vervalt} />
           )}
           {aanvraag && (
-            <Link href={`/aanvragen/${aanvraag.id}`} className="underline">
+            <Link href={`/aanvragen/${aanvraag.id}`} className="inline-flex min-h-doel items-center underline">
               Aanvraag van {aanvraag.naam}
             </Link>
           )}
           {klus && (
-            <Link href={`/klussen/${klus.id}`} className="underline">
+            <Link href={`/klussen/${klus.id}`} className="inline-flex min-h-doel items-center underline">
               {klus.titel}
             </Link>
           )}
           {keuring && (
-            <Link href={`/bus/keuringen/${keuring.id}`} className="underline">
+            <Link href={`/bus/keuringen/${keuring.id}`} className="inline-flex min-h-doel items-center underline">
               {keuring.naam}
             </Link>
           )}
