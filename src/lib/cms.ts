@@ -39,6 +39,22 @@ export interface Mededeling {
   vanTijd?: string;
   totTijd?: string;
 }
+export interface Evenement {
+  titel: string;
+  /** First day, YYYY-MM-DD. */
+  datum: string;
+  /** Last day for events of more than one day, YYYY-MM-DD. */
+  totDatum?: string;
+  vanTijd?: string;
+  totTijd?: string;
+  plaats: string;
+  locatie?: string;
+  tekst?: string;
+  linkTekst?: string;
+  linkUrl?: string;
+  fotoUrl?: string;
+  fotoAlt?: string;
+}
 interface Remote {
   contact?: { telefoon?: string; whatsapp?: string; email?: string };
   mededelingen?: Mededeling[];
@@ -46,7 +62,11 @@ interface Remote {
   referenties?: Referentie[];
   reviews?: Review[];
   faq?: { vraag: string; antwoord: string; pagina: string }[];
+  evenementen?: Evenement[];
 }
+
+/** Today in the Netherlands as YYYY-MM-DD, also when the build runs on a server in UTC. */
+const vandaag = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Amsterdam' }).format(new Date());
 
 let cached: Promise<Remote> | undefined;
 
@@ -60,6 +80,7 @@ async function loadVoorbeeld(): Promise<Remote> {
     mededelingen: voorbeeld.mededelingen as Mededeling[],
     referenties: (voorbeeld.referenties as Referentie[]).map((item, index) => ({ ...item, fotoUrl: foto(index), fotoAlt: '' })),
     reviews: (voorbeeld.reviews as Review[]).map((item, index) => (item.fotoUrl ? { ...item, fotoUrl: foto(index), fotoAlt: '' } : item)),
+    evenementen: voorbeeld.evenementen as Evenement[],
   };
 }
 
@@ -83,6 +104,8 @@ export async function getInhoud() {
     mededelingen: remote.mededelingen ?? [],
     reviews: remote.reviews ?? [],
     referenties: remote.referenties ?? [],
+    // The portal already leaves out what is over; this keeps it so between builds of a cached response.
+    evenementen: (remote.evenementen ?? []).filter((item) => (item.totDatum ?? item.datum) >= vandaag()).sort((a, b) => a.datum.localeCompare(b.datum)),
     arrangementen: remote.arrangementen?.length
       ? [...remote.arrangementen].sort((a, b) => a.volgorde - b.volgorde).map((item) => ({ title: item.titel, text: item.kort }))
       : defaultArrangementen,

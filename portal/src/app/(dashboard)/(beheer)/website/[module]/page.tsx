@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ActieKnop } from "@/components/ActieKnop";
 import { LegeStaat, PaginaKop, PublicatieLabel } from "@/components/ui";
 import { payloadClient, vereisBeheerder } from "@/lib/auth";
-import { datum } from "@/lib/datum";
+import { datum, isoNaarDag, nederlandseDatum } from "@/lib/datum";
 import { websiteModules } from "@/lib/modules";
 import { faqPaginas, labelVan } from "@/lib/opties";
 import { zetGepubliceerd } from "../actions";
@@ -29,6 +29,12 @@ function onderregel(key: string, d: Doc) {
       return labelVan(faqPaginas, d.pagina as string);
     case "werkgebied":
       return String(d.provincie ?? "");
+    case "events": {
+      const eind = (d.totDatum || d.datum) as string | undefined;
+      const voorbij = eind ? isoNaarDag(eind) < nederlandseDatum() : false;
+      const wanneer = `${datum(d.datum as string)}${d.totDatum ? ` tot en met ${datum(d.totDatum as string)}` : ""}`;
+      return [wanneer, d.plaats, voorbij ? "voorbij, staat niet meer op de site" : ""].filter(Boolean).join(", ");
+    }
     case "mededelingen":
       return d.vanaf || d.tot ? `${d.vanaf ? `Vanaf ${datum(d.vanaf as string)}` : ""}${d.tot ? ` tot en met ${datum(d.tot as string)}` : ""}` : "Geen einddatum";
     default:

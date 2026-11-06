@@ -1,7 +1,7 @@
 import { headersWithCors, type Endpoint } from "payload";
 import type { Media } from "@/payload-types";
 import { BEDRIJF } from "./bedrijf";
-import { isoNaarDag } from "./datum";
+import { dagNaarIso, isoNaarDag, nederlandseDatum } from "./datum";
 
 const SERVER = process.env.NEXT_PUBLIC_SERVER_URL || "https://portal.jachtbusfoodtruck.nl";
 const GEPUBLICEERD = { status: { equals: "gepubliceerd" } } as const;
@@ -31,7 +31,9 @@ export const siteInhoudEndpoint: Endpoint = {
     const { payload } = req;
     const vraag = { overrideAccess: true, limit: 500, pagination: false } as const;
 
-    const [instellingen, mededelingen, arrangementen, referenties, reviews, faq, plaatsen] = await Promise.all([
+    // Today at noon UTC, like every stored date: an event stays on until its last day is over.
+    const vandaag = dagNaarIso(nederlandseDatum());
+    const [instellingen, mededelingen, arrangementen, referenties, reviews, faq, plaatsen, evenementen] = await Promise.all([
       payload.findGlobal({ slug: "instellingen", depth: 0, overrideAccess: true }),
       payload.find({ collection: "mededelingen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "arrangementen", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
@@ -39,6 +41,13 @@ export const siteInhoudEndpoint: Endpoint = {
       payload.find({ collection: "reviews", where: GEPUBLICEERD, sort: "-createdAt", depth: 2, ...vraag }),
       payload.find({ collection: "veelgesteld", where: GEPUBLICEERD, sort: "volgorde", depth: 0, ...vraag }),
       payload.find({ collection: "plaatsen", where: GEPUBLICEERD, sort: "naam", depth: 0, ...vraag }),
+      payload.find({
+        collection: "evenementen",
+        where: { and: [GEPUBLICEERD, { or: [{ datum: { greater_than_equal: vandaag } }, { totDatum: { greater_than_equal: vandaag } }] }] },
+        sort: "datum",
+        depth: 1,
+        ...vraag,
+      }),
     ]);
 
     const body = {
@@ -89,6 +98,21 @@ export const siteInhoudEndpoint: Endpoint = {
       }),
       faq: faq.docs.map((f) => ({ vraag: f.vraag, antwoord: f.antwoord, pagina: f.pagina })),
       plaatsen: plaatsen.docs.map((p) => ({ naam: p.naam, provincie: p.provincie })),
+      evenementen: evenementen.docs.map((e) =>
+        zonderLeeg({
+          titel: e.titel,
+          datum: isoNaarDag(e.datum),
+          totDatum: isoNaarDag(e.totDatum),
+          vanTijd: e.vanTijd,
+          totTijd: e.totTijd,
+          plaats: e.plaats,
+          locatie: e.locatie,
+          tekst: e.tekst,
+          linkTekst: e.linkTekst,
+          linkUrl: e.linkUrl,
+          ...fotoVoorSite(e.foto),
+        }),
+      ),
     };
 
     const headers = headersWithCors({ headers: new Headers({ "Cache-Control": "public, max-age=60, s-maxage=300" }), req });

@@ -201,5 +201,42 @@
       "tekst": "Dit is geen echte review, alleen voorbeeldtekst om het scherm te kunnen beoordelen.",
       "bron": "E-mail van de klant"
     }
+  ],
+  "evenementen": [
+    {
+      "titel": "Voorbeeld: zomermarkt in het dorp",
+      "datum": "2027-06-12",
+      "vanTijd": "11:00",
+      "totTijd": "17:00",
+      "plaats": "Gasselte",
+      "locatie": "Op de brink",
+      "tekst": "Voorbeeld: dit is geen echt event. Zo ziet een markt eruit waar je zonder reservering een broodje uit de smoker haalt.",
+      "linkTekst": "Meer over de markt",
+      "linkUrl": "https://example.com"
+    },
+    {
+      "titel": "Voorbeeld: muziekfestival",
+      "datum": "2027-07-02",
+      "totDatum": "2027-07-04",
+      "vanTijd": "14:00",
+      "totTijd": "23:00",
+      "plaats": "Assen",
+      "tekst": "Voorbeeld: een event van drie dagen. De bus staat er het hele weekend."
+    },
+    {
+      "titel": "Voorbeeld: open dag bij een boerderij",
+      "datum": "2027-08-21",
+      "plaats": "Rolde",
+      "locatie": "Voorbeeldboerderij",
+      "tekst": "Voorbeeld: een event zonder tijden en zonder link."
+    },
+    {
+      "titel": "Voorbeeld: oogstfeest",
+      "datum": "2027-09-18",
+      "vanTijd": "12:00",
+      "totTijd": "20:00",
+      "plaats": "Drachten",
+      "tekst": "Voorbeeld: het vierde event, dat zie je alleen op de agendapagina."
+    }
   ]
 }

@@ -20,7 +20,7 @@ import { Taken } from "./collections/Taken";
 import { Team } from "./collections/Team";
 import { Tickets } from "./collections/Tickets";
 import { Users } from "./collections/Users";
-import { Arrangementen, Mededelingen, Plaatsen, Referenties, Reviews, Veelgesteld } from "./collections/Website";
+import { Arrangementen, Evenementen, Mededelingen, Plaatsen, Referenties, Reviews, Veelgesteld } from "./collections/Website";
 import { Instellingen } from "./globals/Instellingen";
 import { Sitestatus } from "./globals/Sitestatus";
 import { mailHerinneringen } from "./jobs/herinneringen";
@@ -96,6 +96,7 @@ export default buildConfig({
     Veelgesteld,
     Plaatsen,
     Mededelingen,
+    Evenementen,
     Media,
     Bijlagen,
     Tickets,

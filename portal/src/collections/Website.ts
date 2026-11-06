@@ -122,6 +122,30 @@ export const Plaatsen: CollectionConfig = {
   ],
 };
 
+/** Public events where people can come and eat at the bus. Past ones drop off the site by themselves. */
+export const Evenementen: CollectionConfig = {
+  slug: "evenementen",
+  labels: { singular: "Event", plural: "Events" },
+  admin: { useAsTitle: "titel" },
+  defaultSort: "datum",
+  access: toegang,
+  hooks: haken,
+  fields: [
+    { name: "titel", type: "text", required: true, maxLength: 120 },
+    { name: "datum", type: "date", required: true, index: true },
+    { name: "totDatum", type: "date", index: true },
+    { name: "vanTijd", type: "text", maxLength: 5 },
+    { name: "totTijd", type: "text", maxLength: 5 },
+    { name: "plaats", type: "text", required: true, maxLength: 80 },
+    { name: "locatie", type: "text", maxLength: 160 },
+    { name: "tekst", type: "textarea", maxLength: 1000 },
+    { name: "linkTekst", type: "text", maxLength: 60 },
+    { name: "linkUrl", type: "text", maxLength: 500 },
+    { name: "foto", type: "upload", relationTo: "media" },
+    status,
+  ],
+};
+
 export const Mededelingen: CollectionConfig = {
   slug: "mededelingen",
   labels: { singular: "Mededeling", plural: "Mededelingen" },

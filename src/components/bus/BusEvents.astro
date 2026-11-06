@@ -1,0 +1,155 @@
+---
+// Public events where you can come and eat at the bus, from the portal. Past
+// events are already left out by getInhoud(). Renders nothing when there are
+// none, unless an empty text is given (for the agenda page itself).
+import { getInhoud, type Evenement } from '../../lib/cms';
+
+interface Props {
+  /** Section title. */
+  title?: string;
+  /** Short line under the title. */
+  text?: string;
+  /** Show at most this many events. 0 shows them all. */
+  limit?: number;
+  /** Text when there are no events. Leave empty to hide the whole section then. */
+  emptyText?: string;
+  /** Section theme. */
+  theme?: 'beige' | 'green';
+}
+const { title = 'Hier kun je ons vinden', text = '', limit = 0, emptyText = '', theme = 'beige' } = Astro.props;
+const { evenementen } = await getInhoud();
+const items = limit > 0 ? evenementen.slice(0, limit) : evenementen;
+
+// Dates arrive as YYYY-MM-DD; noon UTC keeps them on the same day everywhere.
+const dag = (iso: string) => new Date(`${iso}T12:00:00Z`);
+const format = (iso: string, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('nl-NL', { timeZone: 'UTC', ...options }).format(dag(iso));
+// The year only when it is not this year, so a date further ahead is never misread.
+const ditJaar = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Amsterdam', year: 'numeric' }).format(new Date());
+const lang = (iso: string) => format(iso, { weekday: 'long', day: 'numeric', month: 'long', ...(iso.slice(0, 4) !== ditJaar ? { year: 'numeric' } : {}) });
+const wanneer = (item: Evenement) => (!item.totDatum || item.totDatum === item.datum ? lang(item.datum) : `${lang(item.datum)} tot en met ${lang(item.totDatum)}`);
+const tijden = (item: Evenement) => (item.vanTijd && item.totTijd ? `${item.vanTijd} tot ${item.totTijd}` : item.vanTijd ? `Vanaf ${item.vanTijd}` : item.totTijd ? `Tot ${item.totTijd}` : '');
+const extern = (href: string) => /^https?:\/\//.test(href);
+---
+
+{(items.length > 0 || emptyText) && (
+  <section class:list={['bus-events_wrap', 'u-section', `u-theme-bus-${theme}`]}>
+    <div class="bus-events_contain u-container">
+      <div class="bus-events_head">
+        <h2 class="bus-events_title u-text-style-poster-small">{title}</h2>
+        {text && <p class="bus-events_intro u-text-style-large">{text}</p>}
+      </div>
+      {items.length === 0 ? (
+        <p class="bus-events_empty u-text-style-large">{emptyText}</p>
+      ) : (
+        <ul class="bus-events_list">
+          {items.map((item) => (
+            <li class="bus-events_item">
+              <article class="bus-events_card">
+                <p class="bus-events_date" aria-hidden="true">
+                  <span class="bus-events_day u-text-style-poster-row">{format(item.datum, { day: 'numeric' })}</span>
+                  <span class="bus-events_month">{format(item.datum, { month: 'short' }).replace('.', '')}</span>
+                </p>
+                <div class="bus-events_body">
+                  <h3 class="bus-events_name u-text-style-bus-title">{item.titel}</h3>
+                  <p class="bus-events_when">
+                    <time datetime={item.datum}>{wanneer(item)}</time>
+                    {tijden(item) && <span class="bus-events_time">, {tijden(item)}</span>}
+                  </p>
+                  <p class="bus-events_where u-text-style-small">{[item.locatie, item.plaats].filter(Boolean).join(', ')}</p>
+                  {item.tekst && <p class="bus-events_text">{item.tekst}</p>}
+                  {item.linkUrl && (
+                    <a class="bus-events_link" href={item.linkUrl} rel={extern(item.linkUrl) ? 'external' : undefined} data-trigger="hover focus">
+                      {item.linkTekst || 'Meer info'}
+                      {extern(item.linkUrl) && <span class="u-sr-only"> (andere website)</span>}
+                      <svg class="bus-events_arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.500" /></svg>
+                    </a>
+                  )}
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
+      )}
+      <slot />
+    </div>
+  </section>
+)}
+
+<style>
+  .bus-events_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .bus-events_contain {
+    display: flex;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--6);
+  }
+  .bus-events_head {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    max-width: 60ch;
+  }
+  .bus-events_empty { max-width: 50ch; }
+  .bus-events_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size--review-card)), 1fr));
+    gap: var(--site--gutter);
+    width: 100%;
+  }
+  .bus-events_item { display: flex; }
+  .bus-events_card {
+    display: flex;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+    padding: var(--_spacing---space--5);
+    background-color: var(--_theme---background-2);
+  }
+  /* A tear-off calendar page: the day big, the month under it. */
+  .bus-events_date {
+    display: flex;
+    flex: 0 0 auto;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    min-width: var(--size--first-tile);
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
+    border: var(--focus--width) solid var(--_theme---border);
+    line-height: 1;
+  }
+  .bus-events_day { color: var(--_theme---text-accent); }
+  .bus-events_month {
+    margin-top: var(--_spacing---space--1);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-events_body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column;
+    align-items: flex-start;
+    gap: var(--_spacing---space--2);
+    min-width: 0;
+  }
+  .bus-events_when::first-letter { text-transform: uppercase; }
+  .bus-events_when { font-weight: var(--_typography---font--primary-bold); }
+  .bus-events_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    margin-top: auto;
+    color: var(--_theme---heading);
+    text-decoration: underline;
+    text-underline-offset: var(--_spacing---space--1);
+  }
+  .bus-events_arrow {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>

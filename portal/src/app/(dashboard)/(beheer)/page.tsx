@@ -1,4 +1,4 @@
-import { ChevronRight, Clock3, Images, Medal, Star, Truck, UtensilsCrossed } from "lucide-react";
+import { CalendarDays, ChevronRight, Clock3, Images, Medal, Star, Truck, UtensilsCrossed } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { heeftRol } from "@/access";
@@ -148,7 +148,8 @@ export default async function Home() {
             <ul className="divide-y divide-rule">
               {[
                 { href: "/website/arrangementen", label: "Arrangementen", onder: "Wat je aanbiedt, met tekst en foto's", icoon: UtensilsCrossed },
-                { href: "/website/referenties", label: "Referenties", onder: "Events die je hebt gedraaid", icoon: Medal },
+                { href: "/website/events", label: "Events", onder: "Waar mensen je binnenkort kunnen vinden", icoon: CalendarDays },
+                { href: "/website/referenties", label: "Referenties", onder: "Klussen die je hebt gedraaid", icoon: Medal },
                 { href: "/website/reviews", label: "Reviews", onder: "Wat klanten over je zeggen", icoon: Star },
                 { href: "/website/galerij", label: "Galerij", onder: "Foto's op de site", icoon: Images },
               ].map(({ href, label, onder, icoon: Icoon }) => (

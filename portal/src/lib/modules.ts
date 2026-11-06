@@ -2,11 +2,11 @@
  * Website modules with plain content: one list page and one form each, all
  * rendered by /website/[module]. No Payload imports: also used on the client.
  */
-import { arrangementVelden, faqVelden, ingredientenDef, mededelingVelden, plaatsVelden, referentieVelden, reviewVelden } from "./velddefs";
+import { arrangementVelden, evenementVelden, faqVelden, ingredientenDef, mededelingVelden, plaatsVelden, referentieVelden, reviewVelden } from "./velddefs";
 import type { HerhaalDef, VeldDef } from "./velden";
 
 export type WebsiteModule = {
-  slug: "arrangementen" | "referenties" | "reviews" | "veelgesteld" | "plaatsen" | "mededelingen";
+  slug: "arrangementen" | "referenties" | "reviews" | "veelgesteld" | "plaatsen" | "mededelingen" | "evenementen";
   pad: string;
   titel: string;
   enkel: string;
@@ -84,6 +84,18 @@ export const websiteModules: Record<string, WebsiteModule> = {
     legeTitel: "Nog geen plaatsen",
     leeg: "Zet hier de plaatsen waar de bus al gestaan heeft. Alleen echte plaatsen: dat is het sterkste bewijs dat je er kunt komen.",
     velden: plaatsVelden,
+  },
+  events: {
+    slug: "evenementen",
+    pad: "events",
+    titel: "Events",
+    enkel: "Event",
+    titelVeld: "titel",
+    sort: "datum",
+    info: "Openbare events waar mensen bij de bus kunnen eten, zoals een festival of markt. Ze staan in de agenda op de site, en de dag na afloop verdwijnen ze vanzelf.",
+    legeTitel: "Nog geen events",
+    leeg: "Sta je binnenkort op een festival, markt of open dag? Zet het hier, dan weten mensen waar ze je kunnen vinden.",
+    velden: evenementVelden,
   },
   mededelingen: {
     slug: "mededelingen",

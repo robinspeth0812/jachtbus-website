@@ -99,6 +99,21 @@ export const mededelingVelden: VeldDef[] = [
   statusVeld,
 ];
 
+export const evenementVelden: VeldDef[] = [
+  { naam: "titel", label: "Naam van het event", soort: "tekst", verplicht: true, max: 120, breedte: "lang", hulp: "Bijv. Koningsdag Assen of Foodtruckfestival Emmen." },
+  { naam: "datum", label: "Datum", soort: "datum", verplicht: true, breedte: "datum", hulp: "De dag na het event staat het vanzelf niet meer op de site." },
+  { naam: "totDatum", label: "Tot en met", soort: "datum", breedte: "datum", hulp: "Alleen bij een event van meer dagen." },
+  { naam: "vanTijd", label: "Van (tijd)", soort: "tijd", breedte: "tijd" },
+  { naam: "totTijd", label: "Tot (tijd)", soort: "tijd", breedte: "tijd" },
+  { naam: "plaats", label: "Plaats", soort: "tekst", verplicht: true, max: 80, breedte: "kort" },
+  { naam: "locatie", label: "Waar precies", soort: "tekst", max: 160, breedte: "middel", hulp: "Optioneel. Bijv. de Brink, of het adres." },
+  { naam: "tekst", label: "Korte tekst", soort: "lang", max: 1000, rijen: 3, breedte: "lang", hulp: "Optioneel. Wat staat er op de kaart, of wat is er te doen?" },
+  { naam: "linkTekst", label: "Tekst van de link", soort: "tekst", max: 60, breedte: "middel", hulp: "Leeg = Meer over dit event." },
+  { naam: "linkUrl", label: "Link", soort: "url", breedte: "lang", hulp: "Optioneel. De site van het event, of de tickets." },
+  { naam: "foto", label: "Foto", soort: "foto", hulp: "Optioneel." },
+  statusVeld,
+];
+
 export const klantVelden: VeldDef[] = [
   { naam: "naam", label: "Naam", soort: "tekst", verplicht: true, max: 100, breedte: "middel" },
   { naam: "bedrijf", label: "Bedrijf", soort: "tekst", max: 120, breedte: "middel" },

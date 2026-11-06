@@ -103,6 +103,7 @@ const openSoort = services.find((service) => isCurrent(url(`catering/${service.s
     <ul class="bus-menu_list">
       <li><a class="bus-menu_link u-text-style-poster-small" href={url()}>Home</a></li>
       {nav.map((item) => <li><a class="bus-menu_link u-text-style-poster-small" href={item.href}>{item.label}</a></li>)}
+      <li><a class="bus-menu_link u-text-style-poster-small" href={url('agenda')}>Agenda</a></li>
       <li><a class="bus-menu_link u-text-style-poster-small" href={url('veelgestelde-vragen')}>Vragen</a></li>
     </ul>
     {[

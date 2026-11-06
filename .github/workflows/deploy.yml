@@ -5,6 +5,9 @@ on:
     branches: [main]
   repository_dispatch:
     types: [portal-inhoud]
+  # Nightly rebuild, so events that are over drop off the site by themselves.
+  schedule:
+    - cron: '0 3 * * *'
 
 jobs:
   deploy:

@@ -82,6 +82,7 @@ export interface Config {
     veelgesteld: Veelgesteld;
     plaatsen: Plaatsen;
     mededelingen: Mededelingen;
+    evenementen: Evenementen;
     media: Media;
     bijlagen: Bijlagen;
     tickets: Ticket;
@@ -109,6 +110,7 @@ export interface Config {
     veelgesteld: VeelgesteldSelect<false> | VeelgesteldSelect<true>;
     plaatsen: PlaatsenSelect<false> | PlaatsenSelect<true>;
     mededelingen: MededelingenSelect<false> | MededelingenSelect<true>;
+    evenementen: EvenementenSelect<false> | EvenementenSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     bijlagen: BijlagenSelect<false> | BijlagenSelect<true>;
     tickets: TicketsSelect<false> | TicketsSelect<true>;
@@ -592,6 +594,27 @@ export interface Mededelingen {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "evenementen".
+ */
+export interface Evenementen {
+  id: number;
+  titel: string;
+  datum: string;
+  totDatum?: string | null;
+  vanTijd?: string | null;
+  totTijd?: string | null;
+  plaats: string;
+  locatie?: string | null;
+  tekst?: string | null;
+  linkTekst?: string | null;
+  linkUrl?: string | null;
+  foto?: (number | null) | Media;
+  status: 'concept' | 'gepubliceerd';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tickets".
  */
 export interface Ticket {
@@ -800,6 +823,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'mededelingen';
         value: number | Mededelingen;
+      } | null)
+    | ({
+        relationTo: 'evenementen';
+        value: number | Evenementen;
       } | null)
     | ({
         relationTo: 'media';
@@ -1175,6 +1202,26 @@ export interface MededelingenSelect<T extends boolean = true> {
   linkTekst?: T;
   linkUrl?: T;
   volgorde?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "evenementen_select".
+ */
+export interface EvenementenSelect<T extends boolean = true> {
+  titel?: T;
+  datum?: T;
+  totDatum?: T;
+  vanTijd?: T;
+  totTijd?: T;
+  plaats?: T;
+  locatie?: T;
+  tekst?: T;
+  linkTekst?: T;
+  linkUrl?: T;
+  foto?: T;
   status?: T;
   updatedAt?: T;
   createdAt?: T;

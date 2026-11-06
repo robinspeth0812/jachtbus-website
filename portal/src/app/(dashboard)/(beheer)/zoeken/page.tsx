@@ -23,7 +23,7 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
   const waarin = ["aanvragen", metKlanten && "klanten", metKlussen && "klussen"].filter(Boolean).join(", ");
 
   if (q) {
-    const [aanvragen, klanten, klussen, arr, ref, rev, faq, plaatsen] = await Promise.all([
+    const [aanvragen, klanten, klussen, arr, ref, rev, faq, plaatsen, events] = await Promise.all([
       payload.find({ collection: "aanvragen", where: { or: [{ naam: { contains: q } }, { email: { contains: q } }, { plaats: { contains: q } }, { opmerking: { contains: q } }] }, ...toegang }),
       metKlanten ? payload.find({ collection: "klanten", where: { or: [{ naam: { contains: q } }, { bedrijf: { contains: q } }, { email: { contains: q } }, { plaats: { contains: q } }] }, ...toegang }) : null,
       metKlussen ? payload.find({ collection: "klussen", where: { or: [{ titel: { contains: q } }, { plaats: { contains: q } }, { adres: { contains: q } }] }, ...toegang }) : null,
@@ -32,6 +32,7 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
       beheerder ? payload.find({ collection: "reviews", where: { or: [{ naam: { contains: q } }, { tekst: { contains: q } }] }, ...toegang }) : null,
       beheerder ? payload.find({ collection: "veelgesteld", where: { or: [{ vraag: { contains: q } }, { antwoord: { contains: q } }] }, ...toegang }) : null,
       beheerder ? payload.find({ collection: "plaatsen", where: { naam: { contains: q } }, ...toegang }) : null,
+      beheerder ? payload.find({ collection: "evenementen", where: { or: [{ titel: { contains: q } }, { plaats: { contains: q } }] }, ...toegang }) : null,
     ]);
     groepen.push(
       { titel: "Aanvragen", treffers: aanvragen.docs.map((a) => ({ href: `/aanvragen/${a.id}`, titel: a.naam, onder: [labelVan(gelegenheden, a.gelegenheid), a.plaats, a.datum && kortDatum(a.datum)].filter(Boolean).join(", ") })) },
@@ -41,6 +42,7 @@ export default async function Zoeken({ searchParams }: { searchParams: Promise<{
       { titel: "Referenties", treffers: (ref?.docs ?? []).map((d) => ({ href: `/website/referenties/${d.id}`, titel: d.titel, onder: d.plaats })) },
       { titel: "Reviews", treffers: (rev?.docs ?? []).map((d) => ({ href: `/website/reviews/${d.id}`, titel: d.naam, onder: d.tekst.slice(0, 80) })) },
       { titel: "Veelgestelde vragen", treffers: (faq?.docs ?? []).map((d) => ({ href: `/website/faq/${d.id}`, titel: d.vraag })) },
+      { titel: "Events", treffers: (events?.docs ?? []).map((d) => ({ href: `/website/events/${d.id}`, titel: d.titel, onder: [d.plaats, kortDatum(d.datum)].filter(Boolean).join(", ") })) },
       { titel: "Werkgebied", treffers: (plaatsen?.docs ?? []).map((d) => ({ href: `/website/werkgebied/${d.id}`, titel: d.naam, onder: d.provincie })) },
     );
   }
