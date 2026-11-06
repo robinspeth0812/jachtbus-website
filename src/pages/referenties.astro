@@ -1,14 +1,75 @@
 ---
-import Base from '../layouts/Base.astro';
-import PageHero from '../components/PageHero.astro';
+// References: only what really happened. The jobs come from the portal.
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import BusPhoto from '../components/bus/BusPhoto.astro';
+import BusPlaces from '../components/bus/BusPlaces.astro';
+import BusCases from '../components/bus/BusCases.astro';
+import BusMap from '../components/bus/BusMap.astro';
+import BusReviews from '../components/bus/BusReviews.astro';
+import BusRows from '../components/bus/BusRows.astro';
+import BusFaq from '../components/bus/BusFaq.astro';
+import BusClosing from '../components/bus/BusClosing.astro';
+import { faqReferenties, photos, url } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
+import { faqSchema } from '../lib/schema';
+
+const { referenties } = await getInhoud();
+const crumbs = [{ label: 'Referenties', href: url('referenties') }];
 ---
 
-<Base
-  title="Referenties"
-  description="Feesten en events waar de Jachtbus stond, met foto's en reacties van gasten."
+<BusBase
+  title="Referenties: waar de bus stond"
+  description="Van Stiens tot Stadskanaal: bruiloften, tuinfeesten en bedrijfsevenementen waar de Jachtbus al stond. In Drenthe, Groningen en Friesland."
+  crumbs={crumbs}
+  schema={[faqSchema(faqReferenties)]}
 >
-  <PageHero
-    title="Waar we al stonden"
-    text="Echte feesten, echte reacties. Binnenkort zie je hier foto's en verhalen van eerdere events."
+  <BusPageHero
+    title="Hier stonden we al"
+    text="In augustus 2025 reden we voor het eerst uit, in 2026 stonden we al op zo’n 40 feesten. Veel walking dinners en streetfood, in tuinen, op erven en bij bedrijven."
+    photo={photos.veld}
+    shape="corner"
+    crumbs={crumbs}
   />
-</Base>
+  <BusPlaces />
+
+  <BusCases items={referenties} filters />
+
+  <BusMap title="Waar we stonden, op de kaart" text="Tik op een punt en je ziet wat we daar deden. Staat jouw plek er nog niet bij? In Drenthe, Groningen en Friesland komen we overal." />
+  <BusReviews />
+
+  <section class="wall_wrap u-section u-theme-bus-beige">
+    <div class="wall_contain u-container">
+      <h2 class="wall_title u-text-style-poster-small">Zo ziet dat eruit</h2>
+      <div class="wall_layout">
+        <div class="wall_item is-1"><BusPhoto photo={photos.veld} shape="corner" /></div>
+        <div class="wall_item is-2"><BusPhoto photo={photos.bediening} shape="arch" focus="50% 25%" /></div>
+        <div class="wall_item is-3"><BusPhoto photo={photos.plank} shape="circle" /></div>
+        <div class="wall_item is-4"><BusPhoto photo={photos.grill} shape="bowl" /></div>
+      </div>
+    </div>
+  </section>
+
+  <BusRows title="Zit jouw feest er nog niet tussen?" soort="gelegenheid" theme="green" />
+  <BusFaq items={faqReferenties} />
+  <BusClosing title="Staat jouw plek er straks ook bij?" />
+</BusBase>
+
+<style>
+  .wall_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .wall_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--_spacing---space--5) var(--site--gutter);
+    align-items: end;
+  }
+  .wall_item { width: 100%; }
+  .wall_item.is-1 { grid-column: 1 / span 7; }
+  .wall_item.is-2 { grid-column: 8 / span 5; }
+  .wall_item.is-3 { grid-column: 2 / span 4; }
+  .wall_item.is-4 { grid-column: 7 / span 6; }
+</style>

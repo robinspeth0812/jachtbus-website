@@ -2,22 +2,22 @@
 // Local pages per province: the first step of the form in view, the local story
 // next to a map of only this province, and everything below it about this province.
 // The final set of location pages follows from keyword research.
-import BusBase from '../../layouts/BusBase.astro';
-import BusPageHero from '../../components/bus/BusPageHero.astro';
-import BusFirstStep from '../../components/bus/BusFirstStep.astro';
-import BusPlaces from '../../components/bus/BusPlaces.astro';
-import BusMap from '../../components/bus/BusMap.astro';
-import BusRows from '../../components/bus/BusRows.astro';
-import BusFit from '../../components/bus/BusFit.astro';
-import BusReviews from '../../components/bus/BusReviews.astro';
-import BusMoments from '../../components/bus/BusMoments.astro';
-import BusFaq from '../../components/bus/BusFaq.astro';
-import BusClosing from '../../components/bus/BusClosing.astro';
-import { regions, url } from '../../data/nieuw';
-import type { Region } from '../../data/nieuw';
-import { getInhoud } from '../../lib/cms';
-import { casesIn } from '../../lib/regio';
-import { faqSchema, serviceSchema } from '../../lib/schema';
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import BusFirstStep from '../components/bus/BusFirstStep.astro';
+import BusPlaces from '../components/bus/BusPlaces.astro';
+import BusMap from '../components/bus/BusMap.astro';
+import BusRows from '../components/bus/BusRows.astro';
+import BusFit from '../components/bus/BusFit.astro';
+import BusReviews from '../components/bus/BusReviews.astro';
+import BusMoments from '../components/bus/BusMoments.astro';
+import BusFaq from '../components/bus/BusFaq.astro';
+import BusClosing from '../components/bus/BusClosing.astro';
+import { regions, url } from '../data/nieuw';
+import type { Region } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
+import { casesIn } from '../lib/regio';
+import { faqSchema, serviceSchema } from '../lib/schema';
 
 export function getStaticPaths() {
   return regions.map((region) => ({ params: { region: region.slug }, props: { region } }));

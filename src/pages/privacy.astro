@@ -1,32 +1,29 @@
 ---
 // AVG privacy statement. Draft written in-house: have it checked by a
 // legal professional before go-live.
-import Base from '../layouts/Base.astro';
-import PageHero from '../components/PageHero.astro';
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import { url } from '../data/nieuw';
+
+const crumbs = [{ label: 'Privacybeleid', href: url('privacy') }];
 ---
 
-<Base
-  title="Privacybeleid"
-  description="Hoe Jachtbus Foodtruck & Catering B.V. omgaat met je gegevens."
->
-  <PageHero
-    title="Privacybeleid"
-    text="Kort en eerlijk: welke gegevens we hebben, waarom, en wat jouw rechten zijn. Laatst bijgewerkt: augustus 2026."
-  />
-  <section class="legal_wrap u-section u-theme-light">
+<BusBase title="Privacybeleid" description="Hoe Jachtbus Foodtruck & Catering B.V. omgaat met je gegevens." crumbs={crumbs}>
+  <BusPageHero title="Privacybeleid" text="Kort en eerlijk: welke gegevens we hebben, waarom, en wat jouw rechten zijn. Laatst bijgewerkt: augustus 2026." crumbs={crumbs} />
+  <section class="legal_wrap u-section u-theme-bus-beige">
     <div class="legal_contain u-container">
       <div class="legal_layout u-margin-trim">
-        <h2 class="legal_title u-text-style-h4">Wie wij zijn</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Wie wij zijn</h2>
+        <p class="legal_text u-text-style-main">
           Jachtbus Foodtruck &amp; Catering B.V., Julianalaan 54, 9462 PH
           Gasselte, KvK 96772174. Wij zijn verantwoordelijk voor de
           verwerking van persoonsgegevens zoals beschreven op deze pagina.
           Vragen? Bel +31 592 656363 of mail naar
-          info@brasseriejachtlust.nl.
+          info@jachtbusfoodtruck.nl.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Welke gegevens we verwerken</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Welke gegevens we verwerken</h2>
+        <p class="legal_text u-text-style-main">
           Alleen wat je ons zelf geeft: via het aanvraagformulier (naam,
           e-mailadres, telefoonnummer en de gegevens over je feest, zoals
           datum, plaats en aantal gasten) en via telefoon, e-mail of
@@ -34,8 +31,8 @@ import PageHero from '../components/PageHero.astro';
           stiekem en we kopen geen gegevens bij.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Waarvoor en op welke grondslag</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Waarvoor en op welke grondslag</h2>
+        <p class="legal_text u-text-style-main">
           We gebruiken je gegevens om je aanvraag te beantwoorden, een
           voorstel te maken en de catering uit te voeren (uitvoering van de
           overeenkomst, artikel 6 lid 1 sub b AVG) en om vragen af te
@@ -43,17 +40,24 @@ import PageHero from '../components/PageHero.astro';
           gebruiken we ze niet, en we verkopen ze nooit.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Hoe lang we ze bewaren</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Hoe lang we ze bewaren</h2>
+        <p class="legal_text u-text-style-main">
           Een aanvraag die geen boeking wordt, verwijderen we uiterlijk een
           jaar na het laatste contact. Gegevens die bij een boeking horen
           (offertes, facturen) bewaren we zeven jaar vanwege de fiscale
           bewaarplicht.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Wie er verder bij kan</h2>
-        <p class="legal_text">
-          Onze website draait bij een Europese hostingpartij. Voor het
+        <h2 class="legal_title u-text-style-poster-label">Wie er verder bij kan</h2>
+        <p class="legal_text u-text-style-main">
+          De kaart op onze site haalt kaartbeelden op bij OpenFreeMap, gebaseerd
+          op OpenStreetMap. Die dienst ziet daarbij je IP-adres. Dat gebeurt
+          alleen als je daar toestemming voor geeft. Dat geldt ook voor
+          statistieken en marketing met diensten als Google Analytics, Google
+          Ads en de Meta Pixel, als we die gebruiken. Daarbij kunnen gegevens
+          naar de VS gaan. Wat er precies speelt staat in ons cookiebeleid, en
+          je trekt je toestemming net zo makkelijk weer in via
+          Cookie-instellingen onder aan elke pagina. Onze website draait bij een Europese hostingpartij. Voor het
           versturen van e-mail (zoals de bevestiging van je aanvraag)
           gebruiken we een e-maildienst die als verwerker voor ons werkt.
           Met partijen die gegevens voor ons verwerken sluiten we
@@ -61,8 +65,8 @@ import PageHero from '../components/PageHero.astro';
           gegevens niet, tenzij de wet dat vraagt.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Jouw rechten</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Jouw rechten</h2>
+        <p class="legal_text u-text-style-main">
           Je mag je gegevens inzien, laten corrigeren of laten verwijderen,
           de verwerking laten beperken, bezwaar maken en je gegevens
           meenemen (dataportabiliteit). Stuur ons daarvoor een berichtje;
@@ -71,16 +75,16 @@ import PageHero from '../components/PageHero.astro';
           Persoonsgegevens.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Beveiliging en cookies</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Beveiliging en cookies</h2>
+        <p class="legal_text u-text-style-main">
           We nemen passende technische en organisatorische maatregelen om
           je gegevens te beschermen. Over cookies zijn we kort: die
           gebruiken we op dit moment niet. Lees er meer over in ons
-          <a class="legal_link u-underline" href="/cookies" data-trigger="hover focus">cookiebeleid</a>.
+          <a class="legal_link" href={url("cookies")}>cookiebeleid</a>.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Wijzigingen</h2>
-        <p class="legal_text">
+        <h2 class="legal_title u-text-style-poster-label">Wijzigingen</h2>
+        <p class="legal_text u-text-style-main">
           Verandert er iets aan hoe we met gegevens omgaan, dan passen we
           deze pagina aan. De datum bovenaan laat zien wanneer dat voor het
           laatst gebeurde.
@@ -88,15 +92,20 @@ import PageHero from '../components/PageHero.astro';
       </div>
     </div>
   </section>
-</Base>
+</BusBase>
 
 <style>
+  .legal_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
   .legal_layout {
     display: flex;
     flex-direction: column;
     gap: var(--_spacing---space--3);
     max-width: var(--max-width--small);
   }
-  .legal_title { margin-top: var(--_spacing---space--4); }
+  .legal_title { margin-top: var(--_spacing---space--5); }
   .legal_text { max-width: 70ch; }
+  .legal_link { color: var(--_theme---text-link--text); }
 </style>

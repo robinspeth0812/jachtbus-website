@@ -95,7 +95,7 @@ function bezetteDagen(items: Bezet[]): Bezet[] {
 
 let cached: Promise<Remote> | undefined;
 
-// Labelled sample content to show the /nieuw pages while the portal is not online yet.
+// Labelled sample content to show the pages while the portal is not online yet.
 // Only with VOORBEELD_INHOUD set, and only without a portal. Remove before launch.
 async function loadVoorbeeld(): Promise<Remote> {
   const { default: voorbeeld } = await import('../data/voorbeeld-inhoud.json');

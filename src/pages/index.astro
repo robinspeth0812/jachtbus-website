@@ -1,405 +1,181 @@
 ---
-import { Image } from 'astro:assets';
-import Base from '../layouts/Base.astro';
-import ServiceTiles from '../components/ServiceTiles.astro';
-import StepFlow from '../components/StepFlow.astro';
-import MediaText from '../components/MediaText.astro';
-import CoreValues from '../components/CoreValues.astro';
-import ChatBubble from '../components/ChatBubble.astro';
-import RequestForm from '../components/RequestForm.astro';
-import whatsappIcon from '../assets/whatsapp-icon.svg';
-import LocationRequirements from '../components/LocationRequirements.astro';
-import RegionMap from '../components/RegionMap.astro';
-import FaqSection from '../components/FaqSection.astro';
-import CtaSection from '../components/CtaSection.astro';
-import Texture from '../components/Texture.astro';
-import heroImg from '../assets/jachtbus-bus.jpg';
-import busImg from '../assets/bediening-serveert.jpg';
-import plankImg from '../assets/eten-serveerplank.jpg';
-import TestimonialGrid from '../components/TestimonialGrid.astro';
-import drinkenImg from '../assets/drinken-wijn.jpg';
-import bedrijfsfeestImg from '../assets/dienst-bedrijfsfeest.jpg';
-import heleBusImg from '../assets/jachtbus-bus.jpg';
-import bruiloftImg from '../assets/bruiloft-veld.jpg';
+// Home of the new site, in the order of the home page outline: the first step
+// of the form right in view, then whatever takes away the doubt, and the form
+// again at the end. The hero slider is the only thing that moves on its own.
+import BusBase from '../layouts/BusBase.astro';
+import BusButton from '../components/BusButton.astro';
+import BusFirstStep from '../components/bus/BusFirstStep.astro';
+import BusSlider from '../components/bus/BusSlider.astro';
+import BusMoments from '../components/bus/BusMoments.astro';
+import BusMap from '../components/bus/BusMap.astro';
+import BusValues from '../components/bus/BusValues.astro';
+import BusRows from '../components/bus/BusRows.astro';
+import BusStory from '../components/bus/BusStory.astro';
+import BusRoute from '../components/bus/BusRoute.astro';
+import BusFit from '../components/bus/BusFit.astro';
+import BusReviews from '../components/bus/BusReviews.astro';
+import BusEvents from '../components/bus/BusEvents.astro';
+import BusFaq from '../components/bus/BusFaq.astro';
+import BusClosing from '../components/bus/BusClosing.astro';
+import { aanvraagUrl, photos, twijfels, url, waarom } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
+import sideImg from '../assets/ambachtelijk-eten.jpg';
+import { faqSchema } from '../lib/schema';
 
-// Placeholder testimonials, clearly labeled as samples: swap for real
-// quotes and ratings as soon as the first references exist.
-const homeTestimonials = [
-  {
-    quote: 'Voorbeeldquote: hier komt straks de echte reactie van een gast te staan.',
-    name: 'Voornaam Achternaam',
-    meta: 'Bruiloft · Plaatsnaam',
-    stars: 5,
-    image: bruiloftImg,
-    alt: '',
-  },
-  { image: drinkenImg, alt: '' },
-  { image: bedrijfsfeestImg, alt: '' },
-  { image: heleBusImg, alt: '' },
-  {
-    quote: 'Nog een voorbeeldquote, iets langer, zodat je ziet hoe twee regels tekst in de kaart vallen.',
-    name: 'Voornaam Achternaam',
-    meta: 'Bedrijfsfeest · Plaatsnaam',
-    stars: 5,
-  },
-  { image: plankImg, alt: '' },
-];
-
-const regionPills = [
-  { label: 'Drenthe', href: '/foodtruck-drenthe' },
-  { label: 'Groningen', href: '/foodtruck-groningen' },
-  { label: 'Friesland', href: '/foodtruck-friesland' },
-];
-
-const faqItems = [
-  {
-    question: 'Wat kost een foodtruck ongeveer?',
-    answer:
-      'Dat hangt af van het aantal gasten en wat er op het menu komt. Er is geen vaste kaart, dus je krijgt altijd een voorstel op maat. Doe de aanvraag, dan hoor je snel wat het voor jouw feest kost.',
-  },
-  {
-    question: 'Hoe ver van tevoren moet ik boeken?',
-    answer:
-      'Hoe eerder, hoe beter. Zomerse zaterdagen zijn het eerst weg. Check je datum via het aanvraagformulier, dan hoor je snel of we kunnen.',
-  },
-  {
-    question: 'Komen jullie ook buiten Noord-Nederland?',
-    answer:
-      'Ons werkgebied is Drenthe, Groningen en Friesland. Ligt jouw locatie daar net buiten? Vraag het gerust, in overleg kan er vaak meer.',
-  },
-  {
-    question: 'Vanaf hoeveel gasten komen jullie?',
-    answer:
-      'We draaien partijen vanaf 40 personen. Is jouw groep net wat kleiner? Vraag gerust naar de mogelijkheden, dan kijken we wat kan.',
-  },
-  {
-    question: 'Regelen jullie ook de drankjes?',
-    answer:
-      'Dat kan zeker, van borrel tot compleet drankenpakket. Zet het in je aanvraag, dan nemen we het mee in het voorstel.',
-  },
-];
+const { faq } = await getInhoud();
+const faqItems = faq.slice(0, 6);
 ---
 
-<Base
-  title="Foodtruckcatering in Drenthe, Groningen en Friesland"
-  description="De Jachtbus komt naar jouw feest. Goed, vers en ambachtelijk bereid, voor bruiloften, bedrijfsfeesten en evenementen in Noord-Nederland."
-  footerCta={false}
+<BusBase
+  title="Foodtruck huren in Noord-Nederland"
+  description="De Jachtbus komt naar je feest en kookt ter plekke. Voor bruiloften, tuinfeesten, bedrijfsfeesten en evenementen in Noord-Nederland, vanaf 40 personen."
+  schema={[faqSchema(faqItems)]}
 >
-  <section class="hero_wrap u-section u-theme-brand u-texture-wrap">
-    <Image class="hero_bg_img" src={heroImg} alt="" aria-hidden="true" width={1920} loading="eager" />
-    <div class="hero_overlay" aria-hidden="true"></div>
-    <Texture story="morning" />
-    <div class="hero_contain u-container u-texture-content">
-      <div class="hero_layout">
-        <div class="hero_content u-margin-trim">
-          <h1 class="hero_tagline u-text-style-small">
-            Mobiele cateraar/foodtruck in Drenthe, Friesland, Groningen e.o.
-          </h1>
-          <div class="hero_title u-heading u-text-style-h1">
-            <h2>Dé Foodtruck voor eerlijk, ambachtelijk bereid eten op locatie</h2>
-          </div>
-          <div class="hero_text u-text u-text-style-large">
-            <p>
-              Eerlijke catering, vers bereid en zorgvuldig samengesteld.
-              Op jouw locatie naar wens met de Jachtbus Foodtruck.
-            </p>
-          </div>
-          <div class="hero_regions_wrap">
-            <span class="hero_regions_label u-text-style-small">In:</span>
-            <ul class="hero_regions_list">
-              {
-                regionPills.map((region) => (
-                  <li class="hero_regions_item">
-                    <a class="hero_regions_pill u-theme-light" href={region.href} data-trigger="hover focus">
-                      <span class="hero_regions_text">{region.label}</span>
-                    </a>
-                  </li>
-                ))
-              }
-            </ul>
+  <section class="home-hero_wrap u-theme-bus-green">
+    <div class="home-hero_contain u-container">
+      <div class="home-hero_layout">
+        <div class="home-hero_intro">
+          <h1 class="home-hero_label u-text-style-main">Mobiele cateraar/foodtruck in Drenthe, Friesland, Groningen e.o.</h1>
+          <h2 class="home-hero_title u-text-style-poster">Eerlijk, ambachtelijk bereid eten op locatie</h2>
+          <p class="home-hero_text u-text-style-large">
+            Eerlijke catering, vers bereid en zorgvuldig samengesteld. Op jouw locatie in
+            <a class="home-hero_link" href={url('foodtruck-drenthe')}>Drenthe</a>,
+            <a class="home-hero_link" href={url('foodtruck-groningen')}>Groningen</a> of
+            <a class="home-hero_link" href={url('foodtruck-friesland')}>Friesland</a>
+            met de Jachtbus Foodtruck.
+          </p>
+          <div class="home-hero_cta u-button-wrapper">
+            <BusButton label="Start je aanvraag" href={aanvraagUrl()} />
           </div>
         </div>
-        <div class="hero_form_wrap u-theme-soft u-margin-trim" data-aanvraag-form>
-          <RequestForm variant="embedded" />
-          <div class="hero_form_divider" aria-hidden="true">
-            <span class="hero_form_divider_line"></span>
-            <span class="hero_form_divider_text u-text-style-small">of</span>
-            <span class="hero_form_divider_line"></span>
-          </div>
-          <div class="hero_form_actions">
-            <ChatBubble message="Neem direct contact met mij op." />
-            <div class="hero_form_contact_row u-button-wrapper">
-              <a class="hero_form_contact" href="tel:+31592656363" data-trigger="hover focus">
-                +31 592 656363
-              </a>
-              <a
-                class="hero_form_contact is-wa is-wa-link"
-                href="https://wa.me/31592656363"
-                rel="external"
-                aria-label="App ons via WhatsApp"
-                data-trigger="hover focus"
-              >
-                <Image class="hero_form_wa_img" src={whatsappIcon} alt="" aria-hidden="true" width={32} />
-              </a>
-              <button
-                class="hero_form_contact is-wa is-wa-btn"
-                type="button"
-                aria-label="App ons via WhatsApp"
-                data-trigger="hover focus"
-              >
-                <Image class="hero_form_wa_img" src={whatsappIcon} alt="" aria-hidden="true" width={32} />
-              </button>
-            </div>
-          </div>
+        <div class="home-hero_form">
+          <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
         </div>
       </div>
     </div>
+    <div class="home-hero_visual">
+      <BusSlider
+        eager
+        slides={[
+          { photo: photos.luik, focus: '50% 62%' },
+          { photo: photos.bus },
+          { photo: photos.plank },
+          { photo: photos.veld, focus: '30% 50%' },
+          { photo: photos.grill, focus: '60% 50%' },
+          { photo: photos.smoker },
+        ]}
+      />
+    </div>
   </section>
 
-  <CoreValues />
+  <BusValues />
 
-  <MediaText
-    title="Op zoek naar écht goede foodtruckcatering?"
-    image={plankImg}
-    aspect="landscape"
-    theme="light"
+  <BusMoments title="Op zoek naar écht goede foodtruckcatering?" items={twijfels} />
+
+
+  <BusRows title="Waar staat de Jachtbus straks?" soort="gelegenheid" theme="green">
+    <div class="home-rows_more">
+      <BusButton label="Bekijk al onze catering" href={url('catering')} arrow />
+    </div>
+  </BusRows>
+
+  <BusRoute />
+
+  <BusStory
+    title="Waarom de Jachtbus?"
+    photo={{ src: sideImg, alt: 'De zijkant van de bus, met de woorden lokaal verkregen, eerlijke producten en ambachtelijk bereid' }}
+    shape="corner"
+    theme="green"
+    focus="60% 50%"
   >
-    <ul class="home-doubts_list">
-      <li class="home-doubts_item">Geen idee waar je originele catering voor je event kunt vinden?</li>
-      <li class="home-doubts_item">Je huurde eerder catering, maar het eten viel tegen of kwam te laat?</li>
-      <li class="home-doubts_item">Lastig om iets te vinden dat lekker én professioneel is voor elk type publiek?</li>
+    <ul class="home-values_list">
+      {waarom.map((value) => (
+        <li class="home-values_item">
+          <h3 class="home-values_name u-text-style-poster-label">{value.title}</h3>
+          <p class="home-values_text u-text-style-main">{value.text}</p>
+        </li>
+      ))}
     </ul>
-    <p class="home-doubts_text">
-      De Jachtbus biedt een complete, betrouwbare en smaakvolle ervaring.
-      Van de planning tot de laatste hap staan we voor je klaar!
-    </p>
-  </MediaText>
+  </BusStory>
 
-  <ServiceTiles
-    title="Waar staat de Jachtbus straks?"
-    text="Elke gelegenheid heeft een eigen pagina met wat er kan en hoe het werkt."
-    theme="soft"
-  />
+  <BusMap />
+  <BusEvents limit={3} theme="green" note title="Kom langs bij de bus" text="Op deze markten en festivals staan we binnenkort. Gewoon langskomen, reserveren hoeft niet.">
+    <BusButton label="Bekijk de hele agenda" href={url('agenda')} variant="secondary" />
+  </BusEvents>
+  <BusReviews />
 
-  <StepFlow theme="soft" />
-
-  <MediaText title="Waarom de Jachtbus" image={busImg} theme="soft">
-    <ul class="home_why_list">
-      <li class="home_why_item">Alles ter plekke bereid</li>
-      <li class="home_why_item">Lokale producten</li>
-      <li class="home_why_item">Eigen bediening</li>
-      <li class="home_why_item">Menu in overleg samengesteld</li>
-    </ul>
-  </MediaText>
-
-  <TestimonialGrid
-    text="Zo'n 40 feesten en partijen draaiden we al sinds de start in augustus 2025. Voorbeelddata in dit blok: de echte quotes en foto's komen hier zodra de eerste referenties binnen zijn."
-    items={homeTestimonials}
-    theme="light"
-  />
-
-  <LocationRequirements theme="soft" />
-
-  <RegionMap theme="brand" texture="bus" />
-
-  <FaqSection items={faqItems} theme="soft" />
-
-  <CtaSection texture="evening" />
-</Base>
+  <BusFit />
+  <BusFaq items={faqItems} />
+  <section class="home-more_wrap u-theme-bus-beige">
+    <div class="home-more_contain u-container">
+      <BusButton label="Alle vragen" href={url('veelgestelde-vragen')} variant="secondary" />
+    </div>
+  </section>
+  <BusClosing text="Kies wat je viert, dan vragen we alleen nog wat we echt moeten weten. Een richtdatum en een schatting van het aantal gasten is genoeg." />
+</BusBase>
 
 <style>
-  .hero_wrap {
-    overflow: clip;
-    padding-top: var(--_spacing---section-space--large);
-    padding-bottom: var(--_spacing---section-space--large);
-  }
-  .hero_bg_img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  /* Dark scrim behind the text side only; the photo stays visible. */
-  .hero_overlay {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(to right, var(--_theme---scrim), var(--_theme---scrim-fade) 70%);
-  }
-  .hero_contain {
-    position: relative;
-    z-index: 1;
-  }
-  .hero_layout {
-    display: var(--flex-medium, grid);
-    flex-direction: column;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: center;
-    gap: var(--_spacing---space--7) var(--_spacing---space--8);
-  }
-  .hero_tagline {
-    letter-spacing: var(--_typography---letter-spacing--caps);
-    font-size: var(--_typography---size--small);
-    margin-bottom: var(--_text-style---margin-bottom);
-  }
-  .hero_regions_wrap {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--_spacing---space--2);
-    margin-top: var(--_spacing---space--4);
-  }
-  .hero_regions_list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--_spacing---space--2);
-  }
-  .hero_regions_item { display: flex; }
-  /* Compact pill; on hover the colors invert with a left-to-right fill:
-     the text color wipes in as background, the text flips to the old
-     background color. */
-  .hero_regions_pill {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--_spacing---space--6);
-    padding: calc(var(--_spacing---space--1) / 2) var(--_spacing---space--3);
-    background-color: var(--_theme---background-2);
-    background-image: linear-gradient(to right, var(--_theme---text), var(--_theme---text));
-    background-repeat: no-repeat;
-    background-size: calc(100% * var(--_trigger---off)) 100%;
-    color: color-mix(
-      in srgb,
-      var(--_theme---background-2) calc(100% * var(--_trigger---off)),
-      var(--_theme---text) calc(100% * var(--_trigger---on))
-    );
-    border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--main);
-    font-size: var(--_typography---size--small);
-    text-decoration: none;
-    transition: background-size 300ms, color 300ms;
-  }
-  .hero_title {
-    display: flex;
-    margin-bottom: var(--_text-style---margin-bottom);
-  }
-  .hero_text {
-    display: flex;
-    max-width: 55ch;
-  }
-  /* Narrower than its grid column: the fields need little room, so the
-     panel is capped and centered in the column (and when stacked). */
-  .hero_form_wrap {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--3);
-    width: 100%;
-    max-width: var(--max-width--form);
-    justify-self: center;
-    align-self: center;
-    padding: var(--_spacing---space--6);
+  .home-hero_wrap {
     background-color: var(--_theme---background);
     color: var(--_theme---text);
-    border: var(--border-width--main) solid var(--_theme---border);
-    border-radius: var(--radius--large);
   }
-  .hero_form_divider {
+  .home-hero_layout {
+    display: var(--flex-medium, grid);
+    flex-direction: column;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--_spacing---space--5) var(--site--gutter);
+    /* Clears the logo that hangs out of the bar. */
+    padding-top: calc(var(--size--nav-logo-now) - var(--size--nav-bar) + var(--_spacing---space--6));
+    padding-bottom: var(--_spacing---space--7);
+  }
+  .home-hero_intro {
+    grid-column: 1 / span 6;
     display: flex;
-    align-items: center;
-    gap: var(--_spacing---space--3);
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
   }
-  .hero_form_divider_line {
-    flex: 1 1 0;
-    height: var(--border-width--main);
-    background-color: var(--_theme---border);
-  }
-  .hero_form_divider_text {
-    letter-spacing: var(--_typography---letter-spacing--caps);
-    text-transform: uppercase;
-  }
-  .hero_form_actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--_spacing---space--3);
-  }
-  .hero_form_contact_row {
-    display: flex;
-    align-items: center;
-    gap: var(--_spacing---space--2);
-  }
-  .hero_form_contact {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--target--min);
-    padding: var(--_spacing---space--2) var(--_spacing---space--4);
-    border-radius: var(--radius--main);
-    border-style: solid;
-    border-width: var(--border-width--main);
-    font-family: var(--_typography---font--heading);
+  .home-hero_label {
     font-weight: var(--_typography---font--primary-bold);
-    font-size: var(--_typography---size--small);
-    letter-spacing: var(--_typography---letter-spacing--caps);
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: pointer;
-    background-color: color-mix(
-      in hsl,
-      var(--_theme---button-secondary--background) calc(100% * var(--_trigger---on)),
-      var(--_theme---button-secondary--background-hover) calc(100% * var(--_trigger---off))
-    );
-    color: var(--_theme---button-secondary--text);
-    border-color: var(--_theme---button-secondary--border);
-    transition: background-color 300ms;
+    text-transform: none;
+    /* The capitals line up with the top of the form block. */
+    text-box: trim-start cap alphabetic;
   }
-  /* Icon-only WhatsApp button: direct link on mobile, opens the corner
-     widget's QR and WhatsApp Web panel on desktop. */
-  .hero_form_contact.is-wa {
-    width: var(--target--min);
-    padding: 0;
+  .home-hero_title {
+    max-width: 17ch;
+    font-size: var(--_typography---size--poster-hero);
   }
-  .hero_form_wa_img {
-    width: var(--_spacing---space--5);
-    height: var(--_spacing---space--5);
-    object-fit: contain;
+  /* On phones the button opens the form, wider the first step is on the page. */
+  .home-hero_cta {
+    display: var(--flex-medium, none);
+    justify-content: flex-start;
   }
-  .hero_form_contact.is-wa-link { display: var(--flex-medium, none); }
-  .hero_form_contact.is-wa-btn { display: var(--none-medium, inline-flex); }
-  .home-doubts_list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--2);
-    list-style: disc;
-    padding-left: var(--_spacing---space--5);
-    max-width: 60ch;
-    margin-bottom: var(--_text-style---margin-bottom);
+  .home-hero_text { max-width: 44ch; }
+  .home-hero_link { color: inherit; }
+  /* Next to the text the block takes no height, so the text sets where the
+     photos start and the block lies over them. */
+  .home-hero_form {
+    grid-column: 7 / span 6;
+    position: relative;
+    z-index: 1;
+    display: var(--none-medium, block);
+    width: 100%;
+    height: 0;
   }
-  .home-doubts_item {
-    display: list-item;
-    font-style: italic;
-  }
-  .home-doubts_text { max-width: 60ch; }
-  .home_why_list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--2);
-  }
-  .home_why_item {
-    padding-left: var(--_spacing---space--4);
-    border-left: var(--focus--width) solid var(--_theme---text-accent);
-  }
-</style>
+  .home-hero_visual { padding-bottom: var(--_spacing---space--7); }
 
-<script>
-  // Desktop WhatsApp button in the hero card opens the corner widget's
-  // panel (QR plus WhatsApp Web) instead of duplicating it here.
-  document.querySelectorAll<HTMLButtonElement>('.hero_form_contact.is-wa-btn').forEach((btn) => {
-    btn.addEventListener('click', (event) => {
-      // Keep this click away from the widget's outside-click-closes
-      // listener on document.
-      event.stopPropagation();
-      document.querySelector<HTMLButtonElement>('.whatsapp_toggle_wrap')?.click();
-    });
-  });
-</script>
+  .home-rows_more { margin-top: var(--_spacing---space--5); }
+
+  .home-values_item {
+    padding-block: var(--_spacing---space--3);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .home-values_name { margin-bottom: var(--_spacing---space--1); }
+
+  .home-more_wrap {
+    padding-bottom: var(--_spacing---space--7);
+    background-color: var(--_theme---background);
+  }
+  .home-more_contain { align-items: flex-start; }
+</style>

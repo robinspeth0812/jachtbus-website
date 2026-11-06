@@ -1,12 +1,12 @@
 ---
-import BusBase from '../../layouts/BusBase.astro';
-import BusPageHero from '../../components/bus/BusPageHero.astro';
-import BusFaq from '../../components/bus/BusFaq.astro';
-import BusFit from '../../components/bus/BusFit.astro';
-import BusClosing from '../../components/bus/BusClosing.astro';
-import { services, url } from '../../data/nieuw';
-import { getInhoud } from '../../lib/cms';
-import { faqSchema } from '../../lib/schema';
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import BusFaq from '../components/bus/BusFaq.astro';
+import BusFit from '../components/bus/BusFit.astro';
+import BusClosing from '../components/bus/BusClosing.astro';
+import { services, url } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
+import { faqSchema } from '../lib/schema';
 
 const { faq } = await getInhoud();
 const crumbs = [{ label: 'Veelgestelde vragen', href: url('veelgestelde-vragen') }];

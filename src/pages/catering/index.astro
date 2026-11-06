@@ -1,184 +1,39 @@
 ---
-import Base from '../../layouts/Base.astro';
-import Button from '../../components/Button.astro';
-import CoreValues from '../../components/CoreValues.astro';
-import ServiceTiles from '../../components/ServiceTiles.astro';
-import CardGrid from '../../components/CardGrid.astro';
-import MediaText from '../../components/MediaText.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
-import LocationRequirements from '../../components/LocationRequirements.astro';
-import RegionMap from '../../components/RegionMap.astro';
-import FaqSection from '../../components/FaqSection.astro';
-import CtaSection from '../../components/CtaSection.astro';
-import ServiceSchema from '../../components/ServiceSchema.astro';
-import etenImg from '../../assets/eten-serveerplank.jpg';
-import drinkenImg from '../../assets/drinken-wijn.jpg';
+import BusBase from '../../layouts/BusBase.astro';
+import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusRows from '../../components/bus/BusRows.astro';
+import BusMenu from '../../components/bus/BusMenu.astro';
+import BusRoute from '../../components/bus/BusRoute.astro';
+import BusFit from '../../components/bus/BusFit.astro';
+import BusFaq from '../../components/bus/BusFaq.astro';
+import BusClosing from '../../components/bus/BusClosing.astro';
+import { faqAlgemeen, photos, url } from '../../data/nieuw';
+import { faqSchema, serviceSchema } from '../../lib/schema';
 
-const servingStyles = [
-  {
-    title: 'Walking dinner',
-    text: 'Zeven seizoensgerechten die we rondbrengen door je feest.',
-  },
-  {
-    title: 'Buffet',
-    text: 'Gasten pakken zelf, wij vullen aan en houden alles vers.',
-  },
-  {
-    title: 'Streetfood',
-    text: 'Direct uit de bus, lekker informeel op festivals en borrels.',
-  },
-  {
-    title: 'Aan tafel',
-    text: 'Wij serveren uit, jij blijft zitten. Chic zonder poespas.',
-  },
-];
-
-const faqItems = [
-  {
-    question: 'Wat kost foodtruckcatering ongeveer?',
-    answer:
-      'Dat hangt af van het aantal gasten, het menu en de vorm van je feest. Je krijgt altijd een voorstel op maat. Doe de aanvraag, dan hoor je snel wat het voor jouw feest kost.',
-  },
-  {
-    question: 'Voor hoeveel personen kunnen jullie koken?',
-    answer:
-      'We draaien partijen vanaf 40 personen, van tuinfeest tot groot bedrijfsevent. Is jouw groep net wat kleiner? Vraag gerust naar de mogelijkheden, dan kijken we wat kan.',
-  },
-  {
-    question: 'Nemen jullie zelf personeel mee?',
-    answer:
-      'Ja. We komen met eigen bediening, dus jij hoeft niets te regelen en niemand van je gasten hoeft achter de bar.',
-  },
-];
+const description = 'Foodtruckcatering op locatie voor bruiloften, tuinfeesten, bedrijfsfeesten en evenementen. Alles ter plekke bereid, in Drenthe, Groningen en Friesland.';
+const crumbs = [{ label: 'Catering', href: url('catering') }];
+const faqItems = faqAlgemeen.slice(0, 4);
 ---
 
-<Base
+<BusBase
   title="Foodtruckcatering op locatie"
-  description="Foodtruckcatering voor bruiloften, bedrijfsfeesten, evenementen en BBQ in Drenthe, Groningen en Friesland. Alles ter plekke bereid."
-  footerCta={false}
+  description={description}
+  crumbs={crumbs}
+  schema={[serviceSchema('Foodtruckcatering', description), faqSchema(faqItems)]}
 >
-  <ServiceSchema
-    name="Foodtruckcatering"
-    description="Foodtruckcatering op locatie voor bruiloften, bedrijfsfeesten, evenementen en BBQ, ter plekke bereid."
+  <BusPageHero
+    title="De keuken komt naar jou toe"
+    text="Geen zaal nodig, geen keuken nodig. Wij nemen alles mee, koken ter plekke en laten het netjes achter."
+    photo={photos.bus}
+    shape="corner"
+    crumbs={crumbs}
+    checkLabel="Check je datum"
   />
-  <section class="catering-hero_wrap u-section u-theme-brand">
-    <div class="catering-hero_contain u-container">
-      <div class="catering-hero_layout u-margin-trim">
-        <div class="catering-hero_title u-heading u-text-style-h1">
-          <h1>Foodtruckcatering op locatie</h1>
-        </div>
-        <div class="catering-hero_text u-text u-text-style-large">
-          <p>
-            De Jachtbus komt naar jouw feest en kookt ter plekke. Hieronder
-            lees je wat we maken, hoe we serveren en wat er praktisch nodig
-            is.
-          </p>
-        </div>
-        <div class="catering-hero_actions u-button-wrapper">
-          <Button variant="primary" label="Aanvraag starten" href="/aanvraag" />
-          <Button variant="secondary" label="Bellen" href="tel:+31592656363" />
-          <Button variant="secondary" label="WhatsApp" href="https://wa.me/31592656363" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <CoreValues variant="bar" />
-
-  <section class="catering-intro_wrap u-section u-theme-light">
-    <div class="catering-intro_contain u-container">
-      <div class="catering-intro_layout u-margin-trim">
-        <p class="catering-intro_text u-text-style-large">
-          De Jachtbus is een rijdende keuken. Geen opgewarmde bakken uit een
-          koelwagen, maar koken op het moment zelf, waar jouw feest ook is.
-          Het menu stellen we samen in overleg: van borrelhappen tot een
-          walking dinner van zeven gerechten.
-        </p>
-        <p class="catering-intro_text u-text-style-main">
-          Deze pagina is voor iedereen die eerst rustig wil lezen. Weet je al
-          wat voor feest het wordt? Klik dan hieronder direct door naar jouw
-          gelegenheid.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <ServiceTiles
-    title="Voor welke gelegenheid?"
-    text="Staat jouw feest er niet tussen? Bel of app ons even, er kan meer dan je denkt."
-    theme="soft"
-  />
-
-  <MediaText title="Het eten" image={etenImg} theme="light">
-    <p class="catering-food_text">
-      Eerlijke keuken met lokale producten, ter plekke bereid. Geen vaste
-      kaart: het menu hangt af van het seizoen en van wat bij jouw feest
-      past. Denk aan langzaam gegaard vlees uit de smoker, frisse salades en
-      huisgemaakte sauzen.
-    </p>
-    <h3 class="catering-food_subtitle u-text-style-h5">Allergieën en dieetwensen</h3>
-    <p class="catering-food_text">
-      Glutenvrij, vegetarisch, vegan: geef het door bij de aanvraag, dan
-      zorgen wij dat iedereen mee-eet.
-    </p>
-  </MediaText>
-
-  <CardGrid
-    title="Hoe we serveren"
-    text="Dit gaat over de vorm van je feest, niet over het eten zelf."
-    cards={servingStyles}
-    theme="soft"
-  />
-
-  <MediaText title="En het drinken?" image={drinkenImg} reversed theme="light">
-    <p class="catering-drinks_text">
-      Kan allebei: wij leveren en schenken, of jij regelt het zelf en wij
-      doen het eten. Tap of flessen, met of zonder bediening. We stemmen
-      het af op je locatie en je gasten.
-    </p>
-  </MediaText>
-
-  <section class="catering-custom_wrap u-section u-theme-brand">
-    <div class="catering-custom_contain u-container">
-      <SectionHeader
-        title="Maatwerk in de praktijk"
-        text="Geen twee feesten zijn hetzelfde, dus geen twee menu's zijn dat ook. Binnenkort lees je hier drie echte voorbeelden: wat de klant vroeg en wat we hebben neergezet."
-      />
-    </div>
-  </section>
-
-  <LocationRequirements theme="soft" />
-
-  <RegionMap theme="light" />
-
-  <FaqSection items={faqItems} theme="soft" />
-
-  <CtaSection />
-</Base>
-
-<style>
-  .catering-hero_wrap { padding-top: var(--_spacing---section-space--small); }
-  .catering-hero_layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--4);
-  }
-  .catering-hero_title {
-    display: flex;
-    max-width: 20ch;
-  }
-  .catering-hero_text {
-    display: flex;
-    max-width: 55ch;
-  }
-  .catering-hero_actions { display: flex; }
-  .catering-intro_layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--_spacing---space--4);
-  }
-  .catering-intro_text { max-width: 65ch; }
-  .catering-food_text { margin-bottom: var(--_text-style---margin-bottom); }
-  .catering-food_subtitle { margin-bottom: var(--_text-style---margin-bottom); }
-  .catering-drinks_text { max-width: 55ch; }
-</style>
+  <BusRows title="Waar komen we voor?" soort="gelegenheid" />
+  <BusRows title="En wat kan er allemaal?" soort="mogelijkheid" theme="green" />
+  <BusMenu />
+  <BusRoute />
+  <BusFit />
+  <BusFaq items={faqItems} />
+  <BusClosing />
+</BusBase>

@@ -1,0 +1,31 @@
+---
+// The new site was shown under /nieuw before it moved to the root. Every old
+// address sends the visitor on to the same page at the root, so shared links
+// keep working. Bunny edge rules can make these real 301s later.
+import { regions, services, url } from '../../data/nieuw';
+
+export function getStaticPaths() {
+  const vast = ['', 'aanvraag', 'agenda', 'catering', 'contact', 'cookies', 'over-ons', 'privacy', 'referenties', 'veelgestelde-vragen', 'voorwaarden'];
+  const paden = [...vast, ...services.map((service) => `catering/${service.slug}`), ...regions.map((region) => region.slug)];
+  return paden.map((pad) => ({ params: { pad: pad || undefined }, props: { naar: url(pad) } }));
+}
+interface Props {
+  naar: string;
+}
+const { naar } = Astro.props;
+const canonical = new URL(naar, Astro.site);
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Doorsturen naar {naar}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0;url=${naar}`} />
+  </head>
+  <body>
+    <a href={naar}>Deze pagina is verhuisd. Ga verder</a>
+  </body>
+</html>

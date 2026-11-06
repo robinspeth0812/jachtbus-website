@@ -2,13 +2,13 @@
 // Where the bus stands: first the public events of the coming month, then the
 // full agenda with private bookings as a date only. Peer keeps it up to date in
 // the portal; a nightly build takes what is over off the page.
-import BusBase from '../../layouts/BusBase.astro';
-import BusPageHero from '../../components/bus/BusPageHero.astro';
-import BusEventSlider from '../../components/bus/BusEventSlider.astro';
-import BusAgenda from '../../components/bus/BusAgenda.astro';
-import BusClosing from '../../components/bus/BusClosing.astro';
-import { photos, url } from '../../data/nieuw';
-import { getInhoud } from '../../lib/cms';
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import BusEventSlider from '../components/bus/BusEventSlider.astro';
+import BusAgenda from '../components/bus/BusAgenda.astro';
+import BusClosing from '../components/bus/BusClosing.astro';
+import { photos, url } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
 
 const { evenementen } = await getInhoud();
 const crumbs = [{ label: 'Agenda', href: url('agenda') }];

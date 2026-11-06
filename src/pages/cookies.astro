@@ -1,67 +1,84 @@
 ---
-// Cookie policy. Current honest state: no cookies, no tracking, only
-// functional sessionStorage for the request form draft. When analytics
-// or marketing pixels are added, this page and a consent banner must be
-// updated BEFORE those scripts go live (EU ePrivacy: prior opt-in).
-import Base from '../layouts/Base.astro';
-import PageHero from '../components/PageHero.astro';
+// Cookie policy, built from the same list as the banner (src/data/cookies.ts).
+// Keep the words here in step with what the site really does.
+import BusBase from '../layouts/BusBase.astro';
+import BusPageHero from '../components/bus/BusPageHero.astro';
+import BusCookieDetails from '../components/bus/BusCookieDetails.astro';
+import { cookieGroups } from '../data/cookies';
+import { url } from '../data/nieuw';
+
+const crumbs = [{ label: 'Cookiebeleid', href: url('cookies') }];
 ---
 
-<Base
-  title="Cookiebeleid"
-  description="Welke cookies jachtbusfoodtruck.nl gebruikt. Spoiler: op dit moment geen."
->
-  <PageHero
-    title="Cookiebeleid"
-    text="Het kortste cookiebeleid dat je vandaag leest. Laatst bijgewerkt: augustus 2026."
-  />
-  <section class="legal_wrap u-section u-theme-light">
+<BusBase title="Cookiebeleid" description="Welke cookies en diensten jachtbusfoodtruck.nl gebruikt, waar we toestemming voor vragen en hoe je je keuze aanpast." crumbs={crumbs}>
+  <BusPageHero title="Cookiebeleid" text="Wat we gebruiken, waarvoor, en hoe je het aanpast. Laatst bijgewerkt: november 2026." crumbs={crumbs} />
+  <section class="legal_wrap u-section u-theme-bus-beige">
     <div class="legal_contain u-container">
       <div class="legal_layout u-margin-trim">
-        <h2 class="legal_title u-text-style-h4">Geen cookies</h2>
-        <p class="legal_text">
-          Deze website plaatst op dit moment geen cookies. Niet voor
-          statistieken, niet voor marketing, niet van derden. Daarom zie je
-          hier ook geen cookiebanner: die is alleen verplicht als een site
-          iets te vragen heeft.
+        <h2 class="legal_title u-text-style-poster-label">Hoe het werkt</h2>
+        <p class="legal_text u-text-style-main">
+          Wat nodig is om de site te laten werken, staat altijd aan. Al het andere
+          staat uit tot jij ja zegt. Weigeren is net zo makkelijk als accepteren, en
+          de site werkt dan gewoon. Na 12 maanden vragen we het opnieuw. Meer over je
+          gegevens lees je in onze <a class="legal_link" href={url('privacy')}>privacyverklaring</a>.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Wat we wel opslaan</h2>
-        <p class="legal_text">
-          Vul je het aanvraagformulier in, dan bewaart je browser je
-          tussentijdse antwoorden in de sessieopslag (sessionStorage). Dat
-          is puur functioneel: sluit je het tabblad, dan is het weg. Deze
-          opslag verlaat je browser nooit en er is geen toestemming voor
-          nodig.
+        <h2 class="legal_title u-text-style-poster-label">Je keuze aanpassen</h2>
+        <p class="legal_text u-text-style-main">
+          Je past je keuze hier aan, of via Cookie-instellingen onder aan elke pagina.
+          Trek je een ja in, dan stoppen we meteen en halen we die cookies weg. Je kunt
+          cookies ook altijd zelf wissen via de instellingen van je browser.
+        </p>
+        <button class="legal_button" type="button" data-consent-open data-trigger="hover focus">Cookie-instellingen</button>
+
+        {cookieGroups.map((group) => (
+          <>
+            <h2 class="legal_title u-text-style-poster-label">{group.naam}</h2>
+            <p class="legal_text u-text-style-main">{group.tekst}</p>
+            {group.diensten.map((dienst) => <BusCookieDetails service={dienst} />)}
+          </>
+        ))}
+
+        <h2 class="legal_title u-text-style-poster-label">Externe links</h2>
+        <p class="legal_text u-text-style-main">
+          Klik je door naar WhatsApp, Instagram, Facebook of Google, dan gelden daar
+          de cookies en voorwaarden van die platforms. Dat begint pas zodra je klikt.
         </p>
 
-        <h2 class="legal_title u-text-style-h4">Externe links en diensten</h2>
-        <p class="legal_text">
-          Klik je door naar WhatsApp, Instagram, Facebook of Google
-          (bijvoorbeeld de kaartlink of straks onze reviews), dan gelden
-          daar de cookies en voorwaarden van die platforms. Dat begint pas
-          zodra je klikt, niet op deze site zelf.
-        </p>
-
-        <h2 class="legal_title u-text-style-h4">Als dit verandert</h2>
-        <p class="legal_text">
-          Gaan we ooit statistieken of advertenties meten met cookies of
-          vergelijkbare technieken, dan vragen we daarvoor eerst je
-          toestemming via een banner, en werken we deze pagina bij voordat
-          er iets wordt geplaatst.
+        <h2 class="legal_title u-text-style-poster-label">Als dit verandert</h2>
+        <p class="legal_text u-text-style-main">
+          Gebruiken we iets nieuws, dan zetten we het hier en vragen we je opnieuw om
+          je keuze voordat het aan gaat.
         </p>
       </div>
     </div>
   </section>
-</Base>
+</BusBase>
 
 <style>
+  .legal_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
   .legal_layout {
     display: flex;
     flex-direction: column;
     gap: var(--_spacing---space--3);
     max-width: var(--max-width--small);
   }
-  .legal_title { margin-top: var(--_spacing---space--4); }
+  .legal_title { margin-top: var(--_spacing---space--5); }
   .legal_text { max-width: 70ch; }
+  .legal_link { color: var(--_theme---text-link--text); }
+  .legal_button {
+    align-self: flex-start;
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--4);
+    background-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---on)), var(--color--bus-black) calc(100% * var(--_trigger---off)));
+    color: var(--color--white);
+    border: none;
+    font-family: var(--_typography---font--heading);
+    font-stretch: var(--_typography---stretch--poster);
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+  }
 </style>

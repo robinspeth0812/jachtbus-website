@@ -1,4 +1,4 @@
-// Content of the new bus-styled site under /nieuw. Everything that the portal
+// Content of the site. Everything that the portal
 // will manage later has a default here, so the site also builds without it.
 import type { ImageMetadata } from 'astro';
 import busImg from '../assets/jachtbus-bus.jpg';
@@ -11,8 +11,8 @@ import plankImg from '../assets/eten-serveerplank.jpg';
 import bedieningImg from '../assets/bediening-serveert.jpg';
 import smokerImg from '../assets/eten-smoker.jpg';
 
-export const BASE = '/nieuw';
-/** Internal link, so the whole site can move to the root in one change. */
+export const BASE = '';
+/** Internal link, so the whole site can move under a prefix in one change. */
 export const url = (path = '') => `${BASE}/${path.replace(/^\/|\/$/g, '')}${path ? '/' : ''}`.replace('//', '/');
 export const aanvraagUrl = (gelegenheid?: string) => `${url('aanvraag')}${gelegenheid ? `?gelegenheid=${gelegenheid}` : ''}`;
 

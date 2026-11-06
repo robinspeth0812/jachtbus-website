@@ -123,7 +123,7 @@ import RequestForm from './RequestForm.astro';
     };
     document.addEventListener('click', (event) => {
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="/aanvraag"], a[href^="/nieuw/aanvraag"]');
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="/aanvraag"]');
       if (!link) return;
       event.preventDefault();
       open(new URL(link.href).searchParams.get('gelegenheid'), null);
