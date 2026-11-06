@@ -1,7 +1,7 @@
 ---
-// Local pages per province: the first step of the form in view, the local story
-// next to a map of only this province, and everything below it about this province.
-// The final set of location pages follows from keyword research.
+// Location pages: a province, or a service or town within one. The first step of
+// the form in view, the local story next to a map of the province, and everything
+// below it about this place. The final set follows from keyword research.
 import BusBase from '../layouts/BusBase.astro';
 import BusPageHero from '../components/bus/BusPageHero.astro';
 import BusFirstStep from '../components/bus/BusFirstStep.astro';
@@ -13,47 +13,71 @@ import BusReviews from '../components/bus/BusReviews.astro';
 import BusMoments from '../components/bus/BusMoments.astro';
 import BusFaq from '../components/bus/BusFaq.astro';
 import BusClosing from '../components/bus/BusClosing.astro';
-import { regions, url } from '../data/nieuw';
+import { locaties, regions, services, url } from '../data/nieuw';
 import type { Region } from '../data/nieuw';
 import { getInhoud } from '../lib/cms';
 import { casesIn } from '../lib/regio';
 import { faqSchema, serviceSchema } from '../lib/schema';
 
 export function getStaticPaths() {
-  return regions.map((region) => ({ params: { region: region.slug }, props: { region } }));
+  return [...regions, ...locaties].map((region) => ({ params: { region: region.slug }, props: { region } }));
 }
 interface Props {
   region: Region;
 }
 const { region } = Astro.props;
-const crumbs = [{ label: `Foodtruck ${region.naam}`, href: url(region.slug) }];
-const others = regions.filter((other) => other.slug !== region.slug);
+const provincie = region.provincie ?? region.naam;
+const provincieRegio = regions.find((item) => item.naam === provincie);
+const isProvincie = !region.provincie;
+const dienst = services.find((service) => service.slug === region.dienst);
+const crumbs = [{ label: region.kruimel ?? `Foodtruck ${region.naam}`, href: url(region.slug) }];
+const others = regions.filter((other) => other.naam !== provincie);
+// Pages for a service or town within this province, linked from the province page.
+const binnen = locaties.filter((item) => item.provincie === provincie && item.slug !== region.slug);
+const meer = [
+  ...binnen.map((item) => ({ href: url(item.slug), label: (item.kruimel ?? item.naam).replace(/^./, (c) => c.toLowerCase()) })),
+  ...(!isProvincie && provincieRegio ? [{ href: url(provincieRegio.slug), label: `foodtruck huren in ${provincie}` }] : []),
+];
 const { referenties } = await getInhoud();
-const caseSlugs = casesIn(region.naam, referenties).map((item) => item.slug);
+const caseSlugs = casesIn(provincie, referenties).map((item) => item.slug);
+// The map always shows the whole province, with this page's towns on it.
+const kaartRegio = { ...region, naam: provincie };
 ---
 
 <BusBase
   title={region.metaTitle}
   description={region.metaDescription}
   crumbs={crumbs}
-  schema={[serviceSchema(`Foodtruckcatering in ${region.naam}`, region.metaDescription, [region.naam]), faqSchema(region.faq)]}
+  schema={[serviceSchema(region.schemaNaam ?? `Foodtruckcatering in ${region.naam}`, region.metaDescription, [region.naam], region.gebied), faqSchema(region.faq)]}
 >
   <BusPageHero title={region.title} text={region.intro} photo={region.photo} shape="corner" crumbs={crumbs}>
-    <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+    <BusFirstStep title={dienst ? 'Wat mogen we voor jullie doen?' : 'Waarvoor zoek je een foodtruck?'} />
   </BusPageHero>
   <BusPlaces places={region.plaatsen} />
-  <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={region}>
+  <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={kaartRegio}>
+    {dienst && (
+      <p class="region_more u-text-style-main">
+        Alles over het eten, de bediening en het verloop lees je bij <a class="region_link" href={url(`catering/${dienst.slug}`)}>{dienst.schemaName.toLowerCase()}</a>.
+      </p>
+    )}
+    {meer.length > 0 && (
+      <p class="region_more u-text-style-main">
+        Meer in {provincie}: {meer.map((link, index) => (
+          <>{index > 0 && (index === meer.length - 1 ? ' en ' : ', ')}<a class="region_link" href={link.href}>{link.label}</a></>
+        ))}.
+      </p>
+    )}
     <p class="region_more u-text-style-main">
       Ook in {others.map((other, index) => (
         <>{index > 0 && ' en '}<a class="region_link" href={url(other.slug)}>{other.naam}</a></>
       ))} rijden we voor.
     </p>
   </BusMap>
-  <BusRows title={`Wat vieren we in ${region.naam}?`} soort="gelegenheid" theme="green" />
+  <BusRows title={region.rijenTitel ?? `Wat vieren we in ${region.naam}?`} soort={region.rijenSoort ?? 'gelegenheid'} theme="green" />
   <BusFit />
-  <BusReviews title={`Echte reacties uit ${region.naam}`} cases={caseSlugs} />
+  <BusReviews title={region.reviewsTitel ?? `Echte reacties uit ${region.naam}`} cases={caseSlugs} />
   <BusMoments title={region.extraTitel} items={region.extra} theme="green" />
-  <BusFaq title={`Veelgestelde vragen over ${region.naam}`} items={region.faq} />
+  <BusFaq title={region.faqTitel ?? `Veelgestelde vragen over ${region.naam}`} items={region.faq} />
   <BusClosing />
 </BusBase>
 

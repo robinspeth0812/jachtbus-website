@@ -389,6 +389,22 @@ export interface Region {
   extraTitel: string;
   extra: Item[];
   faq: Faq[];
+  /** Province for the map and the references, on a page for a town or a service. Defaults to the name. */
+  provincie?: 'Drenthe' | 'Groningen' | 'Friesland';
+  /** Slug of the service this page is about, linked from the page. Empty for a plain area page. */
+  dienst?: string;
+  /** Kind of area in the structured data. */
+  gebied?: 'State' | 'City';
+  /** Breadcrumb label. Defaults to "Foodtruck {naam}". */
+  kruimel?: string;
+  /** Service name in the structured data. Defaults to "Foodtruckcatering in {naam}". */
+  schemaNaam?: string;
+  /** Title and kind of the row of services. Defaults to occasions, "Wat vieren we in {naam}?". */
+  rijenTitel?: string;
+  rijenSoort?: 'gelegenheid' | 'mogelijkheid';
+  /** Titles of the review and FAQ sections. */
+  reviewsTitel?: string;
+  faqTitel?: string;
 }
 
 export const regions: Region[] = [
@@ -478,9 +494,85 @@ export const regions: Region[] = [
   },
 ];
 
+// Location pages that combine a service or a town with an area. Same template as
+// the provinces, each with its own text, examples and keywords.
+export const locaties: Region[] = [
+  {
+    slug: 'foodtruck-huren-assen',
+    naam: 'Assen',
+    provincie: 'Drenthe',
+    gebied: 'City',
+    kruimel: 'Foodtruck huren in Assen',
+    title: 'Een foodtruck huren in Assen',
+    metaTitle: 'Foodtruck huren in Assen',
+    metaDescription: 'Foodtruck huren in Assen? De Jachtbus komt uit Gasselte en kookt ter plekke op je bruiloft, bedrijfsfeest of tuinfeest. Vanaf 40 personen.',
+    intro: 'Vanuit Gasselte zijn we zo in Assen. We zetten de bus neer bij je huis, je bedrijf of je feestlocatie en koken ter plekke.',
+    lokaalTitel: 'Assen, en de dorpen eromheen',
+    verhaal: [
+      'We stonden al in Assen, en ook in Rolde, Gieten en Roden. Vanuit Gasselte is het een kort ritje, dus Assen voelt voor ons gewoon als thuis.',
+      'In een woonwijk is de ruimte vaak krapper dan op een erf. De bus is 6,5 meter lang, 2,5 meter breed en weegt 3,5 ton. Past hij niet in je tuin? Soms kan hij op de oprit. Stuur een foto van de plek, dan kijken we mee.',
+    ],
+    plaatsen: ['Assen', 'Rolde', 'Gieten', 'Roden', 'Gasselte'],
+    photo: photos.luik,
+    rijenTitel: 'Wat vieren we in Assen?',
+    reviewsTitel: 'Echte reacties uit Drenthe',
+    extraTitel: 'Goed om te weten in Assen',
+    extra: [
+      { title: 'In de wijk', text: 'Tuin of oprit in een woonwijk? Kijk of er 6,5 bij 2,5 meter vrij is en of de bus de straat in kan. Twijfel je? Stuur een foto.' },
+      { title: 'Op je bedrijfsterrein', text: 'Personeelsfeest of jubileum bij je bedrijf in Assen? Een stuk parkeerplaats is vaak al genoeg, met stroom binnen 25 meter. Wij nemen de rest mee.' },
+      { title: 'Op een openbare plek', text: 'Een feest in het park of op een plein vraagt vaak om toestemming van de gemeente. Die regel je zelf, wij denken mee over de opzet.' },
+    ],
+    faqTitel: 'Veelgestelde vragen over een foodtruck in Assen',
+    faq: [
+      { vraag: 'Komen jullie in heel Assen?', antwoord: 'Ja, in de stad en in de dorpen eromheen. We rijden vanuit Gasselte, dus Assen is voor ons dichtbij.' },
+      { vraag: 'Past de bus in een tuin in een woonwijk?', antwoord: 'Vaak wel. We hebben 6,5 bij 2,5 meter nodig op een stevige ondergrond, en een doorgang waar 3,5 ton langs kan. Stuur een foto, dan kijken we mee.' },
+      { vraag: 'Wat eet je bij de foodtruck?', antwoord: 'Streetfood uit het luik, een walking dinner met zeven seizoensgerechten of BBQ van de smoker. Er is geen vaste kaart: we stemmen het af op je feest.' },
+      { vraag: 'Moet ik zelf stroom regelen?', antwoord: 'We hebben 230V of 16A nodig binnen 25 meter. Is dat er niet, dan is er meestal een oplossing, bijvoorbeeld een aggregaat. Zet het in je aanvraag.' },
+      { vraag: 'Vanaf hoeveel personen komen jullie in Assen?', antwoord: 'Vanaf 40 personen, net als overal. Is je groep net wat kleiner? Vraag het gerust.' },
+    ],
+  },
+  {
+    slug: 'bruiloftscatering-drenthe',
+    naam: 'Drenthe',
+    provincie: 'Drenthe',
+    dienst: 'bruiloft',
+    kruimel: 'Bruiloftscatering in Drenthe',
+    schemaNaam: 'Bruiloftscatering in Drenthe',
+    title: 'Bruiloftscatering in Drenthe',
+    metaTitle: 'Bruiloftscatering in Drenthe',
+    metaDescription: 'Trouwen in Drenthe? De Jachtbus kookt op jullie bruiloft ter plekke: borrel, diner en avondsnack, met eigen bediening. Op het erf, in de tuin of in het veld.',
+    intro: 'Trouwen op een Drents erf, in het weiland of gewoon thuis? Wij rijden de keuken voor en koken ter plekke, van de borrel tot de avondsnack.',
+    lokaalTitel: 'Trouwen waar geen keuken is',
+    verhaal: [
+      'Veel mooie trouwplekken in Drenthe hebben geen keuken: het erf bij de schuur, een weiland aan de rand van het dorp, de tuin van je ouders. Daar is de bus voor gemaakt. Wij nemen de keuken mee, jullie zorgen voor een plek en stroom.',
+      'De bus staat in Gasselte, dus Drenthe is thuis. We komen met eigen bediening en stemmen het eten af op het seizoen en op jullie dag. Een vast pakket is er niet.',
+    ],
+    plaatsen: ['Assen', 'Gasselte', 'Rolde', 'Gieten', 'Roden', 'Gasselternijveen', 'Drouwen', 'Eeserveen', 'Een', 'Oudemolen', 'Nooitgedacht'],
+    photo: photos.veld,
+    rijenTitel: 'Wat kunnen we op jullie bruiloft serveren?',
+    rijenSoort: 'mogelijkheid',
+    reviewsTitel: 'Echte reacties uit Drenthe',
+    extraTitel: 'Goed om te weten bij een bruiloft in Drenthe',
+    extra: [
+      { title: 'Op het erf of in het weiland', text: 'Gras kan, als de grond 3,5 ton draagt. Na een natte week kijken we samen waar de bus het beste staat, zodat de dag niet in de modder eindigt.' },
+      { title: 'De hele dag één gezicht', text: 'Borrel, diner en avondsnack kunnen los of samen. Kiezen jullie het hele traject, dan staat er de hele dag een vast gezicht.' },
+      { title: 'Trouwen in de natuur', text: 'Een ceremonie bij de heide of in het bos? Vraag bij de gemeente of de terreinbeheerder wat er mag. Wij denken mee over de opzet.' },
+    ],
+    faqTitel: 'Veelgestelde vragen over bruiloftscatering in Drenthe',
+    faq: [
+      { vraag: 'Waar in Drenthe verzorgen jullie bruiloften?', antwoord: 'In de hele provincie. We rijden vanuit Gasselte, dus ook trouwlocaties in de hoeken van Drenthe zijn goed te doen.' },
+      { vraag: 'Kan de bus op een trouwlocatie zonder keuken?', antwoord: 'Ja, daar is hij juist voor. We hebben een plek van 6,5 bij 2,5 meter nodig, een stevige ondergrond, een toegang voor 3,5 ton en 230V of 16A binnen 25 meter.' },
+      { vraag: 'Welke momenten van de dag kunnen jullie verzorgen?', antwoord: 'De borrel na de ceremonie, het diner en de avondsnack. Los of in combinatie, wat bij jullie dag past.' },
+      { vraag: 'Nemen jullie zelf bediening mee?', antwoord: 'Ja, we komen met eigen bediening. Jullie gasten hoeven nergens voor te zorgen, jullie ook niet.' },
+      { vraag: 'Hoe ver van tevoren moeten we boeken?', antwoord: 'Zaterdagen tussen mei en september gaan ver vooruit. Trouwen jullie in die maanden? Check je datum dan vroeg.' },
+      { vraag: 'Vanaf hoeveel gasten komen jullie?', antwoord: 'Vanaf 40 personen. Is jullie groep net wat kleiner? Vraag het gerust.' },
+    ],
+  },
+];
+
 // Every town from the owner's list of jobs that were actually done.
 // Local page of a town, by name. A town without one shows as a plain tag.
-export const plaatsPaginas: Record<string, string> = {};
+export const plaatsPaginas: Record<string, string> = { Assen: 'foodtruck-huren-assen' };
 // Own page of a job from the portal, by slug. A job without one gets no link on the map.
 export const casePaginas: Record<string, string> = {};
 

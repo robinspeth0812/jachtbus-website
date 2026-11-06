@@ -15,7 +15,7 @@ import BusFaq from '../../components/bus/BusFaq.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusReviews from '../../components/bus/BusReviews.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { services, url } from '../../data/nieuw';
+import { locaties, services, url } from '../../data/nieuw';
 import type { Service } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 import { faqSchema, serviceSchema } from '../../lib/schema';
@@ -32,6 +32,8 @@ const crumbs = [
   { label: service.nav, href: url(`catering/${service.slug}`) },
 ];
 const { referenties } = await getInhoud();
+// Location pages about this service, such as bruiloftscatering in Drenthe.
+const lokaal = locaties.filter((item) => item.dienst === service.slug);
 const cases = referenties.filter((item) =>
   service.soort === 'gelegenheid' ? item.gelegenheid === service.nav : item.mogelijkheden?.includes(service.nav),
 );
@@ -52,7 +54,15 @@ const cases = referenties.filter((item) =>
   {service.opties && service.optiesTitle
     ? <BusMoments title={service.optiesTitle} items={service.opties} theme="green" />
     : service.soort === 'mogelijkheid' && <BusRows title="Waar past dit bij?" soort="gelegenheid" theme="green" />}
-  <BusStory title={service.storyTitle} paragraphs={service.story} photo={service.storyPhoto} shape="arch" flip />
+  <BusStory title={service.storyTitle} paragraphs={service.story} photo={service.storyPhoto} shape="arch" flip>
+    {lokaal.length > 0 && (
+      <p class="service_local u-text-style-main">
+        Per regio: {lokaal.map((item, index) => (
+          <>{index > 0 && ', '}<a class="service_local_link" href={url(item.slug)}>{(item.kruimel ?? item.naam).replace(/^./, (c) => c.toLowerCase())}</a></>
+        ))}.
+      </p>
+    )}
+  </BusStory>
   <BusRoute />
   <BusMoments title={service.worriesTitle} items={service.worries} theme="green" />
   <BusFit occasion={service.gelegenheid} />
@@ -60,3 +70,8 @@ const cases = referenties.filter((item) =>
   <BusFaq items={service.faq} />
   <BusClosing title="Zullen we het regelen?" occasion={service.gelegenheid} label={service.cta} />
 </BusBase>
+
+<style>
+  .service_local { margin-top: var(--_spacing---space--3); }
+  .service_local_link { color: var(--_theme---text-link--text); }
+</style>

@@ -11,12 +11,12 @@ export const faqSchema = (items: Faq[]) => ({
   })),
 });
 
-export const serviceSchema = (name: string, description: string, area: string[] = ['Drenthe', 'Groningen', 'Friesland']) => ({
+export const serviceSchema = (name: string, description: string, area: string[] = ['Drenthe', 'Groningen', 'Friesland'], areaType: 'State' | 'City' = 'State') => ({
   '@context': 'https://schema.org',
   '@type': 'Service',
   serviceType: name,
   name,
   description,
   provider: { '@id': 'https://jachtbusfoodtruck.nl/#business' },
-  areaServed: area.map((place) => ({ '@type': 'State', name: place })),
+  areaServed: area.map((place) => ({ '@type': areaType, name: place })),
 });

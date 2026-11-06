@@ -5,7 +5,7 @@
 import { Image } from 'astro:assets';
 import ringLogo from '../../assets/jachtbus-logo-wit-goud.svg';
 import BusButton from '../BusButton.astro';
-import { aanvraagUrl, nav, regions, services, url } from '../../data/nieuw';
+import { aanvraagUrl, locaties, nav, regions, services, url } from '../../data/nieuw';
 
 const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || (href !== url() && path.startsWith(href));
@@ -108,7 +108,7 @@ const openSoort = services.find((service) => isCurrent(url(`catering/${service.s
     </ul>
     {[
       ...groups.map((group) => ({ label: group.label, links: group.items.map((service) => ({ href: url(`catering/${service.slug}`), label: service.nav })) })),
-      { label: 'Regio', links: regions.map((region) => ({ href: url(region.slug), label: region.naam })) },
+      { label: 'Regio', links: [...regions, ...locaties].map((region) => ({ href: url(region.slug), label: region.kruimel ?? region.naam })) },
     ].map((group) => (
       <div class="bus-menu_group">
         <p class="bus-menu_group_title u-text-style-bus-title">{group.label}</p>
