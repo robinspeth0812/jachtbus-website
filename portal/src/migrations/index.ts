@@ -6,6 +6,7 @@ import * as migration_20261105_134730_referentie_mogelijkheden from './20261105_
 import * as migration_20261105_151408_aanvraag_bedrijf from './20261105_151408_aanvraag_bedrijf';
 import * as migration_20261106_134957_agenda from './20261106_134957_agenda';
 import * as migration_20261107_161032_tuinfeest from './20261107_161032_tuinfeest';
+import * as migration_20261107_163448_review_sterren from './20261107_163448_review_sterren';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20261107_161032_tuinfeest.up,
     down: migration_20261107_161032_tuinfeest.down,
-    name: '20261107_161032_tuinfeest'
+    name: '20261107_161032_tuinfeest',
+  },
+  {
+    up: migration_20261107_163448_review_sterren.up,
+    down: migration_20261107_163448_review_sterren.down,
+    name: '20261107_163448_review_sterren'
   },
 ];

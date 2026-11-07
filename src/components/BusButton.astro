@@ -13,7 +13,7 @@ interface Props {
   arrow?: boolean;
 }
 
-const { label = 'Start je aanvraag', href = '/aanvraag', variant = 'primary', arrow = false } = Astro.props;
+const { label = 'Check je datum', href = '/aanvraag', variant = 'primary', arrow = false } = Astro.props;
 ---
 
 <a class:list={['bus-button_wrap', `is-${variant}`]} href={href} data-trigger="hover focus"><slot name="icon" />{label}{arrow && <span class="bus-button_arrow" aria-hidden="true"><svg class="bus-button_arrow_icon" viewBox="0 0 16 16" fill="none"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></span>}</a>

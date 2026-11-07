@@ -58,7 +58,7 @@ const kaartRegio = { ...region, naam: provincie };
     )}
   </BusPageHero>
   <BusPlaces places={region.plaatsen} />
-  <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={kaartRegio}>
+  <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={kaartRegio} highlight={dienst?.soort === 'gelegenheid' ? dienst.nav : ''}>
     {dienst && (
       <p class="region_more u-text-style-main">
         Alles over het eten, de bediening en het verloop lees je bij <a class="region_link" href={url(`catering/${dienst.slug}`)}>{dienst.schemaName.toLowerCase()}</a>.

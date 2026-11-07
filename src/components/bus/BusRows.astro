@@ -1,8 +1,11 @@
 ---
 // Services next to a photo in a changing shape, in two columns on wide screens.
-// On hover the title shifts over and takes the accent color.
+// On hover the title shifts over and takes the accent color. Under the text one
+// line from a real review of that occasion, with stars only when the customer
+// gave a score.
 import { Image } from 'astro:assets';
 import { services, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
 
 interface Props {
   /** Section title. */
@@ -13,9 +16,15 @@ interface Props {
   soort?: 'gelegenheid' | 'mogelijkheid';
   /** Section theme. */
   theme?: 'beige' | 'green';
+  /** Show one line of a review of that occasion in the card, when there is one. */
+  reviews?: boolean;
 }
-const { title = 'Wat vieren we?', except = '', soort, theme = 'beige' } = Astro.props;
+const { title = 'Wat vieren we?', except = '', soort, theme = 'beige', reviews = true } = Astro.props;
 const rows = services.filter((service) => service.slug !== except && (!soort || service.soort === soort));
+const alleReviews = reviews ? (await getInhoud()).reviews : [];
+const reviewVan = (nav: string) => alleReviews.find((review) => review.gelegenheid?.toLowerCase() === nav.toLowerCase());
+// One line: cut at a word, never halfway.
+const regel = (tekst: string) => (tekst.length <= 90 ? tekst : `${tekst.slice(0, tekst.lastIndexOf(' ', 90))}...`);
 ---
 
 <section class:list={['bus-rows_wrap', 'u-section', `u-theme-bus-${theme}`]}>
@@ -31,6 +40,21 @@ const rows = services.filter((service) => service.slug !== except && (!soort || 
             <div class="bus-rows_body">
               <h3 class="bus-rows_name u-text-style-poster-row">{service.nav}</h3>
               <p class="bus-rows_text u-text-style-large">{service.rowText}</p>
+              {(() => {
+                const review = reviewVan(service.nav);
+                return review && (
+                  <p class="bus-rows_review u-text-style-small">
+                    {review.sterren && (
+                      <span class="bus-rows_stars">
+                        <span aria-hidden="true">{'★'.repeat(review.sterren)}{'☆'.repeat(5 - review.sterren)}</span>
+                        <span class="u-sr-only">{review.sterren} van de 5 sterren.</span>
+                      </span>
+                    )}
+                    <span class="bus-rows_quote">"{regel(review.tekst)}"</span>
+                    <span class="bus-rows_by">{review.naam}{review.bron === 'Google' || review.bron === 'Facebook' ? `, via ${review.bron}` : ''}</span>
+                  </p>
+                );
+              })()}
             </div>
           </a>
         </li>
@@ -74,6 +98,21 @@ const rows = services.filter((service) => service.slug !== except && (!soort || 
     transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms;
   }
   .bus-rows_text { max-width: 36ch; }
+  .bus-rows_review {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    max-width: 44ch;
+    margin-top: var(--_spacing---space--1);
+    padding-left: var(--_spacing---space--3);
+    border-left: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .bus-rows_stars {
+    color: var(--color--bus-yellow);
+    letter-spacing: var(--_spacing---space--1);
+  }
+  .bus-rows_quote { font-style: italic; }
+  .bus-rows_by { font-weight: var(--_typography---font--primary-bold); }
   .bus-rows_visual {
     flex-shrink: 0;
     order: var(--last-medium, 0);

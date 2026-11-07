@@ -69,6 +69,7 @@ export const reviewVelden: VeldDef[] = [
   { naam: "referentie", label: "Hoort bij deze referentie", soort: "relatie", bron: "referenties", leeg: "Niet gekoppeld", breedte: "lang", hulp: "De site linkt dan naar dat verhaal, zodra de referentie gepubliceerd is met toestemming van de klant." },
   { naam: "bron", label: "Waar komt de review vandaan?", soort: "keuze", verplicht: true, opties: reviewBronnen, breedte: "middel", hulp: "Alleen echte reviews: zo blijft het eerlijk en mag het van de wet." },
   { naam: "bronUrl", label: "Link naar de review", soort: "url", breedte: "lang", hulp: "Bij Google en Facebook verplicht om op de site te zetten." },
+  { naam: "sterren", label: "Sterren (1 tot 5)", soort: "getal", min: 1, max: 5, breedte: "tijd", hulp: "Alleen de score die de klant zelf gaf, bijv. op Google. Leeg laten als er geen score is: dan toont de site geen sterren." },
   { naam: "bewijs", label: "Bewijs (intern)", soort: "tekst", max: 240, breedte: "lang", hulp: "Bij mail of WhatsApp: van wanneer is het bericht, en mag het op de site? Bijv. Mail van 3 mei, gevraagd en akkoord." },
   statusVeld,
 ];

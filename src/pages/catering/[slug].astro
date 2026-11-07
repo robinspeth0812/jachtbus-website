@@ -37,13 +37,18 @@ const lokaal = locaties.filter((item) => item.dienst === service.slug);
 const cases = referenties.filter((item) =>
   service.soort === 'gelegenheid' ? item.gelegenheid === service.nav : item.mogelijkheden?.includes(service.nav),
 );
+// What people worry about joins the questions, so doubts are answered in one place.
+const vragen = [
+  ...service.faq,
+  ...service.worries.map((item) => ({ vraag: `En ${item.title.replace(/^./, (c) => c.toLowerCase())}?`, antwoord: item.text })),
+];
 ---
 
 <BusBase
   title={service.metaTitle}
   description={service.metaDescription}
   crumbs={crumbs}
-  schema={[serviceSchema(service.schemaName, service.metaDescription), faqSchema(service.faq)]}
+  schema={[serviceSchema(service.schemaName, service.metaDescription), faqSchema(vragen)]}
 >
   <BusPageHero title={service.title} text={service.intro} photo={service.photo} shape={service.shape} crumbs={crumbs}>
     {service.soort === 'gelegenheid' ? (
@@ -68,11 +73,10 @@ const cases = referenties.filter((item) =>
     )}
   </BusStory>
   <BusRoute />
-  <BusMoments title={service.worriesTitle} items={service.worries} theme="green" />
   <BusFit occasion={service.gelegenheid} />
   <BusReviews cases={cases.map((item) => item.slug)} />
-  <BusFaq items={service.faq} />
-  <BusClosing title="Zullen we het regelen?" occasion={service.gelegenheid} label={service.cta} />
+  <BusFaq items={vragen} />
+  <BusClosing title="Zullen we het regelen?" occasion={service.gelegenheid} label="Check je datum" />
 </BusBase>
 
 <style>

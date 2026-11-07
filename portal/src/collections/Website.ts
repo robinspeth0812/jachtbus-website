@@ -87,6 +87,8 @@ export const Reviews: CollectionConfig = {
     { name: "referentie", type: "relationship", relationTo: "referenties", index: true },
     { name: "bron", type: "select", required: true, options: [...reviewBronnen] },
     { name: "bronUrl", type: "text", maxLength: 500 },
+    // Only the score the customer gave, e.g. on Google; empty shows no stars on the site.
+    { name: "sterren", type: "number", min: 1, max: 5 },
     { name: "bewijs", type: "text", maxLength: 240 },
     status,
   ],

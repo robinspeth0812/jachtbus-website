@@ -106,6 +106,7 @@ export const siteInhoudEndpoint: Endpoint = {
           tekst: r.tekst,
           bron: r.bron,
           bronUrl: r.bronUrl,
+          sterren: r.sterren ?? undefined,
           caseSlug: verwijzing?.slug,
           caseTitel: verwijzing?.titel,
           ...(fotoVoorSite(r.foto) ?? fotoVoorSite(verwijzing?.foto)),

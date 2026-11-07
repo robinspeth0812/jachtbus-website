@@ -37,7 +37,7 @@ const choices = services.filter((service) => service.soort === 'gelegenheid').ma
   </div>
   {occasion ? (
     <>
-      <BusDateCheck occasion={occasion} label="Check of de bus vrij is" />
+      <BusDateCheck occasion={occasion} />
       <p class="bus-first_other u-text-style-main">
         Nog geen vaste datum? Kies een richtdatum. Iets anders vieren? <a class="bus-first_link" href={aanvraagUrl()}>Kies je feest</a>
       </p>

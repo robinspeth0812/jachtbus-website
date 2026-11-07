@@ -21,12 +21,15 @@ interface Props {
   region?: Region;
   /** Longer text under the title, instead of the text above. */
   paragraphs?: string[];
+  /** Occasion this page is about, as on a reference ("Bruiloft"): those pins stand out, the rest steps back. */
+  highlight?: string;
 }
 const {
   title = 'Op locatie door heel Noord-Nederland',
   text = 'De Jachtbus komt door heel Drenthe, Groningen en Friesland. Wij staan op locatie, waar jij dat wilt! Evenement ergens anders? Geen probleem, we denken graag mee.',
   region,
   paragraphs = [],
+  highlight = '',
 } = Astro.props;
 
 const inhoud = await getInhoud();
@@ -39,6 +42,8 @@ interface Pin {
   lng: number;
   naam: string;
   index?: number;
+  /** Not the occasion this page is about: drawn smaller and quieter. */
+  other?: boolean;
 }
 const inPlaats = new Map<string, number>();
 const casePins: Pin[] = [];
@@ -49,7 +54,7 @@ referenties.forEach((item: Referentie, index) => {
   // Jobs in the same town sit next to each other instead of on top.
   const eerder = inPlaats.get(item.plaats) ?? 0;
   inPlaats.set(item.plaats, eerder + 1);
-  casePins.push({ lat: lat + eerder * 0.012, lng: lng + eerder * 0.02, naam: item.titel, index });
+  casePins.push({ lat: lat + eerder * 0.012, lng: lng + eerder * 0.02, naam: item.titel, index, other: Boolean(highlight) && item.gelegenheid !== highlight });
 });
 // Until the first job is in the portal, the towns keep the map from being empty.
 const dots: Pin[] = casePins.length > 0 ? [] : shownRegions.flatMap((shown) => shown.plaatsen.flatMap((naam) => {
@@ -76,6 +81,7 @@ const tekenPaden = features.map((feature) => {
   const vlakken = (type === 'Polygon' ? [coordinates] : coordinates) as unknown as number[][][][];
   return vlakken.flat().map((ring) => `M${ring.map(([lng, lat]) => tekenpunt(lng, lat).map((n) => n.toFixed(1)).join(' ')).join('L')}Z`).join('');
 });
+const uitgelicht = highlight ? casePins.filter((pin) => !pin.other).length : 0;
 const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).trimEnd()}...` : tekst);
 ---
 
@@ -92,6 +98,12 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
           {paragraphs.length > 0
             ? paragraphs.map((paragraph) => <p class="bus-map_text u-text-style-large">{paragraph}</p>)
             : <p class="bus-map_text u-text-style-large">{text}</p>}
+          {uitgelicht > 0 && (
+            <p class="bus-map_legend u-text-style-small">
+              <span class="bus-map_legend_pin" aria-hidden="true"></span>
+              De grote gouden pins: {highlight.toLowerCase()}en waar we stonden. De kleine: ander werk in de buurt.
+            </p>
+          )}
         </div>
         <ul class="bus-map_regions">
           {shownRegions.map((shown) => (
@@ -126,7 +138,7 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
           {tekenPaden.map((d) => <path class="bus-map_off_province" d={d} />)}
           {[...casePins, ...dots].map((pin) => {
             const [cx, cy] = tekenpunt(pin.lng, pin.lat);
-            return <circle class="bus-map_off_pin" cx={cx} cy={cy} r="14" />;
+            return <circle class:list={['bus-map_off_pin', pin.other && 'is-other']} cx={cx} cy={cy} r={pin.other ? '9' : uitgelicht > 0 ? '19' : '14'} />;
           })}
         </svg>
         <div class="bus-map_off_body">
@@ -142,7 +154,7 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
   </div>
   <div class="bus-map_pins" aria-hidden="true">
     {casePins.map((pin) => (
-      <button class="bus-map_pin is-case" type="button" aria-label={`${pin.naam}, bekijk deze klus`} data-trigger="hover focus" data-index={pin.index} data-lat={pin.lat} data-lng={pin.lng} data-naam={pin.naam}></button>
+      <button class:list={['bus-map_pin', 'is-case', pin.other && 'is-other', uitgelicht > 0 && !pin.other && 'is-highlight']} type="button" aria-label={`${pin.naam}, bekijk deze klus`} data-trigger="hover focus" data-index={pin.index} data-lat={pin.lat} data-lng={pin.lng} data-naam={pin.naam}></button>
     ))}
     {dots.map((pin) => (
       <span class="bus-map_pin" aria-hidden="true" data-lat={pin.lat} data-lng={pin.lng} data-naam={pin.naam}></span>
@@ -232,6 +244,24 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
     fill: var(--color--bus-yellow);
     stroke: var(--color--bus-green);
     stroke-width: 5;
+  }
+  .bus-map_off_pin.is-other {
+    fill: var(--color--bus-green);
+    fill-opacity: 0.35;
+    stroke-width: 3;
+  }
+  .bus-map_legend {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-map_legend_pin {
+    flex: 0 0 auto;
+    width: var(--size--map-pin-large);
+    height: var(--size--map-pin-large);
+    background-color: var(--color--bus-yellow);
+    border: var(--focus--width) solid var(--color--bus-green);
+    border-radius: var(--radius--round);
   }
   .bus-map_off_body {
     display: flex;
@@ -352,6 +382,21 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
     border: var(--focus--width) solid var(--color--bus-green);
     cursor: pointer;
   }
+  /* The occasion of the page in gold and bigger; the rest small and quiet. Size tells them apart, not only color. */
+  .bus-map_pin.is-case.is-highlight {
+    width: calc(var(--size--map-pin-large) * 1.3);
+    height: calc(var(--size--map-pin-large) * 1.3);
+    background-color: color-mix(in hsl, var(--color--bus-yellow) calc(100% * var(--_trigger---on)), var(--color--bus-green) calc(100% * var(--_trigger---off)));
+  }
+  .bus-map_pin.is-case.is-other {
+    width: var(--size--map-dot);
+    height: var(--size--map-dot);
+    background-color: var(--color--bus-green);
+    border-width: var(--border-width--main);
+    opacity: 0.6;
+  }
+  .bus-map_pin.is-case.is-highlight::before { inset: calc((var(--size--map-pin-large) * 1.3 - var(--target--min)) / 2); }
+  .bus-map_pin.is-case.is-other::before { inset: calc((var(--size--map-dot) - var(--target--min)) / 2); }
   /* A tap target of the full minimum size around the small pin. */
   .bus-map_pin.is-case::before {
     content: '';

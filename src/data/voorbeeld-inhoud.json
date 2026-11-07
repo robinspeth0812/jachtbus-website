@@ -172,7 +172,8 @@
       "tekst": "Voorbeeld: hier komt straks een echte reactie van iemand die een tuinfeest gaf. Dit is geen echte review.",
       "bron": "E-mail van de klant",
       "caseSlug": "testcase-evenement-drachten",
-      "caseTitel": "Testcase: dorpsfeest"
+      "caseTitel": "Testcase: dorpsfeest",
+      "sterren": 5
     },
     {
       "naam": "Voorbeeld Bedrijf",
@@ -181,7 +182,8 @@
       "tekst": "Voorbeeld: hier komt straks een echte reactie van een bedrijf. Dit is geen echte review.",
       "bron": "E-mail van de klant",
       "caseSlug": "testcase-bedrijfsfeest-stadskanaal",
-      "caseTitel": "Testcase: jubileum van een bedrijf"
+      "caseTitel": "Testcase: jubileum van een bedrijf",
+      "sterren": 5
     },
     {
       "naam": "Voorbeeld Bruidspaar",
@@ -192,7 +194,8 @@
       "caseSlug": "testcase-bruiloft-assen",
       "caseTitel": "Testcase: bruiloft in de tuin",
       "fotoUrl": "http://localhost:3010/api/media/file/bruiloft-veld.jpg",
-      "fotoAlt": "Testfoto: de Jachtbus op een veld bij een bruiloft"
+      "fotoAlt": "Testfoto: de Jachtbus op een veld bij een bruiloft",
+      "sterren": 5
     },
     {
       "naam": "Voorbeeld Reviewer",

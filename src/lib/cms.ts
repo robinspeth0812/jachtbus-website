@@ -11,6 +11,8 @@ export interface Review {
   tekst: string;
   bron: string;
   bronUrl?: string;
+  /** The score the customer gave (1 to 5), only when there was one. */
+  sterren?: number;
   fotoUrl?: string;
   fotoAlt?: string;
   caseSlug?: string;

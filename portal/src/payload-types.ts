@@ -551,6 +551,7 @@ export interface Review {
   referentie?: (number | null) | Referenty;
   bron: 'Google' | 'Facebook' | 'E-mail van de klant' | 'WhatsApp van de klant';
   bronUrl?: string | null;
+  sterren?: number | null;
   bewijs?: string | null;
   status: 'concept' | 'gepubliceerd';
   updatedAt: string;
@@ -1170,6 +1171,7 @@ export interface ReviewsSelect<T extends boolean = true> {
   referentie?: T;
   bron?: T;
   bronUrl?: T;
+  sterren?: T;
   bewijs?: T;
   status?: T;
   updatedAt?: T;
