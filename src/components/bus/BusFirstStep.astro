@@ -3,10 +3,13 @@
 // is the answer to the first question: it opens the form in the modal on the
 // second step, or without JS goes to the form page with the answer filled in.
 // Peer and the direct lines sit under it for everyone who would rather talk.
+// On a page about one occasion that answer is known: the block asks for the
+// date instead, so nobody answers a question the page already answered.
 import { Image } from 'astro:assets';
 import BusButton from '../BusButton.astro';
 import ChatBubble from '../ChatBubble.astro';
 import whatsappIcon from '../../assets/whatsapp-icon.svg';
+import BusDateCheck from './BusDateCheck.astro';
 import { aanvraagUrl, contact, services } from '../../data/nieuw';
 
 interface Props {
@@ -14,8 +17,10 @@ interface Props {
   title?: string;
   /** Show Peer with the phone and WhatsApp buttons under the choices. */
   direct?: boolean;
+  /** Occasion this page is about. Skips the first question and asks for the date. */
+  occasion?: string;
 }
-const { title = '', direct = true } = Astro.props;
+const { title = '', direct = true, occasion = '' } = Astro.props;
 // Only what you can celebrate: a BBQ smoker is something we bring, not an occasion.
 const choices = services.filter((service) => service.soort === 'gelegenheid').map((service) => ({ value: service.gelegenheid, label: service.nav }));
 ---
@@ -24,12 +29,21 @@ const choices = services.filter((service) => service.soort === 'gelegenheid').ma
   <div class="bus-first_top">
     {title && <h2 class="bus-first_title u-text-style-poster-label">{title}</h2>}
     <div class="bus-first_progress">
-      <span class="bus-first_step u-text-style-small">Stap 1 van 4</span>
+      <span class="bus-first_step u-text-style-small">Stap {occasion ? 2 : 1} van 4</span>
       <span class="bus-first_bar" aria-hidden="true">
-        {[0, 1, 2, 3].map((index) => <span class:list={['bus-first_segment', index === 0 && 'is-active']}></span>)}
+        {[0, 1, 2, 3].map((index) => <span class:list={['bus-first_segment', index <= (occasion ? 1 : 0) && 'is-active']}></span>)}
       </span>
     </div>
   </div>
+  {occasion ? (
+    <>
+      <BusDateCheck occasion={occasion} label="Check of de bus vrij is" />
+      <p class="bus-first_other u-text-style-main">
+        Nog geen vaste datum? Kies een richtdatum. Iets anders vieren? <a class="bus-first_link" href={aanvraagUrl()}>Kies je feest</a>
+      </p>
+    </>
+  ) : (
+  <>
   <ul class="bus-first_choices">
     {choices.map((choice) => (
       <li class="bus-first_item">
@@ -43,6 +57,8 @@ const choices = services.filter((service) => service.soort === 'gelegenheid').ma
   <p class="bus-first_other u-text-style-main">
     Iets anders? <a class="bus-first_link" href={aanvraagUrl('overige')}>Vertel het ons</a>
   </p>
+  </>
+  )}
   {direct && (<div class="bus-first_direct">
     <ChatBubble message="Neem direct contact met mij op." />
     <div class="bus-first_contact u-button-wrapper">

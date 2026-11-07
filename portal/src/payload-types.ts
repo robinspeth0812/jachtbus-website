@@ -176,7 +176,16 @@ export interface UserAuthOperations {
  */
 export interface Aanvragen {
   id: number;
-  gelegenheid: 'bruiloft' | 'bedrijfsfeest' | 'evenement' | 'festival' | 'bbq' | 'verjaardag' | 'jubileum' | 'overige';
+  gelegenheid:
+    | 'bruiloft'
+    | 'bedrijfsfeest'
+    | 'tuinfeest'
+    | 'evenement'
+    | 'festival'
+    | 'bbq'
+    | 'verjaardag'
+    | 'jubileum'
+    | 'overige';
   gelegenheidOverig?: string | null;
   datum?: string | null;
   tijd?: string | null;

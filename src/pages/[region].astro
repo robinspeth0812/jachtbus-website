@@ -13,7 +13,7 @@ import BusReviews from '../components/bus/BusReviews.astro';
 import BusMoments from '../components/bus/BusMoments.astro';
 import BusFaq from '../components/bus/BusFaq.astro';
 import BusClosing from '../components/bus/BusClosing.astro';
-import { locaties, regions, services, url } from '../data/nieuw';
+import { datumVraag, locaties, regions, services, url } from '../data/nieuw';
 import type { Region } from '../data/nieuw';
 import { getInhoud } from '../lib/cms';
 import { casesIn } from '../lib/regio';
@@ -51,7 +51,11 @@ const kaartRegio = { ...region, naam: provincie };
   schema={[serviceSchema(region.schemaNaam ?? `Foodtruckcatering in ${region.naam}`, region.metaDescription, [region.naam], region.gebied), faqSchema(region.faq)]}
 >
   <BusPageHero title={region.title} text={region.intro} photo={region.photo} shape="corner" crumbs={crumbs}>
-    <BusFirstStep title={dienst ? 'Wat mogen we voor jullie doen?' : 'Waarvoor zoek je een foodtruck?'} />
+    {dienst?.soort === 'gelegenheid' ? (
+      <BusFirstStep title={datumVraag[dienst.gelegenheid] ?? 'Wanneer is je feest?'} occasion={dienst.gelegenheid} />
+    ) : (
+      <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+    )}
   </BusPageHero>
   <BusPlaces places={region.plaatsen} />
   <BusMap title={region.lokaalTitel} paragraphs={region.verhaal} region={kaartRegio}>

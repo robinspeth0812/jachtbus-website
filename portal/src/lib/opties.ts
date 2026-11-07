@@ -10,6 +10,7 @@ export const labelVan = (lijst: readonly Optie[], waarde: string | null | undefi
 export const gelegenheden = [
   { value: "bruiloft", label: "Bruiloft" },
   { value: "bedrijfsfeest", label: "Bedrijfsfeest" },
+  { value: "tuinfeest", label: "Tuinfeest" },
   { value: "evenement", label: "Evenement" },
   { value: "festival", label: "Festival" },
   { value: "bbq", label: "BBQ" },

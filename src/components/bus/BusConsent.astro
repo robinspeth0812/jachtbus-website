@@ -17,10 +17,9 @@ const metingen = namen(['statistics', 'marketing']);
     <div class="bus-consent_layer is-first is-active">
       <p class="bus-consent_title u-text-style-bus-title">Cookies en privacy</p>
       <p class="bus-consent_text u-text-style-small">
-        Wat nodig is om de site te laten werken, staat altijd aan.
-        {metingen.length > 0 && <>Daarnaast willen we graag meten hoe de site en onze advertenties het doen, met {metingen.join(' en ')}. Daarbij kunnen gegevens naar de VS gaan.</>}
-        De kaart met onze klussen komt van een andere partij en laadt ook pas na jouw ja.
-        Het is jouw keuze, de site werkt ook zonder. Je past het altijd aan via Cookie-instellingen onder aan elke pagina.
+        Wat nodig is, staat altijd aan.
+        {metingen.length > 0 && <>Met jouw ja meten we ook hoe de site en onze advertenties het doen, met {metingen.join(' en ')} (daarbij kunnen gegevens naar de VS gaan).</>}
+        De kaart met onze klussen laadt pas na jouw ja. De site werkt ook zonder, en je past het altijd aan onderaan elke pagina.
       </p>
     </div>
     <div class="bus-consent_layer is-settings">
@@ -53,10 +52,6 @@ const metingen = namen(['statistics', 'marketing']);
         ))}
       </ul>
     </div>
-    <p class="bus-consent_links u-text-style-small">
-      <a class="bus-consent_link" href={url('privacy')}>Privacyverklaring</a>
-      <a class="bus-consent_link" href={url('cookies')}>Cookiebeleid</a>
-    </p>
   </div>
   <div class="bus-consent_foot">
     <div class="bus-consent_actions">
@@ -64,7 +59,11 @@ const metingen = namen(['statistics', 'marketing']);
       <button class="bus-consent_button is-save" type="button" data-trigger="hover focus">Keuze opslaan</button>
       <button class="bus-consent_button is-yes" type="button" data-trigger="hover focus">Alles accepteren</button>
     </div>
-    <button class="bus-consent_switcher u-text-style-small" type="button">Instellingen</button>
+    <p class="bus-consent_links u-text-style-small">
+      <button class="bus-consent_switcher u-text-style-small" type="button">Instellingen</button>
+      <a class="bus-consent_link" href={url('privacy')}>Privacy</a>
+      <a class="bus-consent_link" href={url('cookies')}>Cookiebeleid</a>
+    </p>
   </div>
 </section>
 
@@ -72,7 +71,8 @@ const metingen = namen(['statistics', 'marketing']);
   .bus-consent_wrap {
     display: none;
     position: fixed;
-    left: var(--site--margin);
+    /* Right, over the photo: the request form sits on the left of every hero. */
+    right: var(--site--margin);
     bottom: calc(var(--_spacing---space--4) + (1 - var(--_responsive---large)) * (var(--size--mobile-bar) + var(--size--stripe-thin)) + env(safe-area-inset-bottom));
     z-index: 60;
     flex-flow: column;
@@ -89,7 +89,7 @@ const metingen = namen(['statistics', 'marketing']);
     flex-flow: column;
     gap: var(--_spacing---space--3);
     min-height: 0;
-    padding: var(--_spacing---space--5);
+    padding: calc(var(--_spacing---space--5) * var(--_responsive---large) + var(--_spacing---space--4) * (1 - var(--_responsive---large)));
     overflow-y: auto;
   }
   .bus-consent_layer {
@@ -184,6 +184,7 @@ const metingen = namen(['statistics', 'marketing']);
   .bus-consent_links {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0 var(--_spacing---space--4);
     margin: 0;
   }
@@ -198,7 +199,7 @@ const metingen = namen(['statistics', 'marketing']);
     flex-flow: column;
     align-items: flex-start;
     gap: var(--_spacing---space--1);
-    padding: var(--_spacing---space--4) var(--_spacing---space--5) var(--_spacing---space--2);
+    padding: var(--_spacing---space--3) var(--_spacing---space--4) var(--_spacing---space--1);
     border-top: var(--border-width--main) solid var(--_theme---divider);
   }
   /* Saying no sits next to saying yes, at exactly the same size. */

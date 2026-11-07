@@ -119,6 +119,14 @@ export interface Service {
   faq: Faq[];
 }
 
+/** The date question in the first step on a page about one occasion. */
+export const datumVraag: Record<string, string> = {
+  bruiloft: 'Wanneer is jullie bruiloft?',
+  bedrijfsfeest: 'Wanneer is het bedrijfsfeest?',
+  tuinfeest: 'Wanneer is je tuinfeest?',
+  evenement: 'Wanneer is je evenement?',
+};
+
 export const services: Service[] = [
   {
     slug: 'bruiloft',
@@ -216,7 +224,7 @@ export const services: Service[] = [
   {
     slug: 'tuinfeest',
     soort: 'gelegenheid',
-    gelegenheid: 'overige',
+    gelegenheid: 'tuinfeest',
     nav: 'Tuinfeest',
     rowText: 'Verjaardag, jubileum of gewoon omdat het kan. Jij blijft bij je gasten.',
     title: 'Jij bent gast op je eigen feest',

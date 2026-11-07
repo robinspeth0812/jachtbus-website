@@ -15,7 +15,7 @@ import BusFaq from '../../components/bus/BusFaq.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusReviews from '../../components/bus/BusReviews.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { locaties, services, url } from '../../data/nieuw';
+import { datumVraag, locaties, services, url } from '../../data/nieuw';
 import type { Service } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 import { faqSchema, serviceSchema } from '../../lib/schema';
@@ -46,7 +46,11 @@ const cases = referenties.filter((item) =>
   schema={[serviceSchema(service.schemaName, service.metaDescription), faqSchema(service.faq)]}
 >
   <BusPageHero title={service.title} text={service.intro} photo={service.photo} shape={service.shape} crumbs={crumbs}>
-    <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+    {service.soort === 'gelegenheid' ? (
+      <BusFirstStep title={datumVraag[service.gelegenheid] ?? 'Wanneer is je feest?'} occasion={service.gelegenheid} />
+    ) : (
+      <BusFirstStep title="Waarvoor zoek je een foodtruck?" />
+    )}
   </BusPageHero>
   <BusPlaces />
   <BusCases title="Hier deden we dit al" items={cases.slice(0, 6)} more />
