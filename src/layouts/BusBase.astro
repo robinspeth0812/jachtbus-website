@@ -38,8 +38,10 @@ interface Props {
   modal?: boolean;
   /** Extra structured data for this page. */
   schema?: Record<string, unknown>[];
+  /** Keep this page out of search engines, also after go-live (the 404 page). */
+  noindex?: boolean;
 }
-const { title, description, crumbs = [], modal = true, schema = [] } = Astro.props;
+const { title, description, crumbs = [], modal = true, schema = [], noindex = false } = Astro.props;
 
 const SITE_NOINDEX = true;
 const site = Astro.site ?? new URL('https://jachtbusfoodtruck.nl');
@@ -91,8 +93,8 @@ const graphs = [business, ...(breadcrumbs ? [breadcrumbs] : []), ...schema];
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>{`${title} | Jachtbus Foodtruck`}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {SITE_NOINDEX && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {(SITE_NOINDEX || noindex) && <meta name="robots" content="noindex" />}
     <link rel="icon" href={favicon.src} type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="nl_NL" />
