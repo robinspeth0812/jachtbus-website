@@ -1,7 +1,8 @@
 ---
 // The ways we serve, set like a menu board next to a round photo of the food.
+// A way with its own page links there; the others are plain names.
 import BusPhoto from './BusPhoto.astro';
-import { photos } from '../../data/nieuw';
+import { arrangementPaginas, photos, url } from '../../data/nieuw';
 import { getInhoud } from '../../lib/cms';
 
 interface Props {
@@ -27,7 +28,13 @@ const { arrangementen } = await getInhoud();
         <ul class="bus-menu-board_list">
           {arrangementen.map((item) => (
             <li class="bus-menu-board_item">
-              <h3 class="bus-menu-board_name u-text-style-poster-label">{item.title}</h3>
+              <h3 class="bus-menu-board_name u-text-style-poster-label">
+                {arrangementPaginas[item.title] ? (
+                  <a class="bus-menu-board_link" href={url(`catering/${arrangementPaginas[item.title]}`)} data-trigger="hover focus">
+                    {item.title}<svg class="bus-menu-board_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+                  </a>
+                ) : item.title}
+              </h3>
               <p class="bus-menu-board_desc u-text-style-main">{item.text}</p>
             </li>
           ))}
@@ -77,5 +84,24 @@ const { arrangementen } = await getInhoud();
     border-top: var(--border-width--main) solid var(--_theme---divider);
   }
   .bus-menu-board_name { margin-bottom: var(--_spacing---space--1); }
+  .bus-menu-board_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  /* No underline on the name: a small arrow says it leads somewhere, and nudges on hover. */
+  .bus-menu-board_arrow {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-menu-board_arrow { transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+  }
   .bus-menu-board_desc { max-width: 48ch; }
 </style>

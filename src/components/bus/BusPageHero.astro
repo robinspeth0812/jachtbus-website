@@ -137,6 +137,8 @@ const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = 
     width: 100%;
     padding-bottom: var(--_spacing---space--6);
   }
+  /* Next to a tall block the title stays at the top, not down by the photo line. */
+  .bus-hero_layout.is-even { align-items: start; }
   .bus-hero_layout.is-even .bus-hero_content { grid-column: 1 / span 6; }
   .bus-hero_layout.is-even .bus-hero_side { grid-column: 7 / span 6; }
   .bus-hero_title { max-width: 14ch; }

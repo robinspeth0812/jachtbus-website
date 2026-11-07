@@ -1,39 +1,179 @@
 ---
+// The catering hub. It ranks on catering op locatie itself (the home goes for
+// foodtruck huren) and sends everyone on to the right page: the signpost in the
+// hero, then the occasions, the food, and the areas with their local pages. How
+// a job goes and what the spot needs stay on the pages it sends to.
 import BusBase from '../../layouts/BusBase.astro';
 import BusPageHero from '../../components/bus/BusPageHero.astro';
+import BusWegwijzer from '../../components/bus/BusWegwijzer.astro';
 import BusRows from '../../components/bus/BusRows.astro';
 import BusMenu from '../../components/bus/BusMenu.astro';
-import BusRoute from '../../components/bus/BusRoute.astro';
-import BusFit from '../../components/bus/BusFit.astro';
+import BusCases from '../../components/bus/BusCases.astro';
+import BusStory from '../../components/bus/BusStory.astro';
 import BusFaq from '../../components/bus/BusFaq.astro';
 import BusClosing from '../../components/bus/BusClosing.astro';
-import { faqAlgemeen, photos, url } from '../../data/nieuw';
+import { faqCatering, locaties, photos, plaatsPaginas, regions, services, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
 import { faqSchema, serviceSchema } from '../../lib/schema';
 
-const description = 'Foodtruckcatering op locatie voor bruiloften, tuinfeesten, bedrijfsfeesten en evenementen. Alles ter plekke bereid, in Drenthe, Groningen en Friesland.';
+const description = 'Catering op locatie met de Jachtbus: wij koken ter plekke op je bruiloft, bedrijfsfeest, tuinfeest of evenement. In Drenthe, Groningen en Friesland, vanaf 40 personen.';
 const crumbs = [{ label: 'Catering', href: url('catering') }];
-const faqItems = faqAlgemeen.slice(0, 4);
+const { referenties } = await getInhoud();
+const site = Astro.site ?? new URL('https://jachtbusfoodtruck.nl');
+// Every page below this one, so search engines see what the catering consists of.
+const schema = {
+  ...serviceSchema('Catering op locatie', description),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Catering op locatie',
+    itemListElement: services.map((service) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: service.metaTitle, url: new URL(url(`catering/${service.slug}`), site).href },
+    })),
+  },
+};
+// Local pages per province, such as bruiloftscatering in Drenthe. Towns with a page show as a linked tag.
+const gebieden = regions.map((region) => ({
+  region,
+  paginas: locaties.filter((item) => item.dienst && item.provincie === region.naam),
+}));
+const verhaal = [
+  'Bij gewone catering komt het eten in bakken aan en staat het warm te worden. Bij ons rijdt de keuken zelf voor. De Jachtbus is een foodtruck met een complete keuken achterin: we zetten hem neer op jouw plek, koken waar je gasten bij staan en serveren meteen.',
+  'Zo kun je feesten waar geen zaal of keuken is. Op een erf, in een weiland, in je tuin of op je bedrijfsterrein. Wij hebben een plek van 6,5 bij 2,5 meter nodig, een stevige ondergrond en stroom in de buurt. De rest nemen we mee, ook de bediening.',
+  'Er is geen vaste kaart. Walking dinner, streetfood uit het luik, BBQ van de smoker, een buffet of aan tafel: we kiezen samen wat bij je feest past, met producten uit de buurt waar het kan. We komen vanaf 40 personen, vanuit Gasselte door heel Drenthe, Groningen en Friesland.',
+  'Hoe het gaat? Je checkt je datum, wij nemen binnen 2 werkdagen contact met je op en bespreken je feest. Pas daarna krijg je een voorstel met menu, opzet en prijs.',
+];
 ---
 
 <BusBase
-  title="Foodtruckcatering op locatie"
+  title="Catering op locatie in Noord-Nederland"
   description={description}
   crumbs={crumbs}
-  schema={[serviceSchema('Foodtruckcatering', description), faqSchema(faqItems)]}
+  schema={[schema, faqSchema(faqCatering)]}
 >
   <BusPageHero
-    title="De keuken komt naar jou toe"
-    text="Geen zaal nodig, geen keuken nodig. Wij nemen alles mee, koken ter plekke en laten het netjes achter."
-    photo={photos.bus}
-    shape="corner"
+    title="Catering op locatie in Drenthe, Groningen en Friesland"
+    text="Geen zaal of keuken nodig. Wij rijden de keuken voor, koken ter plekke en laten alles netjes achter. Vertel wat je viert, dan wijzen we je de weg."
     crumbs={crumbs}
-    checkLabel="Check je datum"
-  />
-  <BusRows title="Waar komen we voor?" soort="gelegenheid" />
-  <BusRows title="En wat kan er allemaal?" soort="mogelijkheid" theme="green" />
-  <BusMenu />
-  <BusRoute />
-  <BusFit />
-  <BusFaq items={faqItems} />
+    split="even"
+  >
+    <BusWegwijzer slot="side" />
+  </BusPageHero>
+
+  <BusRows title="Voor welk feest zoek je catering?" soort="gelegenheid" />
+  <BusMenu title="Wat komt er uit de bus?" />
+
+  <section class="catering-areas_wrap u-section u-theme-bus-green">
+    <div class="catering-areas_contain u-container">
+      <h2 class="catering-areas_title u-text-style-poster-small">Waar we koken</h2>
+      <p class="catering-areas_intro u-text-style-large">
+        De bus staat in Gasselte, dus Drenthe is thuis. Groningen en Friesland horen er net zo goed bij. Kies je provincie voor alles wat daar handig is om te weten.
+      </p>
+      <ul class="catering-areas_list">
+        {gebieden.map(({ region, paginas }) => (
+          <li class="catering-areas_item">
+            <h3 class="catering-areas_name u-text-style-poster-label">
+              <a class="catering-areas_link" href={url(region.slug)} data-trigger="hover focus">
+                Catering in {region.naam}<svg class="catering-areas_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+              </a>
+            </h3>
+            <p class="catering-areas_text u-text-style-main">{region.intro}</p>
+            {paginas.length > 0 && (
+              <ul class="catering-areas_pages">
+                {paginas.map((item) => (
+                  <li class="catering-areas_page">
+                    <a class="catering-areas_page_link u-text-style-main" href={url(item.slug)} data-trigger="hover focus">
+                      {item.kruimel ?? item.title}<svg class="catering-areas_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p class="catering-areas_label u-text-style-small">We stonden al in:</p>
+            <ul class="catering-areas_tags">
+              {region.plaatsen.map((plaats) => (
+                <li class="catering-areas_tag_item">
+                  {plaatsPaginas[plaats]
+                    ? <a class="catering-areas_tag is-link u-text-style-small" href={url(plaatsPaginas[plaats])} data-trigger="hover focus">{plaats}<svg class="catering-areas_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></a>
+                    : <span class="catering-areas_tag u-text-style-small">{plaats}</span>}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <BusCases items={referenties.slice(0, 3)} more />
+  <BusStory title="Wat is catering op locatie eigenlijk?" paragraphs={verhaal} photo={photos.luik} shape="arch" flip />
+  <BusFaq items={faqCatering} />
   <BusClosing />
 </BusBase>
+
+<style>
+  .catering-areas_wrap {
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+  }
+  .catering-areas_title { margin-bottom: var(--_spacing---space--4); }
+  .catering-areas_intro {
+    max-width: 56ch;
+    margin-bottom: var(--_spacing---space--6);
+  }
+  .catering-areas_list {
+    display: grid;
+    grid-template-columns: repeat(calc(var(--_responsive---large) * 3 + (1 - var(--_responsive---large))), minmax(0, 1fr));
+    gap: var(--_spacing---space--6) var(--site--gutter);
+  }
+  .catering-areas_item {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .catering-areas_link,
+  .catering-areas_page_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .catering-areas_page_link { font-weight: var(--_typography---font--primary-bold); }
+  .catering-areas_text { max-width: 44ch; }
+  .catering-areas_label { margin-top: var(--_spacing---space--2); }
+  .catering-areas_tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  .catering-areas_tag {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target--small);
+    padding-inline: var(--_spacing---space--2);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+  }
+  .catering-areas_tag.is-link {
+    gap: var(--_spacing---space--1);
+    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--color--bus-green) calc(100% * var(--_trigger---off)));
+    background-color: color-mix(in hsl, var(--_theme---background-2) calc(100% * var(--_trigger---on)), var(--color--bus-yellow) calc(100% * var(--_trigger---off)));
+    text-decoration: none;
+    transition: background-color 150ms, color 150ms;
+  }
+  /* No underline on these links: a small arrow says they lead somewhere, and nudges on hover. */
+  .catering-areas_arrow {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--3);
+    height: var(--_spacing---space--3);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .catering-areas_arrow { transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+  }
+</style>

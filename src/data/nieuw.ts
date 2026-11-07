@@ -74,6 +74,16 @@ export const faqAlgemeen: Faq[] = [
   { vraag: 'Wat als er geen stroom is?', antwoord: 'Meestal is daar een oplossing voor, bijvoorbeeld een aggregaat. Zet het in je aanvraag, dan denken we mee.' },
 ];
 
+export const faqCatering: Faq[] = [
+  { vraag: 'Wat is het verschil met gewone catering?', antwoord: 'Gewone catering kookt ergens anders en brengt het eten in bakken. Wij koken in de bus, op jouw locatie, en serveren meteen. Daardoor heb je geen zaal of keuken nodig.' },
+  { vraag: 'Wat zit er allemaal bij?', antwoord: 'Het eten, de bus met de keuken en onze eigen bediening. Drankjes kunnen erbij. Wat je precies krijgt, bespreken we samen voordat je een voorstel krijgt.' },
+  { vraag: 'Welke vormen van catering hebben jullie?', antwoord: 'Walking dinner, streetfood uit het luik, BBQ van de smoker, een buffet of aan tafel. Welke vorm het wordt, kiezen we samen, passend bij je feest en je gasten.' },
+  faqAlgemeen[0],
+  faqAlgemeen[1],
+  faqAlgemeen[3],
+  faqAlgemeen[8],
+];
+
 export const faqReferenties: Faq[] = [
   { vraag: 'Zijn dit echte feesten?', antwoord: 'Ja. Hier staan alleen feesten waar we echt stonden, en alleen als de klant het goedvindt.' },
   { vraag: 'Zijn de reacties echt?', antwoord: 'Ja. We nemen ze letterlijk over en zetten de bron erbij. Verzinnen doen we niet.' },
@@ -581,6 +591,9 @@ export const locaties: Region[] = [
 // Every town from the owner's list of jobs that were actually done.
 // Local page of a town, by name. A town without one shows as a plain tag.
 export const plaatsPaginas: Record<string, string> = { Assen: 'foodtruck-huren-assen' };
+// Own page of a way we serve, by its name on the menu board. Streetfood, buffet and
+// aan tafel have none yet, so they show without a link.
+export const arrangementPaginas: Record<string, string> = { 'Walking dinner': 'walking-dinner', 'BBQ van de smoker': 'bbq-smoker' };
 // Own page of a job from the portal, by slug. A job without one gets no link on the map.
 export const casePaginas: Record<string, string> = {};
 

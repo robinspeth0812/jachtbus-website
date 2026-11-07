@@ -1,0 +1,276 @@
+---
+// Three short questions (what, where, which food) and one answer: the page that
+// fits best, with at most two more and a date check with the occasion filled in.
+// Which page wins is worked out at build time in src/lib/wegwijzer.ts; the script
+// only looks the answer up and shows the links that were rendered here. Without
+// JS the questions stay hidden and the occasions are plain links.
+import BusButton from '../BusButton.astro';
+import { aanvraagUrl, arrangementPaginas, regions, url } from '../../data/nieuw';
+import { getInhoud } from '../../lib/cms';
+import { adviesTabel, feesten, wijzers } from '../../lib/wegwijzer';
+
+interface Props {
+  /** Title above the questions. */
+  title?: string;
+}
+const { title = 'Waar kunnen we je mee helpen?' } = Astro.props;
+const { arrangementen } = await getInhoud();
+const etenKeuzes = arrangementen.map((item) => item.title);
+const tabel = adviesTabel(etenKeuzes);
+const alle = wijzers();
+// Extra links in their order of priority: food first, then the occasion, then the province.
+const isEten = (href: string) => Object.values(arrangementPaginas).some((slug) => href === url(`catering/${slug}`));
+const ookVolgorde = [...alle.filter((item) => isEten(item.href)), ...alle.filter((item) => !isEten(item.href))];
+const groepen = [
+  { name: 'feest', legend: 'Wat vier je?', options: feesten },
+  { name: 'waar', legend: 'Waar is het?', options: [...regions.map((region) => ({ value: region.naam, label: region.naam })), { value: 'elders', label: 'Ergens anders' }] },
+  { name: 'eten', legend: 'Wat wil je eten?', hint: 'Mag je openlaten', options: etenKeuzes.map((titel) => ({ value: titel, label: titel })) },
+];
+---
+
+<div class="bus-wegwijzer_wrap u-theme-bus-beige" data-tabel={JSON.stringify(tabel)}>
+  <h2 class="bus-wegwijzer_title u-text-style-poster-label">{title}</h2>
+
+  <ul class="bus-wegwijzer_fallback">
+    {feesten.map((feest) => (
+      <li class="bus-wegwijzer_fallback_item">
+        <a class="bus-wegwijzer_fallback_link u-text-style-main" href={feest.value === 'overige' ? aanvraagUrl('overige') : url(`catering/${feest.value}`)} data-trigger="hover focus">
+          {feest.label}<svg class="bus-wegwijzer_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="bus-wegwijzer_form" hidden>
+    {groepen.map((groep) => (
+      <fieldset class="bus-wegwijzer_group">
+        <legend class="bus-wegwijzer_legend u-text-style-main">
+          {groep.legend}{groep.hint && <span class="bus-wegwijzer_hint u-text-style-small"> {groep.hint}</span>}
+        </legend>
+        <div class="bus-wegwijzer_options">
+          {groep.options.map((option) => (
+            <label class="bus-wegwijzer_option u-text-style-small">
+              <input class="bus-wegwijzer_input" type="radio" name={`wegwijzer-${groep.name}`} value={option.value} data-groep={groep.name} />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    ))}
+
+    <div class="bus-wegwijzer_result" aria-live="polite">
+      <p class="bus-wegwijzer_empty u-text-style-main">Kies wat je viert, dan wijzen we je de weg.</p>
+      {alle.map((item) => (
+        <a class="bus-wegwijzer_main" href={item.href} data-hoofd={item.href} data-trigger="hover focus" hidden>
+          <span class="bus-wegwijzer_main_title u-text-style-bus-title">{item.title}<svg class="bus-wegwijzer_arrow is-inline" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></span>
+          <span class="bus-wegwijzer_main_text u-text-style-small">{item.text}</span>
+        </a>
+      ))}
+      <div class="bus-wegwijzer_also" hidden>
+        <p class="bus-wegwijzer_also_title u-text-style-small">Ook handig:</p>
+        <ul class="bus-wegwijzer_also_list">
+          {ookVolgorde.map((item) => (
+            <li class="bus-wegwijzer_also_item" data-ook={item.href} hidden>
+              <a class="bus-wegwijzer_also_link u-text-style-small" href={item.href} data-trigger="hover focus">{item.title}<svg class="bus-wegwijzer_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {etenKeuzes.filter((titel) => !arrangementPaginas[titel]).map((titel) => (
+        <p class="bus-wegwijzer_tip u-text-style-small" data-tip={`eten:${titel}`} hidden>{titel} kun je bij elk feest kiezen. Zet het in je aanvraag, dan bespreken we het samen.</p>
+      ))}
+      <p class="bus-wegwijzer_tip u-text-style-small" data-tip="overige" hidden>Verjaardag, jubileum of iets heel anders? Daar komen we ook voor. Vertel het in je aanvraag.</p>
+      <p class="bus-wegwijzer_tip u-text-style-small" data-tip="elders" hidden>Net buiten Drenthe, Groningen of Friesland? Vraag het gerust, in overleg kan er vaak meer.</p>
+    </div>
+    <div class="bus-wegwijzer_cta u-button-wrapper">
+      <BusButton label="Check je datum" href={aanvraagUrl()} />
+    </div>
+  </div>
+</div>
+
+<style>
+  .bus-wegwijzer_wrap {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+    width: 100%;
+    padding: calc(var(--_responsive---large) * var(--_spacing---space--5) + (1 - var(--_responsive---large)) * var(--_spacing---space--4));
+    background-color: var(--_theme---background);
+    color: var(--_theme---text);
+    border-top: var(--size--stripe-thin) solid var(--color--bus-yellow);
+  }
+  .bus-wegwijzer_fallback {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  .bus-wegwijzer_fallback[hidden] { display: none; }
+  .bus-wegwijzer_fallback_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--3);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    text-decoration: none;
+  }
+  .bus-wegwijzer_form {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--4);
+  }
+  .bus-wegwijzer_form[hidden] { display: none; }
+  .bus-wegwijzer_group {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--2);
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  .bus-wegwijzer_legend {
+    padding: 0;
+    margin-bottom: var(--_spacing---space--2);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .bus-wegwijzer_hint { font-weight: var(--_typography---font--primary-regular); }
+  .bus-wegwijzer_options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  /* Same choice as in the request form: green once picked, with the dot still there. */
+  .bus-wegwijzer_option {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--3);
+    background-color: color-mix(in hsl, var(--_theme---background-2) calc(100% * var(--_state---true)), var(--color--bus-green) calc(100% * var(--_state---false)));
+    color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_state---true)), var(--color--white) calc(100% * var(--_state---false)));
+    border: var(--border-width--main) solid color-mix(in hsl, var(--_theme---border) calc(100% * var(--_state---true)), var(--color--bus-green) calc(100% * var(--_state---false)));
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+    transition: background-color 150ms, color 150ms, border-color 150ms;
+  }
+  .bus-wegwijzer_input {
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+    margin: 0;
+    accent-color: var(--color--bus-yellow);
+  }
+  .bus-wegwijzer_result {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--3);
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider);
+  }
+  .bus-wegwijzer_main {
+    display: flex;
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    padding: var(--_spacing---space--3) var(--_spacing---space--4);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    border-left: var(--focus--width) solid var(--color--bus-green);
+    text-decoration: none;
+  }
+  .bus-wegwijzer_main[hidden] { display: none; }
+  /* Inline, so the arrow stays behind the last word when the title wraps. */
+  .bus-wegwijzer_main_title {
+    display: block;
+    color: color-mix(in hsl, var(--_theme---heading) calc(100% * var(--_trigger---on)), var(--_theme---text-accent) calc(100% * var(--_trigger---off)));
+  }
+  .bus-wegwijzer_arrow.is-inline {
+    display: inline-block;
+    margin-left: var(--_spacing---space--2);
+    vertical-align: middle;
+  }
+  .bus-wegwijzer_main_text { max-width: 52ch; }
+  .bus-wegwijzer_also {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--_spacing---space--3);
+  }
+  .bus-wegwijzer_also[hidden] { display: none; }
+  .bus-wegwijzer_also_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--_spacing---space--3);
+  }
+  .bus-wegwijzer_also_link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+    color: var(--_theme---text-link--text);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: none;
+  }
+  .bus-wegwijzer_tip {
+    max-width: 52ch;
+    padding-left: var(--_spacing---space--3);
+    border-left: var(--focus--width) solid var(--color--bus-yellow);
+  }
+  .bus-wegwijzer_cta { justify-content: flex-start; }
+  /* No underline on these links: a small arrow says they lead somewhere, and nudges on hover. */
+  .bus-wegwijzer_arrow {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--3);
+    height: var(--_spacing---space--3);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-wegwijzer_arrow { transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+  }
+</style>
+
+<script>
+  interface Advies {
+    hoofd: string;
+    ook: string[];
+    tips: string[];
+    aanvraag: string;
+  }
+
+  document.querySelectorAll<HTMLElement>('.bus-wegwijzer_wrap').forEach((root) => {
+    const form = root.querySelector<HTMLElement>('.bus-wegwijzer_form');
+    const fallback = root.querySelector<HTMLElement>('.bus-wegwijzer_fallback');
+    const empty = root.querySelector<HTMLElement>('.bus-wegwijzer_empty');
+    const also = root.querySelector<HTMLElement>('.bus-wegwijzer_also');
+    const check = root.querySelector<HTMLAnchorElement>('.bus-wegwijzer_cta .bus-button_wrap');
+    if (!form || !fallback || !empty || !also || !check) return;
+    const tabel = JSON.parse(root.dataset.tabel ?? '{}') as Record<string, Advies>;
+    const inputs = [...root.querySelectorAll<HTMLInputElement>('.bus-wegwijzer_input')];
+    const mains = [...root.querySelectorAll<HTMLElement>('[data-hoofd]')];
+    const extras = [...root.querySelectorAll<HTMLElement>('[data-ook]')];
+    const tips = [...root.querySelectorAll<HTMLElement>('[data-tip]')];
+    const keuze = (groep: string) => inputs.find((input) => input.dataset.groep === groep && input.checked)?.value ?? '';
+
+    const update = () => {
+      inputs.forEach((input) => input.closest('.bus-wegwijzer_option')?.classList.toggle('is-active', input.checked));
+      const advies = tabel[`${keuze('feest')}|${keuze('waar')}|${keuze('eten')}`];
+      mains.forEach((item) => { item.hidden = item.dataset.hoofd !== advies?.hoofd; });
+      extras.forEach((item) => { item.hidden = !advies?.ook.includes(item.dataset.ook ?? ''); });
+      tips.forEach((item) => { item.hidden = !advies?.tips.includes(item.dataset.tip ?? ''); });
+      also.hidden = !advies?.ook.length;
+      empty.hidden = !!advies && (!!advies.hoofd || advies.tips.length > 0);
+      if (advies) check.href = advies.aanvraag;
+    };
+
+    fallback.hidden = true;
+    form.hidden = false;
+    inputs.forEach((input) => input.addEventListener('change', update));
+    // The browser may restore earlier choices on the way back.
+    update();
+
+    // Which way people go tells us which pages the signpost should know about.
+    root.addEventListener('click', (event) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>('[data-hoofd], [data-ook] a');
+      if (link) window.gtag?.('event', 'select_content', { content_type: 'wegwijzer', item_id: link.getAttribute('href') });
+    });
+  });
+</script>
