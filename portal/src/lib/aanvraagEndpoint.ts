@@ -206,7 +206,7 @@ async function stuurMails(req: PayloadRequest, v: AanvraagVelden, id: number) {
     onderwerp: "We hebben je aanvraag binnen",
     alineas: [
       `Moi ${v.naam.split(" ")[0]},`,
-      `Bedankt voor je aanvraag. We kijken er zo snel mogelijk naar en laten je weten of de bus op ${wanneer} kan komen.`,
+      `Bedankt voor je aanvraag. Binnen 2 werkdagen nemen we contact met je op om je feest samen door te spreken. Dan hoor je ook of de bus op ${wanneer} kan komen.`,
       `Wat wij hebben genoteerd: ${wat}, ${v.gasten} gasten, ${v.plaats}.`,
       `Haast? Bel ons op ${telefoon}.`,
       "Groet,\nPeer en het team van de Jachtbus",

@@ -13,14 +13,18 @@ interface Props {
   theme?: 'beige' | 'green';
 }
 const { title = 'Veelgestelde vragen', items, theme = 'beige' } = Astro.props;
+// More than seven questions: the title on top and the questions over two columns.
+const split = items.length > 7;
+const columns = split ? [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))] : [items];
 ---
 
 <section class:list={['bus-faq_wrap', 'u-section', `u-theme-bus-${theme}`]}>
   <div class="bus-faq_contain u-container">
-    <div class="bus-faq_layout">
+    <div class:list={['bus-faq_layout', split && 'is-split']}>
       <h2 class="bus-faq_title u-text-style-poster-small">{title}</h2>
+      {columns.map((column) => (
       <div class="bus-faq_list">
-        {items.map((item) => (
+        {column.map((item) => (
           <details class="bus-faq_item" name="bus-faq">
             <summary class="bus-faq_question u-text-style-bus-title" data-trigger="hover focus">
               <span class="bus-faq_text">{item.vraag}</span>
@@ -30,6 +34,7 @@ const { title = 'Veelgestelde vragen', items, theme = 'beige' } = Astro.props;
           </details>
         ))}
       </div>
+      ))}
     </div>
   </div>
 </section>
@@ -50,6 +55,10 @@ const { title = 'Veelgestelde vragen', items, theme = 'beige' } = Astro.props;
     grid-column: 6 / span 7;
     width: 100%;
   }
+  .bus-faq_layout.is-split .bus-faq_title { grid-column: 1 / -1; }
+  .bus-faq_layout.is-split .bus-faq_list { grid-column: span 6; }
+  /* Stacked on a phone the two columns read as one list, without a gap between them. */
+  .bus-faq_layout.is-split .bus-faq_list + .bus-faq_list { margin-top: calc(var(--_spacing---space--5) * -1 * (1 - var(--_responsive---large))); }
   .bus-faq_item { border-top: var(--border-width--main) solid var(--_theme---divider); }
   .bus-faq_item:last-child { border-bottom: var(--border-width--main) solid var(--_theme---divider); }
   .bus-faq_question {

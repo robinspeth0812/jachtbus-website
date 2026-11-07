@@ -7,6 +7,8 @@
 // PUBLIC_AANVRAAG_ENDPOINT (the Resend key lives outside this repo);
 // without an endpoint the submit shows the direct-contact fallback.
 import ChatBubble from './ChatBubble.astro';
+import { url } from '../data/nieuw';
+import { getInhoud } from '../lib/cms';
 
 interface Props {
   /** Where the form lives: 'page' renders a full section with its own
@@ -18,6 +20,9 @@ interface Props {
 const { variant = 'page' } = Astro.props;
 
 const endpoint = import.meta.env.PUBLIC_AANVRAAG_ENDPOINT ?? '';
+// A few earlier parties for the thank-you screen; the script shows two, the same occasion first.
+const { referenties } = await getInhoud();
+const cases = referenties.slice(0, 12);
 const isModal = variant === 'modal';
 const stepTitleStyle = isModal ? 'u-text-style-poster-label' : 'u-text-style-h4';
 const buttonTrigger = isModal ? 'hover focus' : undefined;
@@ -242,7 +247,7 @@ const places = [
       <p class="aanvraag_status u-text-style-small" aria-live="polite"></p>
 
       <div class="aanvraag_done_wrap" hidden>
-        <ChatBubble message="Gelukt, je aanvraag is binnen. Ik kijk er snel naar en je hoort van ons." />
+        <ChatBubble message="Gelukt, je aanvraag is binnen. Binnen 2 werkdagen hoor je van ons." />
 
         <div class="aanvraag_summary_wrap">
           <p class="aanvraag_done_title u-text-style-main">Dit hebben we van je</p>
@@ -260,9 +265,12 @@ const places = [
           <p class="aanvraag_done_title u-text-style-main">Zo gaat het verder</p>
           <ol class="aanvraag_next_list">
             <li class="aanvraag_next_item">Peer leest je aanvraag en kijkt of de bus vrij is.</li>
-            <li class="aanvraag_next_item">Is er iets onduidelijk? Dan bellen of mailen we je even.</li>
-            <li class="aanvraag_next_item">Je krijgt een voorstel met menu en prijs.</li>
+            <li class="aanvraag_next_item">Binnen 2 werkdagen nemen we contact met je op. Samen bespreken we wat je voor ogen hebt.</li>
+            <li class="aanvraag_next_item">Daarna krijg je een voorstel met menu en prijs, dat past bij wat we samen hebben besproken.</li>
           </ol>
+          <p class="aanvraag_hint u-text-style-small">
+            Staan we net met de bus op een feest? Dan kan het soms iets langer duren. We nemen zo snel mogelijk contact met je op.
+          </p>
         </div>
 
         <!-- After the request is in: room to tell the whole story, typed or
@@ -298,6 +306,26 @@ const places = [
           </p>
           <p class="aanvraag_extra_status u-text-style-small" aria-live="polite"></p>
         </div>
+
+        {cases.length > 0 && (
+          <div class="aanvraag_cases_wrap" hidden>
+            <p class="aanvraag_done_title u-text-style-main">Zo ging het bij anderen</p>
+            <ul class="aanvraag_cases_list">
+              {cases.map((item) => (
+                <li class="aanvraag_case_item" data-gelegenheid={item.gelegenheid.toLowerCase()} hidden>
+                  <a class="aanvraag_case_card" href={`${url('referenties')}#${item.slug}`} data-trigger="hover focus">
+                    {item.fotoUrl && <img class="aanvraag_case_img" src={item.fotoUrl} alt="" loading="lazy" />}
+                    <span class="aanvraag_case_body">
+                      <span class="aanvraag_case_name">{item.titel}</span>
+                      <span class="aanvraag_case_meta u-text-style-small">{item.gelegenheid} in {item.plaats}{item.gasten && `, ${item.gasten} gasten`}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a class="aanvraag_done_link" href={url('referenties')}>Bekijk alle feesten</a>
+          </div>
+        )}
 
         <p class="aanvraag_done_text">
           Vragen tussendoor? <a class="aanvraag_done_link" href="https://wa.me/31592656363" rel="external">App Peer</a> of bel <a class="aanvraag_done_link" href="tel:+31592656363">0592 656363</a>.
@@ -657,6 +685,53 @@ const places = [
     cursor: pointer;
   }
   .aanvraag_extra_status:empty { display: none; }
+  .aanvraag_cases_wrap,
+  .aanvraag_cases_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_cases_wrap[hidden],
+  .aanvraag_case_item[hidden] { display: none; }
+  .aanvraag_cases_wrap { align-items: flex-start; }
+  .aanvraag_cases_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--size--map-card)), 1fr));
+    width: 100%;
+  }
+  .aanvraag_case_item { display: flex; }
+  .aanvraag_case_card {
+    display: flex;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+    width: 100%;
+    min-height: var(--target--min);
+    padding: var(--_spacing---space--2);
+    background-color: var(--_theme---background-2);
+    color: inherit;
+    border: var(--border-width--main) solid color-mix(in hsl, var(--_theme---border) calc(100% * var(--_trigger---off)), transparent);
+    border-radius: var(--radius--main);
+    text-decoration: none;
+  }
+  .aanvraag_case_img {
+    flex: 0 0 auto;
+    width: var(--size--row-img-small);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius--small);
+  }
+  .aanvraag_case_body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--1);
+    min-width: 0;
+  }
+  .aanvraag_case_name {
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    text-decoration: underline;
+    text-underline-offset: var(--_spacing---space--1);
+  }
   .aanvraag_done_link { color: var(--_theme---text-link--text, inherit); }
   .aanvraag_done_text,
   .aanvraag_fallback_text { max-width: 55ch; }
@@ -815,6 +890,18 @@ const places = [
         if (cell) cell.textContent = value;
         row.hidden = !value;
       });
+    };
+
+    // Two earlier parties, the chosen occasion first.
+    const showCases = () => {
+      const wrap = form.querySelector<HTMLElement>('.aanvraag_cases_wrap');
+      if (!wrap) return;
+      const chosen = form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked')?.value ?? '';
+      const items = [...wrap.querySelectorAll<HTMLElement>('.aanvraag_case_item')];
+      const ranked = [...items.filter((item) => item.dataset.gelegenheid === chosen), ...items.filter((item) => item.dataset.gelegenheid !== chosen)];
+      items.forEach((item) => (item.hidden = true));
+      ranked.slice(0, 2).forEach((item) => (item.hidden = false));
+      wrap.hidden = items.length === 0;
     };
 
     // The story after the request: prompts, dictation and a separate send.
@@ -1039,6 +1126,7 @@ const places = [
         }
         setStatus('');
         fillSummary();
+        showCases();
         extra.open(answer.id && answer.sleutel ? { id: String(answer.id), sleutel: answer.sleutel } : null);
         // A real request is the conversion; the tags only exist after a yes in the cookie choice.
         window.gtag?.('event', 'generate_lead', { form: 'aanvraag', gelegenheid: form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked')?.value });

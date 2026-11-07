@@ -580,8 +580,8 @@ export const allPlaces = ['Stiens', 'Leeuwarden', 'Drachten', 'Leek', 'Roden', '
 
 export const steps: Item[] = [
   { title: 'Je doet een aanvraag', text: 'Via het formulier, de telefoon of een appje. Een richtdatum en een schatting van het aantal gasten is genoeg.' },
-  { title: 'Samen maken we het plan', text: 'Wij komen met een eerste idee. Daarna schaven we er in overleg aan, tot het bij jouw feest past.' },
-  { title: 'Je krijgt een definitief voorstel', text: 'Met menu, opzet en prijs, alles op een rij. Zeg jij ja, dan gaan wij aan de slag.' },
+  { title: 'We bespreken het samen', text: 'Binnen 2 werkdagen nemen we contact met je op. Je vertelt wat je voor ogen hebt, wij denken mee over menu en opzet.' },
+  { title: 'Je krijgt een voorstel', text: 'Met menu, opzet en prijs, precies zoals we het hebben besproken. Zeg jij ja, dan gaan wij aan de slag.' },
   { title: 'De luiken gaan open', text: 'We zetten de bus neer, koken ter plekke en laten alles netjes achter. Jij bent gewoon gast op je eigen feest.' },
 ];
 

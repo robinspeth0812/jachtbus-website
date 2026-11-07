@@ -30,8 +30,10 @@ interface Props {
   occasion?: string;
   /** Text on the date check button. Shows the date check when set. */
   checkLabel?: string;
+  /** Width of the two columns: wider text, or both halves equal (for a form next to cards). */
+  split?: 'text' | 'even';
 }
-const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = '', checkLabel = '' } = Astro.props;
+const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = '', checkLabel = '', split = 'text' } = Astro.props;
 ---
 
 <section class:list={['bus-hero_wrap', 'u-theme-bus-green', !photo && 'is-text']}>
@@ -48,7 +50,7 @@ const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = 
         ))}
       </ol>
     </nav>
-    <div class="bus-hero_layout">
+    <div class:list={['bus-hero_layout', split === 'even' && 'is-even']}>
       <div class="bus-hero_content">
         <h1 class="bus-hero_title u-text-style-poster">{title}</h1>
         {text && <p class="bus-hero_text u-text-style-large">{text}</p>}
@@ -135,6 +137,8 @@ const { title, text = '', photo, shape = 'arch', focus, crumbs = [], occasion = 
     width: 100%;
     padding-bottom: var(--_spacing---space--6);
   }
+  .bus-hero_layout.is-even .bus-hero_content { grid-column: 1 / span 6; }
+  .bus-hero_layout.is-even .bus-hero_side { grid-column: 7 / span 6; }
   .bus-hero_title { max-width: 14ch; }
   .bus-hero_text { max-width: 52ch; }
   .bus-hero_visual {
