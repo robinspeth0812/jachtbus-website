@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { headersWithCors, type Endpoint, type PayloadRequest } from "payload";
 import { BEDRIJF } from "./bedrijf";
 import { dagNaarIso, datumLang, nederlandseDatum } from "./datum";
@@ -8,7 +9,9 @@ import { ipVan, isSpam, overLimiet } from "./spam";
 /**
  * POST /api/aanvraag: the request form on the site (multipart FormData).
  * Stores a request in phase Nieuw and mails the recipients from Instellingen
- * plus a confirmation to the sender. Mail never blocks success.
+ * plus a confirmation to the sender. Mail never blocks success. The answer carries
+ * the id and a signed key, so the thank-you screen can add the visitor's story to
+ * this request (POST /api/aanvraag/aanvulling) and to no other.
  */
 const antwoord = (req: PayloadRequest, status: number, body: object) =>
   Response.json(body, { status, headers: headersWithCors({ headers: new Headers(), req }) });
@@ -119,10 +122,65 @@ export const aanvraagEndpoint: Endpoint = {
 
     // Do not wait: the visitor gets an answer at once, even when the mail server is slow.
     void stuurMails(req, velden, id).catch(() => payload.logger.error("Aanvraagmail mislukt"));
-    return antwoord(req, 200, { ok: true });
+    return antwoord(req, 200, { ok: true, id, sleutel: sleutelVoor(req, id) });
   },
 };
 
+// The key is an HMAC of the id with the Payload secret: nothing extra to store,
+// and only whoever got the answer to the request can add to it.
+const sleutelVoor = (req: PayloadRequest, id: number) => createHmac("sha256", req.payload.secret).update(`aanvulling:${id}`).digest("hex").slice(0, 32);
+const sleutelKlopt = (req: PayloadRequest, id: number, sleutel: string) => {
+  const goed = Buffer.from(sleutelVoor(req, id));
+  const gekregen = Buffer.from(sleutel);
+  return goed.length === gekregen.length && timingSafeEqual(goed, gekregen);
+};
+
+/**
+ * POST /api/aanvraag/aanvulling: the story from the thank-you screen, typed or
+ * spoken. Replaces the remark of that request, so sending again after an edit
+ * keeps the latest version, and tells the recipients once per send.
+ */
+export const aanvullingEndpoint: Endpoint = {
+  path: "/aanvraag/aanvulling",
+  method: "post",
+  handler: async (req) => {
+    const { payload } = req;
+    let form: FormData;
+    try {
+      form = await req.formData!();
+    } catch {
+      return antwoord(req, 400, { ok: false, fout: "Je verhaal kon niet worden verstuurd." });
+    }
+    const id = Number(form.get("id"));
+    const sleutel = String(form.get("sleutel") ?? "");
+    const tekst = String(form.get("aanvulling") ?? "").replace(/\r/g, "").trim().slice(0, 3000);
+    if (!Number.isInteger(id) || id < 1 || !sleutelKlopt(req, id, sleutel)) return antwoord(req, 403, { ok: false, fout: "Deze aanvraag kunnen we niet vinden." });
+    if (!tekst) return antwoord(req, 400, { ok: false, fout: "Schrijf eerst iets op." });
+    if (overLimiet(ipVan(req.headers))) return antwoord(req, 429, { ok: false, fout: "Er is net veel verstuurd vanaf dit adres. Probeer het over een uur opnieuw." });
+
+    let naam = "";
+    try {
+      // The visitor has no account; the signed key is the permission.
+      const doc = await payload.update({ collection: "aanvragen", id, data: { opmerking: tekst }, overrideAccess: true });
+      naam = doc.naam;
+    } catch {
+      payload.logger.error("Aanvulling opslaan mislukt");
+      return antwoord(req, 500, { ok: false, fout: "Versturen lukte niet. Probeer het later opnieuw." });
+    }
+    void ontvangersVan(payload, "aanvraag")
+      .then((aan) =>
+        stuurMelding(payload, {
+          aan,
+          onderwerp: `Aanvulling op de aanvraag van ${naam}`,
+          alineas: [`${naam} heeft meer verteld over het feest:`, tekst.length > 600 ? `${tekst.slice(0, 600)}...` : tekst],
+          pad: `/aanvragen/${id}`,
+          knop: "Bekijk de aanvraag",
+        }),
+      )
+      .catch(() => payload.logger.error("Aanvullingmail mislukt"));
+    return antwoord(req, 200, { ok: true });
+  },
+};
 async function stuurMails(req: PayloadRequest, v: AanvraagVelden, id: number) {
   const { payload } = req;
   const wat = v.gelegenheid === "overige" && v.gelegenheid_overig ? v.gelegenheid_overig : labelVan(gelegenheden, v.gelegenheid);

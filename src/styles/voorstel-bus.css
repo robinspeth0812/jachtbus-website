@@ -82,7 +82,8 @@
   --target--small: 2rem; /* footer lists, the documented exception */
   --size--cal-day: 6.5rem; /* day block in the agenda calendar */
   --size--cal-day-small: 3.25rem; /* the same block on a phone */
-  --size--cal-today: 1.75rem; /* circle around today's number */}
+  --size--cal-today: 1.75rem; /* circle around today's number */
+  --size--summary-min: 8rem; /* one answer in the summary after a request */}
 
 /* Browser surfaces carry the palette too. */
 ::selection {

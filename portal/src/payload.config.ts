@@ -25,7 +25,7 @@ import { Instellingen } from "./globals/Instellingen";
 import { Sitestatus } from "./globals/Sitestatus";
 import { mailHerinneringen } from "./jobs/herinneringen";
 import { keuringTaken } from "./jobs/keuringTaken";
-import { aanvraagEndpoint } from "./lib/aanvraagEndpoint";
+import { aanvraagEndpoint, aanvullingEndpoint } from "./lib/aanvraagEndpoint";
 import { siteInhoudEndpoint } from "./lib/siteInhoudEndpoint";
 import { migrations } from "./migrations";
 
@@ -112,7 +112,7 @@ export default buildConfig({
     ],
     deleteJobOnComplete: true,
   },
-  endpoints: [aanvraagEndpoint, siteInhoudEndpoint],
+  endpoints: [aanvraagEndpoint, aanvullingEndpoint, siteInhoudEndpoint],
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   graphQL: { disable: true },
 });

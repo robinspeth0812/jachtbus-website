@@ -129,7 +129,7 @@ const places = [
           </div>
         </div>
         <p class="aanvraag_hint u-text-style-small">
-          Nog geen vaste datum? Kies een richtdatum en zet het straks in je opmerking.
+          Nog geen vaste datum? Kies een richtdatum. Na het versturen kun je er meer over vertellen.
         </p>
         <div class="aanvraag_field_wrap">
           <p class="aanvraag_label">Welke momenten mogen wij verzorgen?</p>
@@ -219,12 +219,6 @@ const places = [
             <input class="aanvraag_input" type="tel" id="aanvraag-telefoon" name="telefoon" autocomplete="tel" />
           </div>
         </div>
-        <div class="aanvraag_field_wrap">
-          <label class="aanvraag_label is-small" for="aanvraag-opmerking">
-            Wil je nog iets kwijt? <span class="aanvraag_label_opt u-text-style-small">(optioneel)</span>
-          </label>
-          <textarea class="aanvraag_input is-area" id="aanvraag-opmerking" name="opmerking" rows="4"></textarea>
-        </div>
         <div class="aanvraag_trap_wrap" aria-hidden="true">
           <label class="aanvraag_label" for="aanvraag-website">Website</label>
           <input
@@ -248,10 +242,65 @@ const places = [
       <p class="aanvraag_status u-text-style-small" aria-live="polite"></p>
 
       <div class="aanvraag_done_wrap" hidden>
-        <ChatBubble message="Gelukt, je aanvraag is binnen. Ik kijk er snel naar en je hoort van ons. Tot zo!" />
+        <ChatBubble message="Gelukt, je aanvraag is binnen. Ik kijk er snel naar en je hoort van ons." />
+
+        <div class="aanvraag_summary_wrap">
+          <p class="aanvraag_done_title u-text-style-main">Dit hebben we van je</p>
+          <dl class="aanvraag_summary_list">
+            {[['gelegenheid', 'Gelegenheid'], ['datum', 'Datum'], ['plaats', 'Plaats'], ['gasten', 'Gasten']].map(([key, label]) => (
+              <div class="aanvraag_summary_row" data-summary={key} hidden>
+                <dt class="aanvraag_summary_term u-text-style-small">{label}</dt>
+                <dd class="aanvraag_summary_value"></dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div class="aanvraag_next_wrap">
+          <p class="aanvraag_done_title u-text-style-main">Zo gaat het verder</p>
+          <ol class="aanvraag_next_list">
+            <li class="aanvraag_next_item">Peer leest je aanvraag en kijkt of de bus vrij is.</li>
+            <li class="aanvraag_next_item">Is er iets onduidelijk? Dan bellen of mailen we je even.</li>
+            <li class="aanvraag_next_item">Je krijgt een voorstel met menu en prijs.</li>
+          </ol>
+        </div>
+
+        <!-- After the request is in: room to tell the whole story, typed or
+             spoken. Sent separately, so it never holds up the request itself. -->
+        <div class="aanvraag_extra_wrap">
+          <label class="aanvraag_done_title u-text-style-main" for="aanvraag-aanvulling">
+            Vertel ons alles over je feest
+          </label>
+          <p class="aanvraag_hint u-text-style-small">
+            Hoe meer we weten, hoe beter ons voorstel past. Weet je het nog niet precies? Schrijf gewoon op wat je in je hoofd hebt.
+          </p>
+          <div class="aanvraag_prompts" role="group" aria-label="Ideeën om over te schrijven">
+            {['Wat voor sfeer wil je?', 'Wie zijn je gasten?', 'Wat moet er zeker op tafel?', 'Allergieën of dieetwensen?', 'Hoe ziet de plek eruit?', 'Hoe ziet de dag eruit?'].map((prompt) => (
+              <button class="aanvraag_prompt u-text-style-small" type="button" data-prompt={prompt} data-trigger="hover focus">
+                <svg class="aanvraag_prompt_icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.500" /></svg>
+                {prompt}
+              </button>
+            ))}
+          </div>
+          <textarea class="aanvraag_input is-area is-story" id="aanvraag-aanvulling" name="aanvulling" rows="7" maxlength="5000" disabled></textarea>
+          <div class="aanvraag_extra_actions">
+            <button class="aanvraag_mic" type="button" aria-pressed="false" hidden data-trigger="hover focus">
+              <svg class="aanvraag_mic_icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="2" /><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21" stroke="currentColor" stroke-width="2" /></svg>
+              <span class="aanvraag_mic_text">Inspreken</span>
+            </button>
+            <button class="aanvraag_nav_btn is-submit is-extra" type="button" data-trigger={buttonTrigger}>Stuur je verhaal</button>
+          </div>
+          <p class="aanvraag_hint is-mic u-text-style-small" hidden>
+            Praten gaat sneller dan typen. Je browser zet je stem om in tekst, via zijn eigen spraakdienst (bijvoorbeeld van Google of Apple). Lees het daarna even na.
+          </p>
+          <p class="aanvraag_hint is-keyboard u-text-style-small">
+            Tip: op je telefoon kun je ook inspreken met het microfoontje op je toetsenbord.
+          </p>
+          <p class="aanvraag_extra_status u-text-style-small" aria-live="polite"></p>
+        </div>
+
         <p class="aanvraag_done_text">
-          Dit gebeurt er nu: wij bekijken je aanvraag en je krijgt een
-          voorstel met menu en prijs. Vragen tussendoor? Bel of app gerust.
+          Vragen tussendoor? <a class="aanvraag_done_link" href="https://wa.me/31592656363" rel="external">App Peer</a> of bel <a class="aanvraag_done_link" href="tel:+31592656363">0592 656363</a>.
         </p>
       </div>
 
@@ -512,8 +561,103 @@ const places = [
   .aanvraag_done_wrap {
     display: flex;
     flex-direction: column;
-    gap: var(--_spacing---space--4);
+    gap: var(--_spacing---space--5);
   }
+  .aanvraag_done_wrap[hidden],
+  .aanvraag_summary_row[hidden],
+  .aanvraag_mic[hidden],
+  .aanvraag_hint[hidden] { display: none; }
+  .aanvraag_done_title {
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+  }
+  .aanvraag_summary_wrap,
+  .aanvraag_next_wrap,
+  .aanvraag_extra_wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_summary_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--size--summary-min)), 1fr));
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_summary_row {
+    display: flex;
+    flex-direction: column;
+    padding: var(--_spacing---space--2) var(--_spacing---space--3);
+    background-color: var(--_theme---background-2);
+    border-radius: var(--radius--main);
+  }
+  .aanvraag_summary_value {
+    font-weight: var(--_typography---font--primary-bold);
+    overflow-wrap: anywhere;
+  }
+  .aanvraag_summary_value::first-letter { text-transform: uppercase; }
+  /* A real sequence, so the numbers carry meaning. */
+  .aanvraag_next_list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--_spacing---space--1);
+    padding-left: var(--_spacing---space--5);
+    list-style: decimal;
+  }
+  .aanvraag_extra_wrap {
+    padding-top: var(--_spacing---space--4);
+    border-top: var(--border-width--main) solid var(--_theme---divider, var(--_theme---border));
+  }
+  .aanvraag_prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--_spacing---space--2);
+  }
+  .aanvraag_prompt {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--1);
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--3);
+    background-color: color-mix(in hsl, var(--_theme---border) calc(100% * var(--_trigger---off)), var(--_theme---background-2));
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid var(--_theme---divider, var(--_theme---border));
+    border-radius: var(--radius--round);
+    cursor: pointer;
+  }
+  .aanvraag_prompt_icon,
+  .aanvraag_mic_icon {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--4);
+    height: var(--_spacing---space--4);
+  }
+  .aanvraag_input.is-story {
+    min-height: calc(var(--target--min) * 4);
+    font-size: inherit;
+    resize: vertical;
+  }
+  .aanvraag_extra_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--_spacing---space--3);
+  }
+  /* Listening is pressed: filled, with a different label, never color alone. */
+  .aanvraag_mic {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_spacing---space--2);
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--4);
+    background-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_state---false)), transparent);
+    color: color-mix(in hsl, var(--color--white) calc(100% * var(--_state---false)), var(--_theme---text) calc(100% * var(--_state---true)));
+    border: var(--border-width--main) solid color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---off) + 100% * var(--_state---false)), var(--_theme---border));
+    border-radius: var(--radius--main);
+    font-family: var(--_typography---font--heading);
+    font-weight: var(--_typography---font--primary-bold);
+    cursor: pointer;
+  }
+  .aanvraag_extra_status:empty { display: none; }
+  .aanvraag_done_link { color: var(--_theme---text-link--text, inherit); }
   .aanvraag_done_text,
   .aanvraag_fallback_text { max-width: 55ch; }
   .aanvraag_fallback_wrap {
@@ -651,6 +795,141 @@ const places = [
       if (status) status.textContent = message;
     };
 
+    // The thank-you screen repeats the key answers, so a typo shows at once.
+    const fillSummary = () => {
+      const data = new FormData(form);
+      const occasion = form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked');
+      const occasionText = occasion?.value === 'overige'
+        ? String(data.get('gelegenheid_overig') ?? '')
+        : occasion?.closest('label')?.querySelector('.aanvraag_option_text')?.textContent ?? '';
+      const date = String(data.get('datum') ?? '');
+      const values: Record<string, string> = {
+        gelegenheid: occasionText.trim(),
+        datum: date ? new Intl.DateTimeFormat('nl-NL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`)) : '',
+        plaats: [data.get('locatie'), data.get('plaats')].filter(Boolean).join(', '),
+        gasten: String(data.get('gasten') ?? ''),
+      };
+      form.querySelectorAll<HTMLElement>('.aanvraag_summary_row').forEach((row) => {
+        const value = values[row.dataset.summary ?? ''] ?? '';
+        const cell = row.querySelector('.aanvraag_summary_value');
+        if (cell) cell.textContent = value;
+        row.hidden = !value;
+      });
+    };
+
+    // The story after the request: prompts, dictation and a separate send.
+    const extra = (() => {
+      const story = form.querySelector<HTMLTextAreaElement>('.aanvraag_input.is-story');
+      const sendBtn = form.querySelector<HTMLButtonElement>('.aanvraag_nav_btn.is-extra');
+      const extraStatus = form.querySelector<HTMLElement>('.aanvraag_extra_status');
+      const mic = form.querySelector<HTMLButtonElement>('.aanvraag_mic');
+      const micText = form.querySelector<HTMLElement>('.aanvraag_mic_text');
+      const micHint = form.querySelector<HTMLElement>('.aanvraag_hint.is-mic');
+      let target: { id: string; sleutel: string } | null = null;
+      if (!story || !sendBtn || !extraStatus) return { open: () => {} };
+      const say = (message: string) => (extraStatus.textContent = message);
+
+      form.querySelectorAll<HTMLButtonElement>('.aanvraag_prompt').forEach((button) => {
+        button.addEventListener('click', () => {
+          const prompt = button.dataset.prompt ?? '';
+          story.value = `${story.value.trimEnd()}${story.value.trim() ? '\n\n' : ''}${prompt} `;
+          story.focus();
+          story.setSelectionRange(story.value.length, story.value.length);
+        });
+      });
+
+      // Dictation through the browser's own speech service: free, no key, no
+      // upload by us. Only offered where it can work (it needs https).
+      type Recognition = {
+        lang: string;
+        continuous: boolean;
+        interimResults: boolean;
+        start: () => void;
+        stop: () => void;
+        onresult: ((event: { results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> }) => void) | null;
+        onerror: ((event: { error: string }) => void) | null;
+        onend: (() => void) | null;
+      };
+      const speechWindow = window as unknown as { SpeechRecognition?: new () => Recognition; webkitSpeechRecognition?: new () => Recognition };
+      const Speech = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+      if (mic && micText && Speech && window.isSecureContext) {
+        mic.hidden = false;
+        if (micHint) micHint.hidden = false;
+        let listening: Recognition | null = null;
+        const stopUi = () => {
+          listening = null;
+          mic.setAttribute('aria-pressed', 'false');
+          micText.textContent = 'Inspreken';
+        };
+        mic.addEventListener('click', () => {
+          if (listening) {
+            listening.stop();
+            return;
+          }
+          const recognition = new Speech();
+          recognition.lang = 'nl-NL';
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          const base = story.value.trim() ? `${story.value.trimEnd()} ` : '';
+          recognition.onresult = (event) => {
+            const spoken = Array.from(event.results, (result) => result[0].transcript).join('');
+            story.value = `${base}${spoken}`;
+          };
+          recognition.onerror = (event) => {
+            say(event.error === 'not-allowed' || event.error === 'service-not-allowed'
+              ? 'Je browser geeft geen toegang tot de microfoon. Typen kan natuurlijk altijd.'
+              : event.error === 'no-speech' ? 'We hoorden niets. Probeer het nog eens.' : 'Inspreken lukte even niet. Typen kan altijd.');
+          };
+          recognition.onend = () => {
+            stopUi();
+            if (story.value.trim()) say('Klaar met luisteren. Lees het even na en pas aan wat niet klopt.');
+          };
+          listening = recognition;
+          mic.setAttribute('aria-pressed', 'true');
+          micText.textContent = 'Stop met inspreken';
+          say('Ik luister. Vertel maar.');
+          recognition.start();
+        });
+      }
+
+      sendBtn.addEventListener('click', async () => {
+        const text = story.value.trim();
+        if (!text) {
+          say('Schrijf of spreek eerst iets in.');
+          story.focus();
+          return;
+        }
+        if (!target) {
+          say('Versturen lukt hier niet. App of mail het ons gerust.');
+          return;
+        }
+        const body = new FormData();
+        body.set('id', target.id);
+        body.set('sleutel', target.sleutel);
+        body.set('aanvulling', text);
+        sendBtn.disabled = true;
+        say('Versturen...');
+        try {
+          const response = await fetch(`${(form.dataset.endpoint ?? '').replace(/\/$/, '')}/aanvulling`, { method: 'POST', body });
+          if (!response.ok) throw new Error(String(response.status));
+          say('Ontvangen, dank je wel. Wil je nog iets aanpassen? Dat kan, verstuur het gewoon opnieuw.');
+        } catch {
+          say('Versturen lukte even niet. Probeer het nog eens, of app het ons.');
+        } finally {
+          sendBtn.disabled = false;
+        }
+      });
+
+      return {
+        open: (to: { id: string; sleutel: string } | null) => {
+          target = to;
+          story.disabled = false;
+          story.value = '';
+          say('');
+        },
+      };
+    })();
+
     // Init: turn the long form into steps.
     restoreDraft();
     const prefill = new URLSearchParams(window.location.search).get('gelegenheid');
@@ -674,7 +953,10 @@ const places = [
     form.addEventListener('aanvraag:open', (event) => {
       const { occasion, date } = (event as CustomEvent<{ occasion: string | null; date?: string | null }>).detail;
       const wasDone = !!done && !done.hidden;
-      if (wasDone) form.reset();
+      if (wasDone) {
+        form.reset();
+        form.querySelector<HTMLTextAreaElement>('.aanvraag_input.is-story')?.setAttribute('disabled', '');
+      }
       if (date && dateField) dateField.value = date;
       if (done) done.hidden = true;
       if (fallback) fallback.hidden = true;
@@ -706,7 +988,9 @@ const places = [
         if (target < current) show(target, true);
       });
     });
-    form.addEventListener('input', () => {
+    form.addEventListener('input', (event) => {
+      // The story after sending is no part of the draft.
+      if ((event.target as HTMLElement).closest('.aanvraag_done_wrap')) return;
       syncOptionStates();
       saveDraft();
     });
@@ -747,12 +1031,18 @@ const places = [
           body: new FormData(form),
         });
         if (!response.ok) throw new Error(String(response.status));
+        const answer = (await response.json().catch(() => ({}))) as { id?: number; sleutel?: string };
         try {
           sessionStorage.removeItem(STORAGE_KEY);
         } catch {
           /* fine */
         }
         setStatus('');
+        fillSummary();
+        extra.open(answer.id && answer.sleutel ? { id: String(answer.id), sleutel: answer.sleutel } : null);
+        // A real request is the conversion; the tags only exist after a yes in the cookie choice.
+        window.gtag?.('event', 'generate_lead', { form: 'aanvraag', gelegenheid: form.querySelector<HTMLInputElement>('input[name="gelegenheid"]:checked')?.value });
+        window.fbq?.('track', 'Lead');
         finish(done);
       } catch {
         setStatus('');

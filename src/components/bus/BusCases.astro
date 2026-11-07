@@ -35,23 +35,22 @@ const splitStory = (text: string) => {
     <div class="cases_contain u-container">
       <h2 class="cases_title u-text-style-poster-small">{title}</h2>
       {filters && groups.length > 0 && <div class="cases_filters" hidden>
-        {groups.map((filter) => (
-          <div class="cases_group" role="group" aria-label={filter.label}>
-            <p class="cases_group_label u-text-style-bus-title">{filter.label}</p>
-            <div class="cases_chips">
-              <button class="cases_chip" type="button" aria-pressed="true" data-filter={filter.key} data-value="" data-trigger="hover focus">
-                <svg class="cases_chip_check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8.500 6.500 12.500 13.500 4" stroke="currentColor" stroke-width="2.500" /></svg>
-                Alles
-              </button>
-              {filter.values.map((value) => (
-                <button class="cases_chip" type="button" aria-pressed="false" data-filter={filter.key} data-value={value} data-trigger="hover focus">
-                  <svg class="cases_chip_check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8.500 6.500 12.500 13.500 4" stroke="currentColor" stroke-width="2.500" /></svg>
-                  {value}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
+        <div class="cases_selects">
+          {groups.map((filter) => (
+            <label class="cases_select_wrap">
+              <span class="cases_select_label u-text-style-small">{filter.label}</span>
+              <span class="cases_select_box">
+                <select class="cases_select" data-filter={filter.key} data-trigger="hover focus">
+                  <option value="">Alle {filter.label.toLowerCase()}</option>
+                  {filter.values.map((value) => <option value={value}>{value}</option>)}
+                </select>
+                <svg class="cases_select_icon is-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8.500 6.500 12.500 13.500 4" stroke="currentColor" stroke-width="2.500" /></svg>
+                <svg class="cases_select_icon is-caret" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.500 6 8 10.500 12.500 6" stroke="currentColor" stroke-width="2.500" /></svg>
+              </span>
+            </label>
+          ))}
+          <button class="cases_reset u-text-style-main" type="button" hidden>Wis filters</button>
+        </div>
         <p class="cases_count u-text-style-main" role="status"></p>
       </div>}
       <ul class="cases_list">
@@ -104,36 +103,72 @@ const splitStory = (text: string) => {
   .cases_filters {
     display: flex;
     flex-flow: column;
-    gap: var(--_spacing---space--4);
+    gap: var(--_spacing---space--3);
   }
-  .cases_group {
-    display: flex;
-    flex-flow: column;
-    gap: var(--_spacing---space--2);
-  }
-  .cases_chips {
+  .cases_filters[hidden],
+  .cases_reset[hidden] { display: none; }
+  /* Dropdowns side by side; they wrap under each other only when there is no room. */
+  .cases_selects {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--_spacing---space--2);
+    align-items: flex-end;
+    gap: var(--_spacing---space--3);
   }
-  /* Pressed shows a check too, so color is not the only signal. */
-  .cases_chip {
-    display: inline-flex;
+  .cases_select_wrap {
+    display: flex;
+    flex: 0 1 var(--size--map-card);
+    flex-flow: column;
+    gap: var(--_spacing---space--1);
+    min-width: 0;
+  }
+  .cases_select_label { font-weight: var(--_typography---font--primary-bold); }
+  .cases_select_box {
+    position: relative;
+    display: flex;
     align-items: center;
-    gap: calc(var(--_spacing---space--2) * var(--_state---false));
+  }
+  /* A chosen filter turns green and shows a check, so color is not the only signal. */
+  .cases_select {
+    width: 100%;
     min-height: var(--target--min);
-    padding-inline: var(--_spacing---space--3);
-    background-color: color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_state---false)), var(--_theme---background-2) calc(100% * var(--_state---true)));
-    color: color-mix(in hsl, var(--color--white) calc(100% * var(--_state---false)), var(--_theme---text) calc(100% * var(--_state---true)));
-    border: var(--border-width--main) solid color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---off) + 100% * var(--_state---false)), transparent);
+    padding-inline: var(--_spacing---space--3) var(--_spacing---space--6);
+    background-color: var(--_theme---background-2);
+    color: var(--_theme---text);
+    border: var(--border-width--main) solid color-mix(in hsl, var(--color--bus-green) calc(100% * var(--_trigger---off)), var(--_theme---border));
+    border-radius: 0;
     font-family: var(--_typography---font--heading);
     font-stretch: var(--_typography---stretch--poster);
     font-weight: var(--_typography---font--primary-bold);
+    appearance: none;
     cursor: pointer;
   }
-  .cases_chip_check {
-    width: calc(var(--_spacing---space--4) * var(--_state---false));
+  .cases_select_wrap.is-active .cases_select {
+    padding-left: var(--_spacing---space--6);
+    background-color: var(--color--bus-green);
+    color: var(--color--white);
+    border-color: var(--color--bus-green);
+  }
+  .cases_select_icon {
+    position: absolute;
+    width: var(--_spacing---space--4);
     height: var(--_spacing---space--4);
+    pointer-events: none;
+  }
+  .cases_select_icon.is-caret { right: var(--_spacing---space--3); }
+  .cases_select_icon.is-check {
+    left: var(--_spacing---space--3);
+    display: none;
+  }
+  .cases_select_wrap.is-active .cases_select_icon { color: var(--color--white); }
+  .cases_select_wrap.is-active .cases_select_icon.is-check { display: block; }
+  .cases_reset {
+    min-height: var(--target--min);
+    padding-inline: var(--_spacing---space--1);
+    background: none;
+    color: var(--_theme---text-link--text);
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
   }
   .cases_list {
     display: grid;
@@ -193,8 +228,9 @@ const splitStory = (text: string) => {
     const filters = root.querySelector<HTMLElement>('.cases_filters');
     const count = root.querySelector<HTMLElement>('.cases_count');
     const empty = root.querySelector<HTMLElement>('.cases_empty');
-    if (!filters || !count || !empty) return;
-    const chips = [...root.querySelectorAll<HTMLButtonElement>('.cases_chip')];
+    const reset = root.querySelector<HTMLButtonElement>('.cases_reset');
+    if (!filters || !count || !empty || !reset) return;
+    const selects = [...root.querySelectorAll<HTMLSelectElement>('.cases_select')];
     const items = [...root.querySelectorAll<HTMLElement>('.cases_item')];
     const chosen: Record<string, string> = { gelegenheid: '', mogelijkheid: '' };
 
@@ -210,13 +246,22 @@ const splitStory = (text: string) => {
       empty.hidden = shown > 0;
     };
 
-    chips.forEach((chip) => chip.addEventListener('click', () => {
-      const key = chip.dataset.filter ?? '';
-      chosen[key] = chip.dataset.value ?? '';
-      chips.filter((other) => other.dataset.filter === key).forEach((other) => other.setAttribute('aria-pressed', String(other === chip)));
+    selects.forEach((select) => select.addEventListener('change', () => {
+      chosen[select.dataset.filter ?? ''] = select.value;
+      select.closest('.cases_select_wrap')?.classList.toggle('is-active', select.value !== '');
+      reset.hidden = selects.every((other) => other.value === '');
       apply();
     }));
-    filters.hidden = false;
+    reset.addEventListener('click', () => {
+      selects.forEach((select) => {
+        select.value = '';
+        chosen[select.dataset.filter ?? ''] = '';
+        select.closest('.cases_select_wrap')?.classList.remove('is-active');
+      });
+      reset.hidden = true;
+      apply();
+      selects[0]?.focus();
+    });    filters.hidden = false;
     apply();
   });
 </script>
