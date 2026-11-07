@@ -106,7 +106,7 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
                 {shown.plaatsen.map((plaats) => (
                   <li class="bus-map_tag_item">
                     {plaatsPaginas[plaats]
-                      ? <a class="bus-map_tag is-link u-text-style-small" href={url(plaatsPaginas[plaats])} data-trigger="hover focus">{plaats}</a>
+                      ? <a class="bus-map_tag is-link u-text-style-small" href={url(plaatsPaginas[plaats])} data-trigger="hover focus">{plaats}<svg class="bus-map_tag_arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.500 8h10M8.500 3.500 13 8l-4.500 4.500" stroke="currentColor" stroke-width="2.500" /></svg></a>
                       : <span class="bus-map_tag u-text-style-small">{plaats}</span>}
                   </li>
                 ))}
@@ -321,8 +321,19 @@ const kort = (tekst: string) => (tekst.length > 120 ? `${tekst.slice(0, 120).tri
   .bus-map_tag.is-link {
     color: color-mix(in hsl, var(--_theme---text) calc(100% * var(--_trigger---on)), var(--color--white) calc(100% * var(--_trigger---off)));
     background-color: color-mix(in hsl, var(--_theme---background-2) calc(100% * var(--_trigger---on)), var(--color--bus-green) calc(100% * var(--_trigger---off)));
-    text-decoration: underline;
+    gap: var(--_spacing---space--1);
+    text-decoration: none;
     transition: background-color 150ms, color 150ms;
+  }
+  /* No underline on a tag: a small arrow says it leads somewhere, and nudges on hover. */
+  .bus-map_tag_arrow {
+    flex: 0 0 auto;
+    width: var(--_spacing---space--3);
+    height: var(--_spacing---space--3);
+    transform: translateX(calc(var(--_spacing---space--1) * var(--_trigger---off)));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bus-map_tag_arrow { transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
   }
   .bus-map_pins { display: none; }
   .bus-map_pin {

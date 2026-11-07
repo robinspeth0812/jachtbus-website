@@ -80,7 +80,9 @@
   --size--link-arrow: 1.125rem;
   --size--crop-large: 14rem;
   --target--small: 2rem; /* footer lists, the documented exception */
-}
+  --size--cal-day: 6.5rem; /* day block in the agenda calendar */
+  --size--cal-day-small: 3.25rem; /* the same block on a phone */
+  --size--cal-today: 1.75rem; /* circle around today's number */}
 
 /* Browser surfaces carry the palette too. */
 ::selection {
